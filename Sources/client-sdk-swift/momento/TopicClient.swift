@@ -1,11 +1,11 @@
 import Foundation
 
-class TopicClient: TopicClientProtocol {
-    func publish() async -> String {
+public class TopicClient: TopicClientProtocol {    
+    public func publish() async -> String {
         return "publishing"
     }
     
-    func subscribe() async -> String {
+    public func subscribe() async -> String {
         return "subscribing"
     }
 }

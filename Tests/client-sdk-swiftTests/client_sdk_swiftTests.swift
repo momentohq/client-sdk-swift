@@ -19,4 +19,10 @@ final class client_sdk_swiftTests: XCTestCase {
         let subResp = await client.subscribe()
         XCTAssertEqual(subResp, "subscribing")
     }
+    
+    func testCredentialProvider() throws {
+        var smp = try StringMomentoTokenProvider(authToken: "")
+        XCTAssertEqual(smp?.getAuthToken(), "letmein")
+    }
+    
 }
