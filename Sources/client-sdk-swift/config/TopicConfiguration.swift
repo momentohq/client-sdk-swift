@@ -1,4 +1,4 @@
-class TopicClientConfiguration: TopicClientConfigurationProtocol {
+public class TopicClientConfiguration: TopicClientConfigurationProtocol {
     var loggerFactory: MomentoLoggerFactoryProtocol
     var transportStrategy: TransportStrategyProtocol
     

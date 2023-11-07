@@ -1,6 +1,6 @@
 protocol TransportStrategyProtocol {
     var grpcConfig: GrpcConfigurationProtocol { get }
-    func withGrpcConfig(grpcConfig: GrpcConfigurationProtocol) -> TransportStrategyProtocol
+    static func withGrpcConfig(grpcConfig: GrpcConfigurationProtocol) -> TransportStrategyProtocol
     func getClientTimeoutMillis() -> Int
-    func withClientTimeoutMillis(timeoutMillis: Int) -> TransportStrategyProtocol
+    static func withClientTimeoutMillis(timeoutMillis: Int) -> TransportStrategyProtocol
 }
