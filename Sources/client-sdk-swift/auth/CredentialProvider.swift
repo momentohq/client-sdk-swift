@@ -6,16 +6,16 @@ enum CredentialProviderError: Error {
     case badToken
 }
 
-public protocol CredentialProviderProtocol {
+protocol CredentialProviderProtocol {
     var originalAuthToken: String { get }
     var authToken: String { get }
     var controlEndpoint: String { get }
     var cacheEndpoint: String { get }
 }
 
-class CredentialProvider {
+public class CredentialProvider {
     
-    public static func fromEnvironmentVariable(envVariableName: String) throws -> CredentialProviderProtocol {
+    static func fromEnvironmentVariable(envVariableName: String) throws -> CredentialProviderProtocol {
         do {
             let provider = try EnvMomentoTokenProvider(envVarName: envVariableName)
             return provider
@@ -24,7 +24,7 @@ class CredentialProvider {
         }
     }
     
-    public static func fromString(authToken: String) throws -> CredentialProviderProtocol {
+    static func fromString(authToken: String) throws -> CredentialProviderProtocol {
         do {
             let provider = try StringMomentoTokenProvider(authToken: authToken)
             return provider
@@ -103,7 +103,7 @@ class CredentialProvider {
     }
 }
 
-class StringMomentoTokenProvider : CredentialProviderProtocol {
+public class StringMomentoTokenProvider : CredentialProviderProtocol {
     let originalAuthToken: String
     let authToken: String
     let controlEndpoint: String
@@ -121,7 +121,7 @@ class StringMomentoTokenProvider : CredentialProviderProtocol {
     }
 }
 
-class EnvMomentoTokenProvider : StringMomentoTokenProvider {
+public class EnvMomentoTokenProvider : StringMomentoTokenProvider {
     init(envVarName: String = "", controlEndpoint: String? = nil, cacheEndpoint: String? = nil) throws {
         if envVarName.isEmpty {
             throw CredentialProviderError.emptyAuthEnvironmentVariable
