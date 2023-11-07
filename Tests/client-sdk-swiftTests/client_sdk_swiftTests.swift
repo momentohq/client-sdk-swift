@@ -5,7 +5,7 @@ final class client_sdk_swiftTests: XCTestCase {
     func testExample() throws {
         // XCTest Documentation
         // https://developer.apple.com/documentation/xctest
-
+        
         // Defining Test Cases and Test Methods
         // https://developer.apple.com/documentation/xctest/defining_test_cases_and_test_methods
     }
@@ -21,8 +21,21 @@ final class client_sdk_swiftTests: XCTestCase {
     }
     
     func testCredentialProvider() throws {
-        var smp = try StringMomentoTokenProvider(authToken: "")
-        XCTAssertEqual(smp?.getAuthToken(), "letmein")
+        let smp = try StringMomentoTokenProvider(authToken: "letmein")
+        XCTAssertEqual(smp.authToken, "computed from letmein")
     }
     
+    func testStaticStringCredentialProvider() throws {
+        let smp = try CredentialProvider.fromString(authToken: "letmeout")
+        XCTAssertEqual(smp.authToken, "computed from letmeout")
+        XCTAssertEqual(smp.controlEndpoint, "ctrl")
+    }
+    
+    func testEmptyAuthToken() throws {
+        do {
+            let _ = try CredentialProvider.fromString(authToken: "")
+        } catch {
+            XCTAssertTrue(error is CredentialProviderError)
+        }
+    }
 }

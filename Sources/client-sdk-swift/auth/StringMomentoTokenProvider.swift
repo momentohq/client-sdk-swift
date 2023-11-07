@@ -1,15 +1,16 @@
-import Foundation
+class StringMomentoTokenProvider : CredentialProviderProtocol {
+    let originalAuthToken: String
+    let authToken: String
+    let controlEndpoint: String
+    let cacheEndpoint: String
 
-class StringMomentoTokenProvider : CredentialProvider {
-    
-    override init?(authToken: String = "", controlEndpoint: String? = nil, cacheEndpoint: String? = nil) throws {
-        do {
-            try super.init(authToken: authToken)
-        } catch let error as NSError {
-//            print("Got error \(error)")
-//            return nil
-            throw error
+    init(authToken: String = "", controlEndpoint: String? = nil, cacheEndpoint: String? = nil) throws {
+        if authToken.isEmpty {
+            throw CredentialProviderError.emptyAuthToken
         }
+        self.originalAuthToken = authToken
+        self.authToken = "computed from \(originalAuthToken)"
+        self.controlEndpoint = "ctrl"
+        self.cacheEndpoint = "cache"
     }
-    
 }
