@@ -1,3 +1,0 @@
-class EnvMomentoTokenProvider : StringMomentoTokenProvider {
-    
-}
