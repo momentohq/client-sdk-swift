@@ -11,7 +11,7 @@ final class client_sdk_swiftTests: XCTestCase {
     }
     
     func testTopicClient() async throws {
-        let client = TopicClient()
+        let client = TopicClient(configuration: Default.latest())
         
         let pubResp = await client.publish()
         XCTAssertEqual(pubResp, "publishing")

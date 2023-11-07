@@ -17,3 +17,11 @@ protos:
 		--swift_opt=Visibility=Public \
 		--swift_out=Sources/client-sdk-swift/internal/protos \
 		Sources/client-sdk-swift/internal/protos/*.proto
+
+.PHONY: build
+build:
+	swift build
+	
+.PHONY: test
+test:
+	swift test
