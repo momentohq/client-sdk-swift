@@ -1,15 +1,10 @@
 import Foundation
 
-public class StaticGrpcConfiguration: GrpcConfigurationProtocol {
-    var deadline: TimeInterval
-    
-    init(deadline: TimeInterval) {
-        self.deadline = deadline
-    }
-    
-    static func withDeadline(deadline: TimeInterval) -> GrpcConfigurationProtocol {
-        return StaticGrpcConfiguration(deadline: deadline)
-    }
+protocol TransportStrategyProtocol {
+    var grpcConfig: GrpcConfigurationProtocol { get }
+    static func withGrpcConfig(grpcConfig: GrpcConfigurationProtocol) -> TransportStrategyProtocol
+    func getClientTimeout() -> TimeInterval
+    static func withClientTimeout(timeout: TimeInterval) -> TransportStrategyProtocol
 }
 
 public class StaticTransportStrategy: TransportStrategyProtocol {
