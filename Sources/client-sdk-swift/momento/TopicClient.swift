@@ -18,6 +18,12 @@ public class TopicClient: TopicClientProtocol {
     }
     
     public func subscribe() async -> String {
+        do {
+            let result = try await self.pubsubClient.subscribe()
+        } catch {
+            print("TopicClient error:", error)
+        }
+        
         return "subscribing"
     }
 }

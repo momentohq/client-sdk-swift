@@ -5,5 +5,5 @@ protocol PubsubClientProtocol {
 //    credential provider
     
     func publish() async -> String
-    func subscribe() async -> String
+    func subscribe() async throws -> String
 }

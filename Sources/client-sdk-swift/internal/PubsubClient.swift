@@ -32,7 +32,6 @@ final class PubsubClientInterceptorFactory: CacheClient_Pubsub_PubsubClientInter
         [AuthHeaderInterceptor(credentialProvider: self.credentialProvider)]
     }
 
-    /// - Returns: Interceptors to use when invoking 'subscribe'.
     func makeSubscribeInterceptors() -> [ClientInterceptor<CacheClient_Pubsub__SubscriptionRequest, CacheClient_Pubsub__SubscriptionItem>] {
         [AuthHeaderInterceptor(credentialProvider: self.credentialProvider)]
     }
@@ -76,11 +75,11 @@ class PubsubClient: PubsubClientProtocol {
     
     func publish() async -> String {
         var request = CacheClient_Pubsub__PublishRequest()
-        request.cacheName = "foo"
+        request.cacheName = "cache"
         request.topic = "bar"
         request.value.text = "baz"
         do {
-            var result = try await self.client.publish(request)
+            let result = try await self.client.publish(request)
             print(result)
         } catch {
             print(error)
@@ -88,7 +87,22 @@ class PubsubClient: PubsubClientProtocol {
         return "calling client.publish"
     }
     
-    func subscribe() async -> String {
+    func subscribe() async throws -> String {
+        var request = CacheClient_Pubsub__SubscriptionRequest()
+        request.cacheName = "cache"
+        request.topic = "bar"
+        let result = self.client.subscribe(request)
+        print(result)
+        
+        print("About to print items loop:")
+        do {
+            for try await item in result {
+                print("Item:", item)
+            }
+        } catch {
+            print("Caught error while looping:", error)
+        }
+        
         return "calling client.subscribe"
     }
     
