@@ -1,6 +1,6 @@
 import Foundation
 
 protocol GrpcConfigurationProtocol {
-    var deadlineMillis: TimeInterval { get }
-    static func withDeadlineMillis(deadlineMillis: TimeInterval) -> GrpcConfigurationProtocol
+    var deadline: TimeInterval { get }
+    static func withDeadline(deadline: TimeInterval) -> GrpcConfigurationProtocol
 }

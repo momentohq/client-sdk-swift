@@ -5,5 +5,5 @@ protocol TopicClientConfigurationProtocol {
     var transportStrategy: TransportStrategyProtocol { get }
     
     func withTransportStrategy(transportStrategy: TransportStrategyProtocol) -> TopicClientConfigurationProtocol
-    func withClientTimeout(timeoutMillis: TimeInterval) -> TopicClientConfigurationProtocol
+    func withClientTimeout(timeout: TimeInterval) -> TopicClientConfigurationProtocol
 }

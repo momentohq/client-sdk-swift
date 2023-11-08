@@ -13,8 +13,8 @@ public class TopicClientConfiguration: TopicClientConfigurationProtocol {
         return TopicClientConfiguration(loggerFactory: self.loggerFactory, transportStrategy: transportStrategy)
     }
     
-    func withClientTimeout(timeoutMillis: TimeInterval) -> TopicClientConfigurationProtocol {
-        return TopicClientConfiguration(loggerFactory: self.loggerFactory, transportStrategy: StaticTransportStrategy(grpcConfig: StaticGrpcConfiguration(deadlineMillis: timeoutMillis)))
+    func withClientTimeout(timeout: TimeInterval) -> TopicClientConfigurationProtocol {
+        return TopicClientConfiguration(loggerFactory: self.loggerFactory, transportStrategy: StaticTransportStrategy(grpcConfig: StaticGrpcConfiguration(deadline: timeout)))
     }
 }
 
