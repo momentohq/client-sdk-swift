@@ -1,6 +1,6 @@
 import Foundation
 
-protocol TopicClientProtocol {
+public protocol TopicClientProtocol {
     func publish() async -> String
     func subscribe() async -> String
 }
