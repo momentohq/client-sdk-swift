@@ -1,4 +1,43 @@
 import GRPC
+import NIO
+
+final class AuthHeaderInterceptor<Request, Response>: ClientInterceptor<Request, Response> {
+
+    private let credentialProvider: CredentialProviderProtocol
+
+    init(credentialProvider: CredentialProviderProtocol) {
+        self.credentialProvider = credentialProvider
+    }
+
+    override func send(_ part: GRPCClientRequestPart<Request>, promise: EventLoopPromise<Void>?, context: ClientInterceptorContext<Request, Response>) {
+        guard case .metadata(var headers) = part else {
+            return context.send(part, promise: promise)
+        }
+
+        let authToken = credentialProvider.authToken
+        headers.add(name: "authorization", value: authToken)
+        context.send(.metadata(headers), promise: promise)
+    }
+}
+
+final class PubsubClientInterceptorFactory: CacheClient_Pubsub_PubsubClientInterceptorFactoryProtocol {
+    
+    private let credentialProvider: CredentialProviderProtocol
+    
+    init(credentialProvider: CredentialProviderProtocol) {
+        self.credentialProvider = credentialProvider
+    }
+    
+    func makePublishInterceptors() -> [ClientInterceptor<CacheClient_Pubsub__PublishRequest, CacheClient_Pubsub__Empty>] {
+        [AuthHeaderInterceptor(credentialProvider: self.credentialProvider)]
+    }
+
+    /// - Returns: Interceptors to use when invoking 'subscribe'.
+    func makeSubscribeInterceptors() -> [ClientInterceptor<CacheClient_Pubsub__SubscriptionRequest, CacheClient_Pubsub__SubscriptionItem>] {
+        [AuthHeaderInterceptor(credentialProvider: self.credentialProvider)]
+    }
+}
+
 @available(macOS 10.15, *)
 class PubsubClient: PubsubClientProtocol {
     var logger: MomentoLoggerProtocol
@@ -32,7 +71,7 @@ class PubsubClient: PubsubClientProtocol {
             fatalError("Failed to open GRPC channel")
         }
         
-        self.client = CacheClient_Pubsub_PubsubAsyncClient(channel: self.sharedChannel)
+        self.client = CacheClient_Pubsub_PubsubAsyncClient(channel: self.sharedChannel, interceptors: PubsubClientInterceptorFactory(credentialProvider: credentialProvider))
     }
     
     func publish() async -> String {
