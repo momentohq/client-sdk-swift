@@ -1,11 +1,13 @@
+import Foundation
+
 public class StaticGrpcConfiguration: GrpcConfigurationProtocol {
-    var deadlineMillis: Int
+    var deadlineMillis: TimeInterval
     
-    init(deadlineMillis: Int) {
+    init(deadlineMillis: TimeInterval) {
         self.deadlineMillis = deadlineMillis
     }
     
-    static func withDeadlineMillis(deadlineMillis: Int) -> GrpcConfigurationProtocol {
+    static func withDeadlineMillis(deadlineMillis: TimeInterval) -> GrpcConfigurationProtocol {
         return StaticGrpcConfiguration(deadlineMillis: deadlineMillis)
     }
 }
@@ -21,11 +23,11 @@ public class StaticTransportStrategy: TransportStrategyProtocol {
         return StaticTransportStrategy(grpcConfig: grpcConfig)
     }
     
-    func getClientTimeoutMillis() -> Int {
+    func getClientTimeoutMillis() -> TimeInterval {
         return self.grpcConfig.deadlineMillis
     }
     
-    static func withClientTimeoutMillis(timeoutMillis: Int) -> TransportStrategyProtocol {
+    static func withClientTimeoutMillis(timeoutMillis: TimeInterval) -> TransportStrategyProtocol {
         return StaticTransportStrategy(grpcConfig: StaticGrpcConfiguration(deadlineMillis: timeoutMillis))
     }
     

@@ -1,3 +1,5 @@
+import Foundation
+
 public class TopicClientConfiguration: TopicClientConfigurationProtocol {
     var loggerFactory: MomentoLoggerFactoryProtocol
     var transportStrategy: TransportStrategyProtocol
@@ -11,7 +13,7 @@ public class TopicClientConfiguration: TopicClientConfigurationProtocol {
         return TopicClientConfiguration(loggerFactory: self.loggerFactory, transportStrategy: transportStrategy)
     }
     
-    func withClientTimeout(timeoutMillis: Int) -> TopicClientConfigurationProtocol {
+    func withClientTimeout(timeoutMillis: TimeInterval) -> TopicClientConfigurationProtocol {
         return TopicClientConfiguration(loggerFactory: self.loggerFactory, transportStrategy: StaticTransportStrategy(grpcConfig: StaticGrpcConfiguration(deadlineMillis: timeoutMillis)))
     }
 }
