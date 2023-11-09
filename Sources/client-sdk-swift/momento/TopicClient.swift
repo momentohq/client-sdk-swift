@@ -1,5 +1,12 @@
 import Foundation
 
+@available(macOS 10.15, *)
+public protocol TopicClientProtocol {
+    func publish() async -> PublishResponse
+    func subscribe() async -> String
+}
+
+@available(macOS 10.15, *)
 public class TopicClient: TopicClientProtocol {
     var logger: MomentoLoggerProtocol
     var pubsubClient: PubsubClientProtocol
@@ -12,18 +19,13 @@ public class TopicClient: TopicClientProtocol {
         self.pubsubClient = PubsubClient(logger: logger, configuration: configuration, credentialProvider: credentialProvider)
     }
     
-    public func publish() async -> String {
+    public func publish() async -> PublishResponse {
         let result = await self.pubsubClient.publish()
-        return "publishing"
+        return result
     }
     
     public func subscribe() async -> String {
-        do {
-            let result = try await self.pubsubClient.subscribe()
-        } catch {
-            print("TopicClient error:", error)
-        }
-        
-        return "subscribing"
+        let result = await self.pubsubClient.subscribe()
+        return result
     }
 }
