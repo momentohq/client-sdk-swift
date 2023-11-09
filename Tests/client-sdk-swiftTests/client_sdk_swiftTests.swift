@@ -18,9 +18,6 @@ final class client_sdk_swiftTests: XCTestCase {
         XCTAssertNotNil(client)
         
         let pubResp = await client.publish()
-        XCTAssertEqual(pubResp, "publishing")
-        
-        let subResp = await client.subscribe()
-        XCTAssertEqual(subResp, "subscribing")
+        XCTAssertTrue(pubResp is PublishSuccess, "Unexpected response: \((pubResp as! PublishError).toString())")
     }    
 }

@@ -73,7 +73,7 @@ class PubsubClient: PubsubClientProtocol {
         self.client = CacheClient_Pubsub_PubsubAsyncClient(channel: self.sharedChannel, interceptors: PubsubClientInterceptorFactory(credentialProvider: credentialProvider))
     }
     
-    func publish() async -> String {
+    func publish() async -> PublishResponse {
         var request = CacheClient_Pubsub__PublishRequest()
         request.cacheName = "cache"
         request.topic = "bar"
@@ -81,13 +81,13 @@ class PubsubClient: PubsubClientProtocol {
         do {
             let result = try await self.client.publish(request)
             print(result)
+            return PublishSuccess()
         } catch {
-            print(error)
+            return PublishError(error: error)
         }
-        return "calling client.publish"
     }
     
-    func subscribe() async throws -> String {
+    func subscribe() async -> String {
         var request = CacheClient_Pubsub__SubscriptionRequest()
         request.cacheName = "cache"
         request.topic = "bar"

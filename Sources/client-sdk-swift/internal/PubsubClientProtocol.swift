@@ -1,9 +1,10 @@
+@available(macOS 10.15, *)
 protocol PubsubClientProtocol {
     var logger: MomentoLoggerProtocol { get }
     var configuration: TopicClientConfiguration { get }
-//    pb.pubsub client
-//    credential provider
+    var credentialProvider: CredentialProviderProtocol { get }
+    var client: CacheClient_Pubsub_PubsubAsyncClient { get }
     
-    func publish() async -> String
-    func subscribe() async throws -> String
+    func publish() async -> PublishResponse
+    func subscribe() async -> String
 }
