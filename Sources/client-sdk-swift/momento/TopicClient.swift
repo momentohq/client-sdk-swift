@@ -2,7 +2,7 @@ import Foundation
 
 @available(macOS 10.15, *)
 public protocol TopicClientProtocol {
-    func publish() async -> PublishResponse
+    func publish(cacheName: String, topicName: String, value: String) async -> PublishResponse
     func subscribe() async -> String
 }
 
@@ -19,8 +19,8 @@ public class TopicClient: TopicClientProtocol {
         self.pubsubClient = PubsubClient(logger: logger, configuration: configuration, credentialProvider: credentialProvider)
     }
     
-    public func publish() async -> PublishResponse {
-        let result = await self.pubsubClient.publish()
+    public func publish(cacheName: String, topicName: String, value: String) async -> PublishResponse {
+        let result = await self.pubsubClient.publish(cacheName: cacheName, topicName: topicName, value: value)
         return result
     }
     

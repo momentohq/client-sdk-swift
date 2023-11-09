@@ -38,6 +38,17 @@ final class PubsubClientInterceptorFactory: CacheClient_Pubsub_PubsubClientInter
 }
 
 @available(macOS 10.15, *)
+protocol PubsubClientProtocol {
+    var logger: MomentoLoggerProtocol { get }
+    var configuration: TopicClientConfiguration { get }
+    var credentialProvider: CredentialProviderProtocol { get }
+    var client: CacheClient_Pubsub_PubsubAsyncClient { get }
+    
+    func publish(cacheName: String, topicName: String, value: String) async -> PublishResponse
+    func subscribe() async -> String
+}
+
+@available(macOS 10.15, *)
 class PubsubClient: PubsubClientProtocol {
     var logger: MomentoLoggerProtocol
     var configuration: TopicClientConfiguration
@@ -73,11 +84,11 @@ class PubsubClient: PubsubClientProtocol {
         self.client = CacheClient_Pubsub_PubsubAsyncClient(channel: self.sharedChannel, interceptors: PubsubClientInterceptorFactory(credentialProvider: credentialProvider))
     }
     
-    func publish() async -> PublishResponse {
+    func publish(cacheName: String, topicName: String, value: String) async -> PublishResponse {
         var request = CacheClient_Pubsub__PublishRequest()
-        request.cacheName = "cache"
-        request.topic = "bar"
-        request.value.text = "baz"
+        request.cacheName = cacheName
+        request.topic = topicName
+        request.value.text = value
         do {
             let result = try await self.client.publish(request)
             print(result)

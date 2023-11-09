@@ -17,7 +17,7 @@ final class client_sdk_swiftTests: XCTestCase {
         let client = TopicClient(configuration: Default.latest(), credentialProvider: creds)
         XCTAssertNotNil(client)
         
-        let pubResp = await client.publish()
+        let pubResp = await client.publish(cacheName: "test-cache", topicName: "test-topic", value: "test-message")
         XCTAssertTrue(pubResp is PublishSuccess, "Unexpected response: \((pubResp as! PublishError).toString())")
     }    
 }
