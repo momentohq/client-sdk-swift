@@ -4,6 +4,6 @@ protocol PubsubClientProtocol {
 //    pb.pubsub client
 //    credential provider
     
-    func publish() async -> String
+    func publish() async throws -> String
     func subscribe() async throws -> String
 }

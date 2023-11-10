@@ -13,7 +13,11 @@ public class TopicClient: TopicClientProtocol {
     }
     
     public func publish() async -> String {
-        let result = await self.pubsubClient.publish()
+        do {
+            let result = try await self.pubsubClient.publish()
+        } catch {
+            print("TopicClientPublishError: \(error)")
+        }
         return "publishing"
     }
     
@@ -21,9 +25,8 @@ public class TopicClient: TopicClientProtocol {
         do {
             let result = try await self.pubsubClient.subscribe()
         } catch {
-            print("TopicClient error:", error)
+            print("TopicClientSubscribeError: \(error)")
         }
-        
         return "subscribing"
     }
 }
