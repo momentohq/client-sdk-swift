@@ -1,21 +1,21 @@
 import GRPC
 
-enum MomentoErrorCode {
-    case INVALID_ARGUMENT_ERROR
-    case UNKNOWN_SERVICE_ERROR
-    case ALREADY_EXISTS_ERROR
-    case NOT_FOUND_ERROR
-    case INTERNAL_SERVER_ERROR
-    case PERMISSION_ERROR
-    case AUTHENTICATION_ERROR
-    case CANCELLED_ERROR
-    case LIMIT_EXCEEDED_ERROR
-    case BAD_REQUEST_ERROR
-    case TIMEOUT_ERROR
-    case SERVER_UNAVAILABLE
-    case CLIENT_RESOURCE_EXHAUSTED
-    case FAILED_PRECONDITION_ERROR
-    case UNKNOWN_ERROR
+public enum MomentoErrorCode: String {
+    case INVALID_ARGUMENT_ERROR = "INVALID_ARGUMENT_ERROR"
+    case UNKNOWN_SERVICE_ERROR = "UNKNOWN_SERVICE_ERROR"
+    case ALREADY_EXISTS_ERROR = "ALREADY_EXISTS_ERROR"
+    case NOT_FOUND_ERROR = "NOT_FOUND_ERROR"
+    case INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR"
+    case PERMISSION_ERROR = "PERMISSION_ERROR"
+    case AUTHENTICATION_ERROR = "AUTHENTICATION_ERROR"
+    case CANCELLED_ERROR = "CANCELLED_ERROR"
+    case LIMIT_EXCEEDED_ERROR = "LIMIT_EXCEEDED_ERROR"
+    case BAD_REQUEST_ERROR = "BAD_REQUEST_ERROR"
+    case TIMEOUT_ERROR = "TIMEOUT_ERROR"
+    case SERVER_UNAVAILABLE = "SERVER_UNAVAILABLE"
+    case CLIENT_RESOURCE_EXHAUSTED = "CLIENT_RESOURCE_EXHAUSTED"
+    case FAILED_PRECONDITION_ERROR = "FAILED_PRECONDITION_ERROR"
+    case UNKNOWN_ERROR = "UNKNOWN_ERROR"
 }
 
 struct MomentoGrpcErrorDetails {
@@ -28,27 +28,40 @@ struct MomentoErrorTransportDetails {
     let grpc: MomentoGrpcErrorDetails
 }
 
-class SdkError: Error {
-    let message: String
-    let errorCode: MomentoErrorCode
+public protocol ErrorResponseBaseProtocol {
+    var message: String { get }
+    var errorCode: MomentoErrorCode { get }
+    var innerException: Error? { get }
+}
+
+public class SdkError: Error, ErrorResponseBaseProtocol {
+    public let message: String
+    public let errorCode: MomentoErrorCode
+    public let innerException: Error?
     let transportDetails: MomentoErrorTransportDetails?
     let messageWrapper: String
+    
+    var description: String {
+        return "\(self.errorCode): \(self.message)"
+    }
     
     init(
         message: String,
         errorCode: MomentoErrorCode,
+        innerException: Error? = nil,
         transportDetails: MomentoErrorTransportDetails? = nil,
         messageWrapper: String = ""
     ) {
         self.message = message
         self.errorCode = errorCode
+        self.innerException = innerException
         self.transportDetails = transportDetails
         self.messageWrapper = messageWrapper
     }
 }
 
 class AlreadyExistsError: SdkError {
-    init(message: String, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.BAD_REQUEST_ERROR,
@@ -59,7 +72,7 @@ class AlreadyExistsError: SdkError {
 }
 
 class AuthenticationError: SdkError {
-    init(message: String, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.AUTHENTICATION_ERROR,
@@ -70,7 +83,7 @@ class AuthenticationError: SdkError {
 }
 
 class BadRequestError: SdkError {
-    init(message: String, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.BAD_REQUEST_ERROR,
@@ -81,7 +94,7 @@ class BadRequestError: SdkError {
 }
 
 class CancelledError: SdkError {
-    init(message: String, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.CANCELLED_ERROR,
@@ -92,7 +105,7 @@ class CancelledError: SdkError {
 }
 
 class FailedPreconditionError: SdkError {
-    init(message: String, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.FAILED_PRECONDITION_ERROR,
@@ -103,7 +116,7 @@ class FailedPreconditionError: SdkError {
 }
 
 class InternalServerError: SdkError {
-    init(message: String, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.INTERNAL_SERVER_ERROR,
@@ -114,7 +127,7 @@ class InternalServerError: SdkError {
 }
 
 class InvalidArgumentError: SdkError {
-    init(message: String, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.INVALID_ARGUMENT_ERROR,
@@ -125,7 +138,7 @@ class InvalidArgumentError: SdkError {
 }
 
 class LimitExceededError: SdkError {
-    init(message: String, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.LIMIT_EXCEEDED_ERROR,
@@ -136,7 +149,7 @@ class LimitExceededError: SdkError {
 }
 
 class NotFoundError: SdkError {
-    init(message: String, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.NOT_FOUND_ERROR,
@@ -147,7 +160,7 @@ class NotFoundError: SdkError {
 }
 
 class PermissionDeniedError: SdkError {
-    init(message: String, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.PERMISSION_ERROR,
@@ -158,7 +171,7 @@ class PermissionDeniedError: SdkError {
 }
 
 class TimeoutError: SdkError {
-    init(message: String, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.TIMEOUT_ERROR,
@@ -169,7 +182,7 @@ class TimeoutError: SdkError {
 }
 
 class ServerUnavailableError: SdkError {
-    init(message: String, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.SERVER_UNAVAILABLE,
@@ -180,7 +193,7 @@ class ServerUnavailableError: SdkError {
 }
 
 class UnknownError: SdkError {
-    init(message: String, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.UNKNOWN_ERROR,
@@ -191,7 +204,7 @@ class UnknownError: SdkError {
 }
 
 class UnknownServiceError: SdkError {
-    init(message: String, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.BAD_REQUEST_ERROR,
@@ -205,37 +218,37 @@ internal func grpcStatusToSdkError(grpcStatus: GRPCStatus) -> SdkError {
     let message = grpcStatus.message ?? "No message"
     switch grpcStatus.code {
     case .aborted:
-        return InternalServerError(message: message)
+        return InternalServerError(message: message, innerException: grpcStatus)
     case .alreadyExists:
-        return AlreadyExistsError(message: message)
+        return AlreadyExistsError(message: message, innerException: grpcStatus)
     case .cancelled:
-        return CancelledError(message: message)
+        return CancelledError(message: message, innerException: grpcStatus)
     case .dataLoss:
-        return InternalServerError(message: message)
+        return InternalServerError(message: message, innerException: grpcStatus)
     case .deadlineExceeded:
-        return TimeoutError(message: message)
+        return TimeoutError(message: message, innerException: grpcStatus)
     case .failedPrecondition:
-        return FailedPreconditionError(message: message)
+        return FailedPreconditionError(message: message, innerException: grpcStatus)
     case .internalError:
-        return InternalServerError(message: message)
+        return InternalServerError(message: message, innerException: grpcStatus)
     case .invalidArgument:
-        return InvalidArgumentError(message: message)
+        return InvalidArgumentError(message: message, innerException: grpcStatus)
     case .notFound:
-        return NotFoundError(message: message)
+        return NotFoundError(message: message, innerException: grpcStatus)
     case .outOfRange:
-        return BadRequestError(message: message)
+        return BadRequestError(message: message, innerException: grpcStatus)
     case .permissionDenied:
-        return PermissionDeniedError(message:message)
+        return PermissionDeniedError(message:message, innerException: grpcStatus)
     case .resourceExhausted:
-        return LimitExceededError(message: message)
+        return LimitExceededError(message: message, innerException: grpcStatus)
     case .unauthenticated:
-        return AuthenticationError(message: message)
+        return AuthenticationError(message: message, innerException: grpcStatus)
     case .unavailable:
-        return ServerUnavailableError(message: message)
+        return ServerUnavailableError(message: message, innerException: grpcStatus)
     case .unimplemented:
-        return BadRequestError(message: message)
+        return BadRequestError(message: message, innerException: grpcStatus)
     case .unknown:
-        return UnknownServiceError(message: message)
+        return UnknownServiceError(message: message, innerException: grpcStatus)
     default:
         return UnknownError(message: "Unknown error")
     }
