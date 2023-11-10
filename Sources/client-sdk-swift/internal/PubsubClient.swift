@@ -37,6 +37,14 @@ final class PubsubClientInterceptorFactory: CacheClient_Pubsub_PubsubClientInter
     }
 }
 
+protocol PubsubClientProtocol {
+    var logger: MomentoLoggerProtocol { get }
+    var configuration: TopicClientConfiguration { get }
+    
+    func publish() async throws -> String
+    func subscribe() async throws -> String
+}
+
 @available(macOS 10.15, *)
 class PubsubClient: PubsubClientProtocol {
     var logger: MomentoLoggerProtocol
