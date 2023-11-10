@@ -1,21 +1,21 @@
 import GRPC
 
-enum MomentoErrorCode {
-    case INVALID_ARGUMENT_ERROR
-    case UNKNOWN_SERVICE_ERROR
-    case ALREADY_EXISTS_ERROR
-    case NOT_FOUND_ERROR
-    case INTERNAL_SERVER_ERROR
-    case PERMISSION_ERROR
-    case AUTHENTICATION_ERROR
-    case CANCELLED_ERROR
-    case LIMIT_EXCEEDED_ERROR
-    case BAD_REQUEST_ERROR
-    case TIMEOUT_ERROR
-    case SERVER_UNAVAILABLE
-    case CLIENT_RESOURCE_EXHAUSTED
-    case FAILED_PRECONDITION_ERROR
-    case UNKNOWN_ERROR
+public enum MomentoErrorCode: String {
+    case INVALID_ARGUMENT_ERROR = "INVALID_ARGUMENT_ERROR"
+    case UNKNOWN_SERVICE_ERROR = "UNKNOWN_SERVICE_ERROR"
+    case ALREADY_EXISTS_ERROR = "ALREADY_EXISTS_ERROR"
+    case NOT_FOUND_ERROR = "NOT_FOUND_ERROR"
+    case INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR"
+    case PERMISSION_ERROR = "PERMISSION_ERROR"
+    case AUTHENTICATION_ERROR = "AUTHENTICATION_ERROR"
+    case CANCELLED_ERROR = "CANCELLED_ERROR"
+    case LIMIT_EXCEEDED_ERROR = "LIMIT_EXCEEDED_ERROR"
+    case BAD_REQUEST_ERROR = "BAD_REQUEST_ERROR"
+    case TIMEOUT_ERROR = "TIMEOUT_ERROR"
+    case SERVER_UNAVAILABLE = "SERVER_UNAVAILABLE"
+    case CLIENT_RESOURCE_EXHAUSTED = "CLIENT_RESOURCE_EXHAUSTED"
+    case FAILED_PRECONDITION_ERROR = "FAILED_PRECONDITION_ERROR"
+    case UNKNOWN_ERROR = "UNKNOWN_ERROR"
 }
 
 struct MomentoGrpcErrorDetails {
@@ -28,7 +28,7 @@ struct MomentoErrorTransportDetails {
     let grpc: MomentoGrpcErrorDetails
 }
 
-class SdkError: Error {
+public class SdkError: Error {
     let message: String
     let errorCode: MomentoErrorCode
     let transportDetails: MomentoErrorTransportDetails?

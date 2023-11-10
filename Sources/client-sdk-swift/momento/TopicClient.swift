@@ -5,7 +5,7 @@ public protocol TopicClientProtocol {
         cacheName: String,
         topicName: String,
         value: String
-    ) async throws -> TopicPublishResponse
+    ) async -> TopicPublishResponse
     func subscribe() async -> String
 }
 
@@ -36,12 +36,20 @@ public class TopicClient: TopicClientProtocol {
         cacheName: String,
         topicName: String,
         value: String
-    ) async throws -> TopicPublishResponse {
+    ) async -> TopicPublishResponse {
         if cacheName.count < 1 {
-            throw SdkError(message: "Must provide a cache name", errorCode: MomentoErrorCode.INVALID_ARGUMENT_ERROR)
+            return TopicPublishError(
+                error: SdkError(
+                    message: "Must provide a cache name",
+                    errorCode: MomentoErrorCode.INVALID_ARGUMENT_ERROR)
+            )
         }
         if topicName.count < 1 {
-            throw SdkError(message: "Must provide a topic name", errorCode: MomentoErrorCode.INVALID_ARGUMENT_ERROR)
+            return TopicPublishError(
+                error: SdkError(
+                    message: "Must provide a topic name",
+                    errorCode: MomentoErrorCode.INVALID_ARGUMENT_ERROR)
+            )
         }
         do {
             let result = try await self.pubsubClient.publish(
@@ -51,7 +59,7 @@ public class TopicClient: TopicClientProtocol {
             )
             return result
         } catch {
-            throw error
+            return error as! TopicPublishResponse
         }
     }
     

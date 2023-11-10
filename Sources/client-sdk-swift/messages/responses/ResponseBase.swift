@@ -1,27 +1,27 @@
 public protocol ErrorResponseBaseProtocol {
     func message() -> String
-    func innerException() -> String
-    func errorCode() -> String
+    func innerException() -> SdkError
+    func errorCode() -> MomentoErrorCode
     func toString() -> String
 }
 
 public class ErrorResponseBase: ErrorResponseBaseProtocol {
-    var error: Error
+    var error: SdkError
 
-    init(error: Error) {
+    init(error: SdkError) {
         self.error = error
     }
 
     public func message() -> String {
-        return "inner wrapped error message"
+        return self.error.messageWrapper
     }
 
-    public func innerException() -> String {
-        return "inner error"
+    public func innerException() -> SdkError {
+        return self.error
     }
 
-    public func errorCode() -> String {
-        return "error code"
+    public func errorCode() -> MomentoErrorCode {
+        return self.error.errorCode
     }
 
     public func toString() -> String {

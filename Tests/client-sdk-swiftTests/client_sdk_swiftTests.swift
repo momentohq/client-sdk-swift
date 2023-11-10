@@ -15,7 +15,37 @@ final class client_sdk_swiftTests: XCTestCase {
         let client = TopicClient(configuration: Default.latest(), credentialProvider: creds)
         XCTAssertNotNil(client)
         
-        let pubResp = try await client.publish(
+        let invalidCacheNameResp = await client.publish(
+            cacheName: "",
+            topicName: "test-topic",
+            value: "test-message"
+        )
+        XCTAssertTrue(
+            invalidCacheNameResp is client_sdk_swift.TopicPublishError,
+            "Unexpected response: \(invalidCacheNameResp)"
+        )
+        let invalidCacheNameErrorCode = (invalidCacheNameResp as! TopicPublishError).errorCode()
+        XCTAssertEqual(
+            invalidCacheNameErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
+            "Unexpected error code: \(invalidCacheNameErrorCode)"
+        )
+        
+        let invalidTopicNameResp = await client.publish(
+            cacheName: "test-cache",
+            topicName: "",
+            value: "test-message"
+        )
+        XCTAssertTrue(
+            invalidTopicNameResp is client_sdk_swift.TopicPublishError,
+            "Unexpected response: \(invalidTopicNameResp)"
+        )
+        let invalidTopicNameErrorCode = (invalidTopicNameResp as! TopicPublishError).errorCode()
+        XCTAssertEqual(
+            invalidCacheNameErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
+            "Unexpected error code: \(invalidCacheNameErrorCode)"
+        )
+        
+        let pubResp = await client.publish(
             cacheName: "test-cache",
             topicName: "test-topic",
             value: "test-message"
