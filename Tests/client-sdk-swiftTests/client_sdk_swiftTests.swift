@@ -11,7 +11,8 @@ final class client_sdk_swiftTests: XCTestCase {
     }
     
     func testTopicClient() async throws {
-        let client = TopicClient(configuration: Default.latest())
+        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
+        let client = TopicClient(configuration: Default.latest(), credentialProvider: creds)
         
         let pubResp = await client.publish()
         XCTAssertEqual(pubResp, "publishing")
