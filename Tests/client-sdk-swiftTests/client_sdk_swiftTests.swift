@@ -10,14 +10,19 @@ final class client_sdk_swiftTests: XCTestCase {
         // https://developer.apple.com/documentation/xctest/defining_test_cases_and_test_methods
     }
     
-    func testTopicClient() async throws {
+    func testTopicClientPublishes() async throws {
         let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
         let client = TopicClient(configuration: Default.latest(), credentialProvider: creds)
+        XCTAssertNotNil(client)
         
-        let pubResp = await client.publish()
-        XCTAssertEqual(pubResp, "publishing")
-        
-        let subResp = await client.subscribe()
-        XCTAssertEqual(subResp, "subscribing")
+        let pubResp = try await client.publish(
+            cacheName: "test-cache",
+            topicName: "test-topic",
+            value: "test-message"
+        )
+        XCTAssertTrue(
+            pubResp is TopicPublishSuccess,
+            "Unexpected response: \((pubResp as! TopicPublishError).toString())"
+        )
     }    
 }
