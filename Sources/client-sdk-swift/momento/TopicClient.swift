@@ -1,5 +1,10 @@
 import Foundation
 
+public protocol TopicClientProtocol {
+    func publish() async -> String
+    func subscribe() async -> String
+}
+
 public class TopicClient: TopicClientProtocol {
     var logger: MomentoLoggerProtocol
     var pubsubClient: PubsubClientProtocol
