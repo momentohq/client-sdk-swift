@@ -96,6 +96,7 @@ class PubsubClient: PubsubClientProtocol {
         request.value.text = value
         do {
             let result = try await self.client.publish(request)
+            // Successful publish returns client_sdk_swift.CacheClient_Pubsub__Empty
             self.logger.debug(msg: "Publish response: \(result)")
             return TopicPublishSuccess()
         } catch {

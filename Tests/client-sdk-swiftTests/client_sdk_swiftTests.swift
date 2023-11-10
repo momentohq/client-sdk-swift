@@ -41,8 +41,8 @@ final class client_sdk_swiftTests: XCTestCase {
         )
         let invalidTopicNameErrorCode = (invalidTopicNameResp as! TopicPublishError).errorCode()
         XCTAssertEqual(
-            invalidCacheNameErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidCacheNameErrorCode)"
+            invalidTopicNameErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
+            "Unexpected error code: \(invalidTopicNameErrorCode)"
         )
         
         let pubResp = await client.publish(
