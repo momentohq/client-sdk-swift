@@ -41,7 +41,7 @@ protocol PubsubClientProtocol {
     var logger: MomentoLoggerProtocol { get }
     var configuration: TopicClientConfiguration { get }
     
-    func publish() async -> String
+    func publish() async throws -> String
     func subscribe() async throws -> String
 }
 

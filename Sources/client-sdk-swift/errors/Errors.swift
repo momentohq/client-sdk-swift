@@ -28,7 +28,7 @@ struct MomentoErrorTransportDetails {
     let grpc: MomentoGrpcErrorDetails
 }
 
-class SdkError: Error, SdkErrorProtocol {
+class SdkError: Error {
     let message: String
     let errorCode: MomentoErrorCode
     let transportDetails: MomentoErrorTransportDetails?
