@@ -73,32 +73,34 @@ class PubsubClient: PubsubClientProtocol {
         self.client = CacheClient_Pubsub_PubsubAsyncClient(channel: self.sharedChannel, interceptors: PubsubClientInterceptorFactory(credentialProvider: credentialProvider))
     }
     
-    func publish() async -> String {
+    func publish() async throws -> String {
         var request = CacheClient_Pubsub__PublishRequest()
-        request.cacheName = "cache"
+        request.cacheName = "cache-a-doodle"
         request.topic = "bar"
         request.value.text = "baz"
         do {
             let result = try await self.client.publish(request)
-            print(result)
+        } catch let myError as GRPCStatus {
+            throw grpcStatusToSdkError(grpcStatus: myError)
         } catch {
-            print(error)
+            print("Caught error while publishing:", error)
         }
         return "calling client.publish"
     }
     
     func subscribe() async throws -> String {
         var request = CacheClient_Pubsub__SubscriptionRequest()
-        request.cacheName = "cache"
+        request.cacheName = "not-a-cache"
         request.topic = "bar"
         let result = self.client.subscribe(request)
-        print(result)
         
         print("About to print items loop:")
         do {
             for try await item in result {
                 print("Item:", item)
             }
+        } catch let myError as GRPCStatus {
+            throw grpcStatusToSdkError(grpcStatus: myError)
         } catch {
             print("Caught error while looping:", error)
         }
