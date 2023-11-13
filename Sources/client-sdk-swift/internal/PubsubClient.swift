@@ -99,8 +99,10 @@ class PubsubClient: PubsubClientProtocol {
             // Successful publish returns client_sdk_swift.CacheClient_Pubsub__Empty
             self.logger.debug(msg: "Publish response: \(result)")
             return TopicPublishSuccess()
+        } catch let err as GRPCStatus {
+            return TopicPublishError(error: grpcStatusToSdkError(grpcStatus: err))
         } catch {
-            return TopicPublishError(error: grpcStatusToSdkError(grpcStatus: error as! GRPCStatus))
+            return TopicPublishError(error: UnknownError(message: "unknown error"))
         }
     }
     

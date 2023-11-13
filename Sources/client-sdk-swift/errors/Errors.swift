@@ -60,7 +60,7 @@ public class SdkError: Error, ErrorResponseBaseProtocol {
     }
 }
 
-class AlreadyExistsError: SdkError {
+public class AlreadyExistsError: SdkError {
     init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
@@ -72,7 +72,7 @@ class AlreadyExistsError: SdkError {
     }
 }
 
-class AuthenticationError: SdkError {
+public class AuthenticationError: SdkError {
     init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
@@ -84,7 +84,7 @@ class AuthenticationError: SdkError {
     }
 }
 
-class BadRequestError: SdkError {
+public class BadRequestError: SdkError {
     init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
@@ -96,7 +96,7 @@ class BadRequestError: SdkError {
     }
 }
 
-class CancelledError: SdkError {
+public class CancelledError: SdkError {
     init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
@@ -108,7 +108,7 @@ class CancelledError: SdkError {
     }
 }
 
-class FailedPreconditionError: SdkError {
+public class FailedPreconditionError: SdkError {
     init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
@@ -120,7 +120,7 @@ class FailedPreconditionError: SdkError {
     }
 }
 
-class InternalServerError: SdkError {
+public class InternalServerError: SdkError {
     init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
@@ -132,7 +132,7 @@ class InternalServerError: SdkError {
     }
 }
 
-class InvalidArgumentError: SdkError {
+public class InvalidArgumentError: SdkError {
     init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
@@ -144,7 +144,7 @@ class InvalidArgumentError: SdkError {
     }
 }
 
-class LimitExceededError: SdkError {
+public class LimitExceededError: SdkError {
     init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
@@ -156,7 +156,7 @@ class LimitExceededError: SdkError {
     }
 }
 
-class NotFoundError: SdkError {
+public class NotFoundError: SdkError {
     init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
@@ -168,7 +168,7 @@ class NotFoundError: SdkError {
     }
 }
 
-class PermissionDeniedError: SdkError {
+public class PermissionDeniedError: SdkError {
     init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
@@ -180,7 +180,7 @@ class PermissionDeniedError: SdkError {
     }
 }
 
-class TimeoutError: SdkError {
+public class TimeoutError: SdkError {
     init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
@@ -192,7 +192,7 @@ class TimeoutError: SdkError {
     }
 }
 
-class ServerUnavailableError: SdkError {
+public class ServerUnavailableError: SdkError {
     init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
@@ -204,7 +204,7 @@ class ServerUnavailableError: SdkError {
     }
 }
 
-class UnknownError: SdkError {
+public class UnknownError: SdkError {
     init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
@@ -216,7 +216,7 @@ class UnknownError: SdkError {
     }
 }
 
-class UnknownServiceError: SdkError {
+public class UnknownServiceError: SdkError {
     init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(
             message: message,
