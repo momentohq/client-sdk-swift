@@ -41,7 +41,11 @@ protocol PubsubClientProtocol {
     var logger: MomentoLoggerProtocol { get }
     var configuration: TopicClientConfiguration { get }
     
-    func publish() async throws -> String
+    func publish(
+        cacheName: String,
+        topicName: String,
+        value: String
+    ) async throws -> TopicPublishResponse
     func subscribe() async throws -> String
 }
 
@@ -81,19 +85,25 @@ class PubsubClient: PubsubClientProtocol {
         self.client = CacheClient_Pubsub_PubsubAsyncClient(channel: self.sharedChannel, interceptors: PubsubClientInterceptorFactory(credentialProvider: credentialProvider))
     }
     
-    func publish() async throws -> String {
+    func publish(
+        cacheName: String,
+        topicName: String,
+        value: String
+    ) async -> TopicPublishResponse {
         var request = CacheClient_Pubsub__PublishRequest()
-        request.cacheName = "cache-a-doodle"
-        request.topic = "bar"
-        request.value.text = "baz"
+        request.cacheName = cacheName
+        request.topic = topicName
+        request.value.text = value
         do {
             let result = try await self.client.publish(request)
-        } catch let myError as GRPCStatus {
-            throw grpcStatusToSdkError(grpcStatus: myError)
+            // Successful publish returns client_sdk_swift.CacheClient_Pubsub__Empty
+            self.logger.debug(msg: "Publish response: \(result)")
+            return TopicPublishSuccess()
+        } catch let err as GRPCStatus {
+            return TopicPublishError(error: grpcStatusToSdkError(grpcStatus: err))
         } catch {
-            print("Caught error while publishing:", error)
+            return TopicPublishError(error: UnknownError(message: "unknown error"))
         }
-        return "calling client.publish"
     }
     
     func subscribe() async throws -> String {

@@ -1,7 +1,11 @@
 import Foundation
 
 public protocol TopicClientProtocol {
-    func publish() async -> String
+    func publish(
+        cacheName: String,
+        topicName: String,
+        value: String
+    ) async -> TopicPublishResponse
     func subscribe() async -> String
 }
 
@@ -11,19 +15,48 @@ public class TopicClient: TopicClientProtocol {
     var credentialProvider: CredentialProviderProtocol
     
     @available(macOS 10.15, *)
-    init(configuration: TopicClientConfiguration, credentialProvider: CredentialProviderProtocol, logger: MomentoLoggerProtocol = DefaultMomentoLogger(loggerName: "swift-momento-logger", level: DefaultMomentoLoggerLevel.info)) {
+    init(
+        configuration: TopicClientConfiguration,
+        credentialProvider: CredentialProviderProtocol,
+        logger: MomentoLoggerProtocol = DefaultMomentoLogger(
+            loggerName: "swift-momento-logger",
+            level: DefaultMomentoLoggerLevel.info
+        )
+    ) {
         self.logger = logger
         self.credentialProvider = credentialProvider
-        self.pubsubClient = PubsubClient(logger: logger, configuration: configuration, credentialProvider: credentialProvider)
+        self.pubsubClient = PubsubClient(
+            logger: logger,
+            configuration: configuration,
+            credentialProvider: credentialProvider
+        )
     }
     
-    public func publish() async -> String {
-        do {
-            let result = try await self.pubsubClient.publish()
-        } catch {
-            print("TopicClientPublishError: \(error)")
+    public func publish(
+        cacheName: String,
+        topicName: String,
+        value: String
+    ) async -> TopicPublishResponse {
+        if cacheName.count < 1 {
+            return TopicPublishError(
+                error: InvalidArgumentError(message: "Must provide a cache name")
+            )
         }
-        return "publishing"
+        if topicName.count < 1 {
+            return TopicPublishError(
+                error: InvalidArgumentError(message: "Must provide a topic name")
+            )
+        }
+        do {
+            let result = try await self.pubsubClient.publish(
+                cacheName: cacheName,
+                topicName: topicName,
+                value: value
+            )
+            return result
+        } catch {
+            return TopicPublishError(error: UnknownError(message: "Unknown error from publish", innerException: error))
+        }
     }
     
     public func subscribe() async -> String {
