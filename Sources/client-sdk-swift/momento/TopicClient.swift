@@ -39,16 +39,12 @@ public class TopicClient: TopicClientProtocol {
     ) async -> TopicPublishResponse {
         if cacheName.count < 1 {
             return TopicPublishError(
-                error: SdkError(
-                    message: "Must provide a cache name",
-                    errorCode: MomentoErrorCode.INVALID_ARGUMENT_ERROR)
+                error: InvalidArgumentError(message: "Must provide a cache name")
             )
         }
         if topicName.count < 1 {
             return TopicPublishError(
-                error: SdkError(
-                    message: "Must provide a topic name",
-                    errorCode: MomentoErrorCode.INVALID_ARGUMENT_ERROR)
+                error: InvalidArgumentError(message: "Must provide a topic name")
             )
         }
         do {
