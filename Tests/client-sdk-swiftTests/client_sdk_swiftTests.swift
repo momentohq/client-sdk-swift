@@ -24,7 +24,7 @@ final class client_sdk_swiftTests: XCTestCase {
             invalidCacheNameResp is client_sdk_swift.TopicPublishError,
             "Unexpected response: \(invalidCacheNameResp)"
         )
-        let invalidCacheNameErrorCode = (invalidCacheNameResp as! TopicPublishError).errorCode()
+        let invalidCacheNameErrorCode = (invalidCacheNameResp as! TopicPublishError).errorCode
         XCTAssertEqual(
             invalidCacheNameErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
             "Unexpected error code: \(invalidCacheNameErrorCode)"
@@ -39,7 +39,7 @@ final class client_sdk_swiftTests: XCTestCase {
             invalidTopicNameResp is client_sdk_swift.TopicPublishError,
             "Unexpected response: \(invalidTopicNameResp)"
         )
-        let invalidTopicNameErrorCode = (invalidTopicNameResp as! TopicPublishError).errorCode()
+        let invalidTopicNameErrorCode = (invalidTopicNameResp as! TopicPublishError).errorCode
         XCTAssertEqual(
             invalidTopicNameErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
             "Unexpected error code: \(invalidTopicNameErrorCode)"
@@ -52,7 +52,7 @@ final class client_sdk_swiftTests: XCTestCase {
         )
         XCTAssertTrue(
             pubResp is TopicPublishSuccess,
-            "Unexpected response: \((pubResp as! TopicPublishError).toString())"
+            "Unexpected response: \((pubResp as! TopicPublishError).description)"
         )
     }    
 }
