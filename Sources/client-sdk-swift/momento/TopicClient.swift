@@ -55,7 +55,7 @@ public class TopicClient: TopicClientProtocol {
             )
             return result
         } catch {
-            return error as! TopicPublishResponse
+            return TopicPublishError(error: UnknownError(message: "Unknown error from publish", innerException: error))
         }
     }
     
