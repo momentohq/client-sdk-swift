@@ -46,7 +46,11 @@ protocol PubsubClientProtocol {
         topicName: String,
         value: String
     ) async throws -> TopicPublishResponse
-    func subscribe() async throws -> String
+    
+    func subscribe(
+        cacheName: String,
+        topicName: String
+    ) async throws -> TopicSubscribeResponse
 }
 
 @available(macOS 10.15, *)
@@ -102,28 +106,18 @@ class PubsubClient: PubsubClientProtocol {
         } catch let err as GRPCStatus {
             return TopicPublishError(error: grpcStatusToSdkError(grpcStatus: err))
         } catch {
-            return TopicPublishError(error: UnknownError(message: "unknown error"))
+            return TopicPublishError(error: UnknownError(message: "unknown publish error \(error)"))
         }
     }
     
-    func subscribe() async throws -> String {
+    func subscribe(cacheName: String, topicName: String) async throws -> TopicSubscribeResponse {
         var request = CacheClient_Pubsub__SubscriptionRequest()
-        request.cacheName = "not-a-cache"
-        request.topic = "bar"
+        request.cacheName = cacheName
+        request.topic = topicName
+        
         let result = self.client.subscribe(request)
-        
-        print("About to print items loop:")
-        do {
-            for try await item in result {
-                print("Item:", item)
-            }
-        } catch let myError as GRPCStatus {
-            throw grpcStatusToSdkError(grpcStatus: myError)
-        } catch {
-            print("Caught error while looping:", error)
-        }
-        
-        return "calling client.subscribe"
+        print(result)
+        return TopicSubscribeSuccess(subscription: result)
     }
     
     

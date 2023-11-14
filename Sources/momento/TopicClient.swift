@@ -6,7 +6,11 @@ public protocol TopicClientProtocol {
         topicName: String,
         value: String
     ) async -> TopicPublishResponse
-    func subscribe() async -> String
+    
+    func subscribe(
+        cacheName: String,
+        topicName: String
+    ) async -> TopicSubscribeResponse
 }
 
 public class TopicClient: TopicClientProtocol {
@@ -55,16 +59,39 @@ public class TopicClient: TopicClientProtocol {
             )
             return result
         } catch {
-            return TopicPublishError(error: UnknownError(message: "Unknown error from publish", innerException: error))
+            return TopicPublishError(
+                error: UnknownError(
+                    message: "Unknown error from publish",
+                    innerException: error
+                )
+            )
         }
     }
     
-    public func subscribe() async -> String {
-        do {
-            let result = try await self.pubsubClient.subscribe()
-        } catch {
-            print("TopicClientSubscribeError: \(error)")
+    public func subscribe(cacheName: String, topicName: String) async -> TopicSubscribeResponse {
+        if cacheName.count < 1 {
+            return TopicSubscribeError(
+                error: InvalidArgumentError(message: "Must provide a cache name")
+            )
         }
-        return "subscribing"
+        if topicName.count < 1 {
+            return TopicSubscribeError(
+                error: InvalidArgumentError(message: "Must provide a topic name")
+            )
+        }
+        do {
+            let result = try await self.pubsubClient.subscribe(
+                cacheName: cacheName, 
+                topicName: topicName
+            )
+            return result
+        } catch {
+            return TopicSubscribeError(
+                error: UnknownError(
+                    message: "Unknown error from subscribe",
+                    innerException: error
+                )
+            )
+        }
     }
 }
