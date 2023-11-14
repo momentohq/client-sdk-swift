@@ -12,7 +12,10 @@ final class client_sdk_swiftTests: XCTestCase {
     
     func testTopicClientPublishes() async throws {
         let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
-        let client = TopicClient(configuration: Default.latest(), credentialProvider: creds)
+        let client = TopicClient(
+            configuration: TopicConfigurations.Default.latest(),
+            credentialProvider: creds
+        )
         XCTAssertNotNil(client)
         
         let invalidCacheNameResp = await client.publish(
@@ -58,7 +61,7 @@ final class client_sdk_swiftTests: XCTestCase {
     
     func testTopicClientSubscribes() async throws {
         let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
-        let client = TopicClient(configuration: Default.latest(), credentialProvider: creds)
+        let client = TopicClient(configuration: TopicConfigurations.Default.latest(), credentialProvider: creds)
         XCTAssertNotNil(client)
         
         let invalidCacheNameResp = await client.subscribe(
@@ -101,7 +104,7 @@ final class client_sdk_swiftTests: XCTestCase {
     
     func testTopicClientPublishesAndSubscribes() async throws {
         let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
-        let client = TopicClient(configuration: Default.latest(), credentialProvider: creds)
+        let client = TopicClient(configuration: TopicConfigurations.Default.latest(), credentialProvider: creds)
         XCTAssertNotNil(client)
         
         let subResp = await client.subscribe(

@@ -7,7 +7,10 @@ final class configTests: XCTestCase {
         let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
         XCTAssertNotNil(creds)
         
-        let client = TopicClient(configuration: Default.latest(), credentialProvider: creds)
+        let client = TopicClient(
+            configuration: TopicConfigurations.Default.latest(),
+            credentialProvider: creds
+        )
         XCTAssertNotNil(client)
     }
 
@@ -22,7 +25,7 @@ final class configTests: XCTestCase {
 
     func testTimeoutForImpossibleDeadline() async throws {
         let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
-        let configuration = Default.latest().withClientTimeout(timeout: 0.001)
+        let configuration = TopicConfigurations.Default.latest().withClientTimeout(timeout: 0.001)
         let client = TopicClient(configuration: configuration, credentialProvider: creds)
         // TODO: use test framework's setup and teardown methods to create and delete caches for use with tests
         let pubResp = await client.publish(
