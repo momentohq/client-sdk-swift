@@ -17,12 +17,12 @@ public protocol TopicClientProtocol {
 
 public class TopicClient: TopicClientProtocol {
     var logger: MomentoLoggerProtocol
-    var pubsubClient: PubsubClientProtocol
-    var credentialProvider: CredentialProviderProtocol
+    private let pubsubClient: PubsubClientProtocol
+    private let credentialProvider: CredentialProviderProtocol
     
     @available(macOS 10.15, *)
     init(
-        configuration: TopicClientConfiguration,
+        configuration: TopicClientConfigurationProtocol,
         credentialProvider: CredentialProviderProtocol,
         logger: MomentoLoggerProtocol = DefaultMomentoLogger(
             loggerName: "swift-momento-logger",
