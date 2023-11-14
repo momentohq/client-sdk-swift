@@ -11,6 +11,8 @@ public protocol TopicClientProtocol {
         cacheName: String,
         topicName: String
     ) async -> TopicSubscribeResponse
+    
+    func close()
 }
 
 public class TopicClient: TopicClientProtocol {
@@ -93,5 +95,9 @@ public class TopicClient: TopicClientProtocol {
                 )
             )
         }
+    }
+    
+    public func close() {
+        self.pubsubClient.close()
     }
 }

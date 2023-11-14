@@ -51,6 +51,8 @@ protocol PubsubClientProtocol {
         cacheName: String,
         topicName: String
     ) async throws -> TopicSubscribeResponse
+    
+    func close()
 }
 
 @available(macOS 10.15, *)
@@ -116,9 +118,10 @@ class PubsubClient: PubsubClientProtocol {
         request.topic = topicName
         
         let result = self.client.subscribe(request)
-        print(result)
         return TopicSubscribeSuccess(subscription: result)
     }
     
-    
+    func close() {
+        let _ = self.client.channel.close()
+    }
 }

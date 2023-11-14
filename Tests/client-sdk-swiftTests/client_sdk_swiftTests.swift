@@ -113,6 +113,7 @@ final class client_sdk_swiftTests: XCTestCase {
             "Unexpected response: \((subResp as! TopicSubscribeError).description)"
         )
         
+        try await Task.sleep(nanoseconds: 1000)
         let pubResp = await client.publish(
             cacheName: "test-cache",
             topicName: "test-topic",
@@ -122,20 +123,23 @@ final class client_sdk_swiftTests: XCTestCase {
             pubResp is TopicPublishSuccess,
             "Unexpected response: \((pubResp as! TopicPublishError).description)"
         )
+        try await Task.sleep(nanoseconds: 1000)
         
-        let subscription = (subResp as! TopicSubscribeSuccess)
-        for await item in subscription {
-            print("Received item: \(item)")
+        let subscription = (subResp as! TopicSubscribeSuccess).subscription
+        for try await item in subscription {
+            print("Received item: \(String(describing: item))")
             XCTAssertTrue(
                 item is TopicSubscriptionItemText,
-                "received subscription item that was not text: \(item)"
+                "received subscription item that was not text: \(String(describing: item))"
             )
             
             let value = (item as! TopicSubscriptionItemText).value
             print("Received value: \(value)")
             XCTAssertEqual(value, "publishing and subscribing!", "unexpected topic subscription item value: \(value)")
-            
-//            return
+            break
         }
+        
+        client.close()
+        print("closed subscription")
     }
 }
