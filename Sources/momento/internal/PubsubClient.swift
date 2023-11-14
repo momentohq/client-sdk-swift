@@ -1,5 +1,6 @@
 import GRPC
 import NIO
+import NIOHPACK
 
 final class AuthHeaderInterceptor<Request, Response>: ClientInterceptor<Request, Response> {
 
@@ -9,7 +10,11 @@ final class AuthHeaderInterceptor<Request, Response>: ClientInterceptor<Request,
         self.credentialProvider = credentialProvider
     }
 
-    override func send(_ part: GRPCClientRequestPart<Request>, promise: EventLoopPromise<Void>?, context: ClientInterceptorContext<Request, Response>) {
+    override func send(
+        _ part: GRPCClientRequestPart<Request>,
+        promise: EventLoopPromise<Void>?,
+        context: ClientInterceptorContext<Request, Response>
+    ) {
         guard case .metadata(var headers) = part else {
             return context.send(part, promise: promise)
         }
@@ -39,7 +44,7 @@ final class PubsubClientInterceptorFactory: CacheClient_Pubsub_PubsubClientInter
 
 protocol PubsubClientProtocol {
     var logger: MomentoLoggerProtocol { get }
-    var configuration: TopicClientConfiguration { get }
+    var configuration: TopicClientConfigurationProtocol { get }
     
     func publish(
         cacheName: String,
@@ -58,13 +63,17 @@ protocol PubsubClientProtocol {
 @available(macOS 10.15, *)
 class PubsubClient: PubsubClientProtocol {
     var logger: MomentoLoggerProtocol
-    var configuration: TopicClientConfiguration
+    var configuration: TopicClientConfigurationProtocol
     var credentialProvider: CredentialProviderProtocol
     var sharedChannel: GRPCChannel
     var eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
     var client: CacheClient_Pubsub_PubsubAsyncClient
     
-    init(logger: MomentoLoggerProtocol, configuration: TopicClientConfiguration, credentialProvider: CredentialProviderProtocol) {
+    init(
+        logger: MomentoLoggerProtocol,
+        configuration: TopicClientConfigurationProtocol,
+        credentialProvider: CredentialProviderProtocol
+    ) {
         self.logger = logger
         self.configuration = configuration
         self.credentialProvider = credentialProvider
@@ -88,7 +97,16 @@ class PubsubClient: PubsubClientProtocol {
             fatalError("Failed to open GRPC channel")
         }
         
-        self.client = CacheClient_Pubsub_PubsubAsyncClient(channel: self.sharedChannel, interceptors: PubsubClientInterceptorFactory(credentialProvider: credentialProvider))
+        let headers = ["agent": "swift:0.1.0"]
+
+        self.client = CacheClient_Pubsub_PubsubAsyncClient(
+            channel: self.sharedChannel,
+            defaultCallOptions: .init(
+                customMetadata: .init(headers.map { ($0, $1) }),
+                timeLimit: .timeout(.seconds(Int64(self.configuration.transportStrategy.getClientTimeout())))
+            ),
+            interceptors: PubsubClientInterceptorFactory(credentialProvider: credentialProvider)
+        )
     }
     
     func publish(
@@ -104,9 +122,14 @@ class PubsubClient: PubsubClientProtocol {
             let result = try await self.client.publish(request)
             // Successful publish returns client_sdk_swift.CacheClient_Pubsub__Empty
             self.logger.debug(msg: "Publish response: \(result)")
+            // TODO: I'm just resetting customMetadata after it's sent once to prevent the agent
+            //  header from being sent more than once. Need to repeat this in subscribe().
+            self.client.defaultCallOptions.customMetadata = HPACKHeaders()
             return TopicPublishSuccess()
         } catch let err as GRPCStatus {
             return TopicPublishError(error: grpcStatusToSdkError(grpcStatus: err))
+        } catch let err as GRPCConnectionPoolError {
+            return TopicPublishError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
         } catch {
             return TopicPublishError(error: UnknownError(message: "unknown publish error \(error)"))
         }
