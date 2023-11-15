@@ -8,20 +8,31 @@ let package = Package(
     platforms: [.macOS(.v10_15), .iOS(.v13)],
     products: [
         .executable(
-            name: "momento-topics-example",
-            targets: ["momento-topics-example"]
+            name: "publisher",
+            targets: ["publisher"]
+        ),
+        .executable(
+            name: "subscriber",
+            targets: ["subscriber"]
         ),
     ],
     dependencies: [
-        .package(name: "client-sdk-swift", path: "../.."),
+        .package(name: "momento", path: "../.."),
     ],
     targets: [
         .executableTarget(
-            name: "momento-topics-example",
+            name: "publisher",
             dependencies: [
-                "client-sdk-swift",
+                "momento",
             ],
-            path: "Sources"
+            sources: ["publish.swift"]
+        ),
+        .executableTarget(
+            name: "subscriber",
+            dependencies: [
+                "momento",
+            ],
+            sources: ["subscribe.swift"]
         ),
     ]
 )

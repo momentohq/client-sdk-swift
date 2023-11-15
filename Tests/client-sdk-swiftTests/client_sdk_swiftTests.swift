@@ -1,5 +1,5 @@
 import XCTest
-@testable import client_sdk_swift
+@testable import momento
 
 final class client_sdk_swiftTests: XCTestCase {
     func testExample() throws {

@@ -1,7 +1,9 @@
-import client_sdk_swift
+import momento
 
 func main() async {
-    print("Hello World")
+    print("Running Momento Topics example subscriber!")
+    let cacheName = "my-cache"
+    let topicName = "my-topic"
 
     var creds: CredentialProviderProtocol
     do {
@@ -13,7 +15,7 @@ func main() async {
     
     let client = TopicClient(configuration: TopicConfigurations.Default.latest(), credentialProvider: creds)
     
-    let subscribeResponse = await client.subscribe(cacheName: "my-cache", topicName: "my-topic")
+    let subscribeResponse = await client.subscribe(cacheName: cacheName, topicName: topicName)
     switch subscribeResponse {
     case is TopicSubscribeError:
         print("Subscribe error: \((subscribeResponse as! TopicSubscribeError).description)")
@@ -25,34 +27,26 @@ func main() async {
         return
     }
     
-    let publishResponse = await client.publish(cacheName: "my-cache", topicName: "my-topic", value: "hello world")
-    switch publishResponse {
-    case is TopicPublishError:
-        print("Publish error: \((publishResponse as! TopicPublishError).description)")
-        return
-    case is TopicPublishSuccess:
-        print("Successful publish!")
-    default:
-        print("Unknown publish response: \(publishResponse)")
-        return
-    }
-    
     let subscription = (subscribeResponse as! TopicSubscribeSuccess).subscription
     do {
         for try await item in subscription {
-            print("Received subscription item: \(String(describing: item))")
+            // otherwise continue receiving messages
             let value = (item as! TopicSubscriptionItemText).value
-            print("Subscription item value: \(value)")
-            break
+            print("Subscriber received message: \(value)")
+            
+            // we can exit the loop once we receive the last message
+            if value == "topics" {
+                break
+            }
         }
     } catch {
         print("Error while awaiting subscription item: \(error)")
         return
     }
     
-    
     client.close()
-    print("Closed topic client, successful end of example")
+    print("Closed topic client, successful end of subscriber example")
 }
 
-Task.init { await main() }
+await main()
+
