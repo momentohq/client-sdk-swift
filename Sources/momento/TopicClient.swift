@@ -21,7 +21,7 @@ public class TopicClient: TopicClientProtocol {
     private let credentialProvider: CredentialProviderProtocol
     
     @available(macOS 10.15, *)
-    init(
+    public init(
         configuration: TopicClientConfigurationProtocol,
         credentialProvider: CredentialProviderProtocol,
         logger: MomentoLoggerProtocol = DefaultMomentoLogger(

@@ -1,4 +1,4 @@
-protocol MomentoLoggerProtocol {
+public protocol MomentoLoggerProtocol {
     func error(msg: String)
     func warn(msg: String)
     func info(msg: String)
@@ -6,6 +6,6 @@ protocol MomentoLoggerProtocol {
     func trace(msg: String)
 }
 
-protocol MomentoLoggerFactoryProtocol {
+public protocol MomentoLoggerFactoryProtocol {
     func getLogger(loggerName: String) -> MomentoLoggerProtocol
 }

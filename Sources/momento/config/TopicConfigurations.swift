@@ -1,10 +1,10 @@
 // Prebuilt configurations for Momento Topics clients
 
-enum TopicConfigurations {
+public enum TopicConfigurations {
 
-    enum Default {
+    public enum Default {
 
-        static func latest() -> TopicClientConfiguration {
+        public static func latest() -> TopicClientConfiguration {
             return TopicClientConfiguration(
                 loggerFactory: DefaultMomentoLoggerFactory(),
                 transportStrategy: StaticTransportStrategy(
@@ -13,7 +13,7 @@ enum TopicConfigurations {
             )
         }
 
-        static func v1()  -> TopicClientConfiguration {
+        public static func v1()  -> TopicClientConfiguration {
             return latest()
         }
 

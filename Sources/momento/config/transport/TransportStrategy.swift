@@ -1,6 +1,6 @@
 import Foundation
 
-protocol TransportStrategyProtocol {
+public protocol TransportStrategyProtocol {
     var grpcConfig: GrpcConfigurationProtocol { get }
     static func withGrpcConfig(grpcConfig: GrpcConfigurationProtocol) -> TransportStrategyProtocol
     func getClientTimeout() -> TimeInterval
@@ -8,21 +8,21 @@ protocol TransportStrategyProtocol {
 }
 
 public class StaticTransportStrategy: TransportStrategyProtocol {
-    var grpcConfig: GrpcConfigurationProtocol
+    public var grpcConfig: GrpcConfigurationProtocol
     
     init(grpcConfig: GrpcConfigurationProtocol) {
         self.grpcConfig = grpcConfig
     }
     
-    static func withGrpcConfig(grpcConfig: GrpcConfigurationProtocol) -> TransportStrategyProtocol {
+    public static func withGrpcConfig(grpcConfig: GrpcConfigurationProtocol) -> TransportStrategyProtocol {
         return StaticTransportStrategy(grpcConfig: grpcConfig)
     }
     
-    func getClientTimeout() -> TimeInterval {
+    public func getClientTimeout() -> TimeInterval {
         return self.grpcConfig.deadline
     }
     
-    static func withClientTimeout(timeout: TimeInterval) -> TransportStrategyProtocol {
+    public static func withClientTimeout(timeout: TimeInterval) -> TransportStrategyProtocol {
         return StaticTransportStrategy(
             grpcConfig: StaticGrpcConfiguration(deadline: timeout)
         )
