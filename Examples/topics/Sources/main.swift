@@ -13,15 +13,27 @@ func main() async {
     
     let client = TopicClient(configuration: TopicConfigurations.Default.latest(), credentialProvider: creds)
     
-    var subscribeResponse = await client.subscribe(cacheName: "my-cache", topicName: "my-topic")
-    if subscribeResponse is TopicSubscribeError {
+    let subscribeResponse = await client.subscribe(cacheName: "my-cache", topicName: "my-topic")
+    switch subscribeResponse {
+    case is TopicSubscribeError:
         print("Subscribe error: \((subscribeResponse as! TopicSubscribeError).description)")
+        return
+    case is TopicSubscribeSuccess:
+        print("Successful subscription!")
+    default:
+        print("Unknown subscribe response: \(subscribeResponse)")
         return
     }
     
-    var publishResponse = await client.publish(cacheName: "my-cache", topicName: "my-topic", value: "hello world")
-    if publishResponse is TopicPublishError {
+    let publishResponse = await client.publish(cacheName: "my-cache", topicName: "my-topic", value: "hello world")
+    switch publishResponse {
+    case is TopicPublishError:
         print("Publish error: \((publishResponse as! TopicPublishError).description)")
+        return
+    case is TopicPublishSuccess:
+        print("Successful publish!")
+    default:
+        print("Unknown publish response: \(publishResponse)")
         return
     }
     
