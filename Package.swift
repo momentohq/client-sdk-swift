@@ -27,10 +27,6 @@ let package = Package(
         .testTarget(
             name: "momentoTests",
             dependencies: ["momento", .product(name: "SwiftProtobuf", package: "swift-protobuf"), .product(name: "GRPC", package: "grpc-swift")]
-        ),
-        .target(
-            name: "momento-topics-example",
-            path: "./Examples/topics"
         )
     ]
 )
