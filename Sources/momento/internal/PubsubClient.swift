@@ -4,10 +4,10 @@ import NIOHPACK
 
 final class AuthHeaderInterceptor<Request, Response>: ClientInterceptor<Request, Response> {
 
-    private let credentialProvider: CredentialProviderProtocol
+    private let apiKey: String
 
-    init(credentialProvider: CredentialProviderProtocol) {
-        self.credentialProvider = credentialProvider
+    init(apiKey: String) {
+        self.apiKey = apiKey
     }
 
     override func send(
@@ -19,26 +19,25 @@ final class AuthHeaderInterceptor<Request, Response>: ClientInterceptor<Request,
             return context.send(part, promise: promise)
         }
 
-        let authToken = credentialProvider.authToken
-        headers.add(name: "authorization", value: authToken)
+        headers.add(name: "authorization", value: apiKey)
         context.send(.metadata(headers), promise: promise)
     }
 }
 
 final class PubsubClientInterceptorFactory: CacheClient_Pubsub_PubsubClientInterceptorFactoryProtocol {
     
-    private let credentialProvider: CredentialProviderProtocol
+    private let apiKey: String
     
-    init(credentialProvider: CredentialProviderProtocol) {
-        self.credentialProvider = credentialProvider
+    init(apiKey: String) {
+        self.apiKey = apiKey
     }
     
     func makePublishInterceptors() -> [ClientInterceptor<CacheClient_Pubsub__PublishRequest, CacheClient_Pubsub__Empty>] {
-        [AuthHeaderInterceptor(credentialProvider: self.credentialProvider)]
+        [AuthHeaderInterceptor(apiKey: apiKey)]
     }
 
     func makeSubscribeInterceptors() -> [ClientInterceptor<CacheClient_Pubsub__SubscriptionRequest, CacheClient_Pubsub__SubscriptionItem>] {
-        [AuthHeaderInterceptor(credentialProvider: self.credentialProvider)]
+        [AuthHeaderInterceptor(apiKey: apiKey)]
     }
 }
 
@@ -105,7 +104,7 @@ class PubsubClient: PubsubClientProtocol {
                 customMetadata: .init(headers.map { ($0, $1) }),
                 timeLimit: .timeout(.seconds(Int64(self.configuration.transportStrategy.getClientTimeout())))
             ),
-            interceptors: PubsubClientInterceptorFactory(credentialProvider: credentialProvider)
+            interceptors: PubsubClientInterceptorFactory(apiKey: credentialProvider.authToken)
         )
     }
     
