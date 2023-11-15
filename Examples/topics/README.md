@@ -7,16 +7,9 @@
 
 ## Running the example
 
-In one terminal, compile and run the subscriber example:
+Navigate to the `Examples/topics` folder, then run the example:
 
 ```
 cd Examples/topics
-MOMENTO_API_KEY=<your-api-key> swift run subscriber
-```
-
-In another terminal, compile and run the publisher example:
-
-```
-cd Examples/topics
-MOMENTO_API_KEY=<your-api-key> swift run publisher
+MOMENTO_API_KEY=<your-api-key> swift run
 ```

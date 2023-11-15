@@ -1,9 +1,9 @@
 import momento
 
 func main() async {
-    print("Running Momento Topics example subscriber!")
-    let cacheName = "my-cache"
-    let topicName = "my-topic"
+    print("Running Momento Topics example!")
+        let cacheName = "my-cache"
+        let topicName = "my-topic"
 
     var creds: CredentialProviderProtocol
     do {
@@ -12,10 +12,11 @@ func main() async {
         print("Error establishing credential provider: \(error)")
         return
     }
-    
+
     let client = TopicClient(configuration: TopicConfigurations.Default.latest(), credentialProvider: creds)
-    
+
     let subscribeResponse = await client.subscribe(cacheName: cacheName, topicName: topicName)
+    
     switch subscribeResponse {
     case is TopicSubscribeError:
         print("Subscribe error: \((subscribeResponse as! TopicSubscribeError).description)")
@@ -27,10 +28,27 @@ func main() async {
         return
     }
     
+    let messages = ["hello", "welcome", "to", "momento", "topics"]
+    for message in messages {
+        // Publish the message
+        let publishResponse = await client.publish(cacheName: cacheName, topicName: topicName, value: message)
+
+        // Check the response type (error or success?)
+        switch publishResponse {
+        case is TopicPublishError:
+            print("Publish error: \((publishResponse as! TopicPublishError).description)")
+            return
+        case is TopicPublishSuccess:
+            print("Successfully published: \(message)")
+        default:
+            print("Unknown publish response: \(publishResponse)")
+            return
+        }
+    }
+
     let subscription = (subscribeResponse as! TopicSubscribeSuccess).subscription
     do {
         for try await item in subscription {
-            // otherwise continue receiving messages
             let value = (item as! TopicSubscriptionItemText).value
             print("Subscriber received message: \(value)")
             
@@ -43,10 +61,9 @@ func main() async {
         print("Error while awaiting subscription item: \(error)")
         return
     }
-    
+
     client.close()
-    print("Closed topic client, successful end of subscriber example")
+    print("Closed topic client, successful end of example")
 }
 
 await main()
-
