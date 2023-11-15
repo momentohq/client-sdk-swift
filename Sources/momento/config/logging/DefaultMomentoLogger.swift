@@ -1,5 +1,5 @@
 import Foundation
-enum DefaultMomentoLoggerLevel {
+public enum DefaultMomentoLoggerLevel {
     case trace, debug, info, warn, error
     var value: Int {
         switch self {
@@ -17,23 +17,23 @@ enum DefaultMomentoLoggerLevel {
     }
 }
 
-class DefaultMomentoLoggerFactory: MomentoLoggerFactoryProtocol {
+public class DefaultMomentoLoggerFactory: MomentoLoggerFactoryProtocol {
     var level: DefaultMomentoLoggerLevel
     
-    init(level: DefaultMomentoLoggerLevel = DefaultMomentoLoggerLevel.info) {
+    public init(level: DefaultMomentoLoggerLevel = DefaultMomentoLoggerLevel.info) {
         self.level = level
     }
     
-    func getLogger(loggerName: String) -> MomentoLoggerProtocol {
+    public func getLogger(loggerName: String) -> MomentoLoggerProtocol {
         return DefaultMomentoLogger(loggerName: loggerName, level: self.level)
     }
 }
 
-class DefaultMomentoLogger: MomentoLoggerProtocol {
+public class DefaultMomentoLogger: MomentoLoggerProtocol {
     var loggerName: String
     var level: DefaultMomentoLoggerLevel
     
-    init(loggerName: String, level: DefaultMomentoLoggerLevel) {
+    public init(loggerName: String, level: DefaultMomentoLoggerLevel) {
         self.loggerName = loggerName
         self.level = level
     }

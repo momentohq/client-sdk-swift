@@ -6,7 +6,7 @@ enum CredentialProviderError: Error {
     case badToken
 }
 
-protocol CredentialProviderProtocol {
+public protocol CredentialProviderProtocol {
     var originalAuthToken: String { get }
     var authToken: String { get }
     var controlEndpoint: String { get }
@@ -15,7 +15,7 @@ protocol CredentialProviderProtocol {
 
 public class CredentialProvider {
     
-    static func fromEnvironmentVariable(envVariableName: String) throws -> CredentialProviderProtocol {
+    public static func fromEnvironmentVariable(envVariableName: String) throws -> CredentialProviderProtocol {
         do {
             let provider = try EnvMomentoTokenProvider(envVarName: envVariableName)
             return provider
@@ -24,7 +24,7 @@ public class CredentialProvider {
         }
     }
     
-    static func fromString(authToken: String) throws -> CredentialProviderProtocol {
+    public static func fromString(authToken: String) throws -> CredentialProviderProtocol {
         do {
             let provider = try StringMomentoTokenProvider(authToken: authToken)
             return provider
@@ -104,10 +104,10 @@ public class CredentialProvider {
 }
 
 public class StringMomentoTokenProvider : CredentialProviderProtocol {
-    let originalAuthToken: String
-    let authToken: String
-    let controlEndpoint: String
-    let cacheEndpoint: String
+    public let originalAuthToken: String
+    public let authToken: String
+    public let controlEndpoint: String
+    public let cacheEndpoint: String
 
     init(authToken: String = "", controlEndpoint: String? = nil, cacheEndpoint: String? = nil) throws {
         if authToken.isEmpty {

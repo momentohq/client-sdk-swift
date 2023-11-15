@@ -1,6 +1,6 @@
 import Foundation
 
-protocol TopicClientConfigurationProtocol {
+public protocol TopicClientConfigurationProtocol {
     var loggerFactory: MomentoLoggerFactoryProtocol { get }
     var transportStrategy: TransportStrategyProtocol { get }
     
@@ -9,8 +9,8 @@ protocol TopicClientConfigurationProtocol {
 }
 
 public class TopicClientConfiguration: TopicClientConfigurationProtocol {
-    var loggerFactory: MomentoLoggerFactoryProtocol
-    var transportStrategy: TransportStrategyProtocol
+    public var loggerFactory: MomentoLoggerFactoryProtocol
+    public var transportStrategy: TransportStrategyProtocol
     
     init(
         loggerFactory: MomentoLoggerFactoryProtocol,
@@ -20,14 +20,14 @@ public class TopicClientConfiguration: TopicClientConfigurationProtocol {
         self.transportStrategy = transportStrategy
     }
     
-    func withTransportStrategy(transportStrategy: TransportStrategyProtocol) -> TopicClientConfigurationProtocol {
+    public func withTransportStrategy(transportStrategy: TransportStrategyProtocol) -> TopicClientConfigurationProtocol {
         return TopicClientConfiguration(
             loggerFactory: self.loggerFactory,
             transportStrategy: transportStrategy
         )
     }
     
-    func withClientTimeout(timeout: TimeInterval) -> TopicClientConfigurationProtocol {
+    public func withClientTimeout(timeout: TimeInterval) -> TopicClientConfigurationProtocol {
         return TopicClientConfiguration(
             loggerFactory: self.loggerFactory,
             transportStrategy: StaticTransportStrategy(
