@@ -69,7 +69,39 @@ public class TopicClient: TopicClientProtocol {
             )
         }
     }
-    
+
+    public func publish(
+        cacheName: String,
+        topicName: String,
+        value: Data
+    ) async -> TopicPublishResponse {
+        if cacheName.count < 1 {
+            return TopicPublishError(
+                error: InvalidArgumentError(message: "Must provide a cache name")
+            )
+        }
+        if topicName.count < 1 {
+            return TopicPublishError(
+                error: InvalidArgumentError(message: "Must provide a topic name")
+            )
+        }
+        do {
+            let result = try await self.pubsubClient.publish(
+                cacheName: cacheName,
+                topicName: topicName,
+                value: value
+            )
+            return result
+        } catch {
+            return TopicPublishError(
+                error: UnknownError(
+                    message: "Unknown error from publish",
+                    innerException: error
+                )
+            )
+        }
+    }
+
     public func subscribe(cacheName: String, topicName: String) async -> TopicSubscribeResponse {
         if cacheName.count < 1 {
             return TopicSubscribeError(

@@ -1,3 +1,4 @@
+import Foundation
 import GRPC
 import NIO
 import NIOHPACK
@@ -50,7 +51,13 @@ protocol PubsubClientProtocol {
         topicName: String,
         value: String
     ) async throws -> TopicPublishResponse
-    
+
+    func publish(
+        cacheName: String,
+        topicName: String,
+        value: Data
+    ) async throws -> TopicPublishResponse
+
     func subscribe(
         cacheName: String,
         topicName: String
@@ -117,6 +124,22 @@ class PubsubClient: PubsubClientProtocol {
         request.cacheName = cacheName
         request.topic = topicName
         request.value.text = value
+        return await self.doPublish(request: request)
+    }
+
+    func publish(
+        cacheName: String,
+        topicName: String,
+        value: Data
+    ) async -> TopicPublishResponse {
+        var request = CacheClient_Pubsub__PublishRequest()
+        request.cacheName = cacheName
+        request.topic = topicName
+        request.value.binary = value
+        return await doPublish(request: request)
+    }
+
+    private func doPublish(request: CacheClient_Pubsub__PublishRequest) async -> TopicPublishResponse {
         do {
             let result = try await self.client.publish(request)
             // Successful publish returns client_sdk_swift.CacheClient_Pubsub__Empty
