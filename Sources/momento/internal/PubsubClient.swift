@@ -76,11 +76,9 @@ class PubsubClient: PubsubClientProtocol {
     var client: CacheClient_Pubsub_PubsubAsyncClient
     
     init(
-        logger: MomentoLoggerProtocol,
         configuration: TopicClientConfigurationProtocol,
         credentialProvider: CredentialProviderProtocol
     ) {
-        self.logger = logger
         self.configuration = configuration
         self.credentialProvider = credentialProvider
         
@@ -101,6 +99,12 @@ class PubsubClient: PubsubClientProtocol {
                 }
         } catch {
             fatalError("Failed to open GRPC channel")
+        }
+        
+        do {
+            self.logger = try LogProvider.getLogger(name: "PubsubClient")
+        } catch  {
+            fatalError("Failed to initialize PubsubClient logger")
         }
         
         let headers = ["agent": "swift:0.1.0"]
@@ -163,7 +167,7 @@ class PubsubClient: PubsubClientProtocol {
         request.topic = topicName
         
         let result = self.client.subscribe(request)
-        return TopicSubscribeSuccess(subscription: result, logger: self.logger)
+        return TopicSubscribeSuccess(subscription: result)
     }
     
     func close() {
