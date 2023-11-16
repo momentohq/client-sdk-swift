@@ -76,13 +76,12 @@ class PubsubClient: PubsubClientProtocol {
     var client: CacheClient_Pubsub_PubsubAsyncClient
     
     init(
-        logger: MomentoLoggerProtocol,
         configuration: TopicClientConfigurationProtocol,
         credentialProvider: CredentialProviderProtocol
     ) {
-        self.logger = logger
         self.configuration = configuration
         self.credentialProvider = credentialProvider
+        self.logger = LogProvider.getLogger(name: "PubsubClient")
         
         do {
             self.sharedChannel = try GRPCChannelPool.with(
