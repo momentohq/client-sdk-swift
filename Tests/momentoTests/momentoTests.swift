@@ -1,7 +1,7 @@
 import XCTest
 @testable import momento
 
-final class client_sdk_swiftTests: XCTestCase {
+final class momentoTests: XCTestCase {
     func testExample() throws {
         // XCTest Documentation
         // https://developer.apple.com/documentation/xctest
@@ -11,7 +11,7 @@ final class client_sdk_swiftTests: XCTestCase {
     }
     
     func testTopicClientPublishes() async throws {
-        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
+        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "TEST_AUTH_TOKEN")
         let client = TopicClient(
             configuration: TopicConfigurations.Default.latest(),
             credentialProvider: creds
@@ -60,7 +60,7 @@ final class client_sdk_swiftTests: XCTestCase {
     }    
     
     func testTopicClientSubscribes() async throws {
-        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
+        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "TEST_AUTH_TOKEN")
         let client = TopicClient(configuration: TopicConfigurations.Default.latest(), credentialProvider: creds)
         XCTAssertNotNil(client)
         
@@ -103,7 +103,7 @@ final class client_sdk_swiftTests: XCTestCase {
     }
     
     func testTopicClientPublishesAndSubscribes() async throws {
-        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
+        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "TEST_AUTH_TOKEN")
         let client = TopicClient(configuration: TopicConfigurations.Default.latest(), credentialProvider: creds)
         XCTAssertNotNil(client)
         
@@ -143,7 +143,7 @@ final class client_sdk_swiftTests: XCTestCase {
     }
 
     func testTopicClientPublishesAndSubscribesBinary() async throws {
-        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
+        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "TEST_AUTH_TOKEN")
         let client = TopicClient(configuration: TopicConfigurations.Default.latest(), credentialProvider: creds)
         XCTAssertNotNil(client)
 

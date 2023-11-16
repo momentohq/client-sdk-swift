@@ -4,7 +4,7 @@ import XCTest
 final class configTests: XCTestCase {
 
     func testCreateClientWithDefaultConfig() throws {
-        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
+        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "TEST_AUTH_TOKEN")
         XCTAssertNotNil(creds)
         
         let client = TopicClient(
@@ -15,7 +15,7 @@ final class configTests: XCTestCase {
     }
 
     func testCreateClientWithCustomTimeout() throws {
-        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
+        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "TEST_AUTH_TOKEN")
         XCTAssertNotNil(creds)
         
         let config = TopicClientConfiguration(loggerFactory: DefaultMomentoLoggerFactory(), transportStrategy: StaticTransportStrategy(grpcConfig: StaticGrpcConfiguration(deadline: 60)))
@@ -24,7 +24,7 @@ final class configTests: XCTestCase {
     }
 
     func testTimeoutForImpossibleDeadline() async throws {
-        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
+        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "TEST_AUTH_TOKEN")
         let configuration = TopicConfigurations.Default.latest().withClientTimeout(timeout: 0.001)
         let client = TopicClient(configuration: configuration, credentialProvider: creds)
         // TODO: use test framework's setup and teardown methods to create and delete caches for use with tests
