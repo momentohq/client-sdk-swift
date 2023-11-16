@@ -5,7 +5,7 @@ class LogProvider {
         self.momentoLoggerFactory = loggerFactory
     }
     
-    internal static func getLogger(name: String) -> MomentoLoggerProtocol {
+    public static func getLogger(name: String) -> MomentoLoggerProtocol {
         return self.momentoLoggerFactory.getLogger(loggerName: name)
     }
 }

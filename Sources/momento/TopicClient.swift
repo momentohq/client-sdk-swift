@@ -16,7 +16,6 @@ public protocol TopicClientProtocol {
 }
 
 public class TopicClient: TopicClientProtocol {
-    private let logProvider: LogProvider
     private let pubsubClient: PubsubClientProtocol
     private let credentialProvider: CredentialProviderProtocol
     
@@ -25,9 +24,7 @@ public class TopicClient: TopicClientProtocol {
         configuration: TopicClientConfigurationProtocol,
         credentialProvider: CredentialProviderProtocol
     ) {
-        self.logProvider = LogProvider()
         LogProvider.setLogger(loggerFactory: configuration.loggerFactory)
-        
         self.credentialProvider = credentialProvider
         self.pubsubClient = PubsubClient(
             configuration: configuration,
