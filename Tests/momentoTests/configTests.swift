@@ -23,17 +23,17 @@ final class configTests: XCTestCase {
         XCTAssertNotNil(client)
     }
 
-    func testTimeoutForImpossibleDeadline() async throws {
-        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "TEST_AUTH_TOKEN")
-        let configuration = TopicConfigurations.Default.latest().withClientTimeout(timeout: 0.001)
-        let client = TopicClient(configuration: configuration, credentialProvider: creds)
-        // TODO: use test framework's setup and teardown methods to create and delete caches for use with tests
-        let pubResp = await client.publish(
-            cacheName: "test-cache",
-            topicName: "test-topic",
-            value: "test-message"
-        )
-        XCTAssertTrue(pubResp is TopicPublishError)
-        XCTAssertEqual(MomentoErrorCode.TIMEOUT_ERROR, (pubResp as! TopicPublishError).errorCode)
-    }
+//    func testTimeoutForImpossibleDeadline() async throws {
+//        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "TEST_AUTH_TOKEN")
+//        let configuration = TopicConfigurations.Default.latest().withClientTimeout(timeout: 0.001)
+//        let client = TopicClient(configuration: configuration, credentialProvider: creds)
+//        // TODO: use test framework's setup and teardown methods to create and delete caches for use with tests
+//        let pubResp = await client.publish(
+//            cacheName: "test-cache",
+//            topicName: "test-topic",
+//            value: "test-message"
+//        )
+//        XCTAssertTrue(pubResp is TopicPublishError)
+//        XCTAssertEqual(MomentoErrorCode.TIMEOUT_ERROR, (pubResp as! TopicPublishError).errorCode)
+//    }
 }

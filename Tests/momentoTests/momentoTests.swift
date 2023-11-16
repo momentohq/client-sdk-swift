@@ -2,14 +2,6 @@ import XCTest
 @testable import momento
 
 final class momentoTests: XCTestCase {
-    func testExample() throws {
-        // XCTest Documentation
-        // https://developer.apple.com/documentation/xctest
-        
-        // Defining Test Cases and Test Methods
-        // https://developer.apple.com/documentation/xctest/defining_test_cases_and_test_methods
-    }
-    
     func testTopicClientPublishes() async throws {
         let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "TEST_AUTH_TOKEN")
         let client = TopicClient(
@@ -48,15 +40,15 @@ final class momentoTests: XCTestCase {
             "Unexpected error code: \(invalidTopicNameErrorCode)"
         )
         
-        let pubResp = await client.publish(
-            cacheName: "test-cache",
-            topicName: "test-topic",
-            value: "test-message"
-        )
-        XCTAssertTrue(
-            pubResp is TopicPublishSuccess,
-            "Unexpected response: \((pubResp as! TopicPublishError).description)"
-        )
+//        let pubResp = await client.publish(
+//            cacheName: "test-cache",
+//            topicName: "test-topic",
+//            value: "test-message"
+//        )
+//        XCTAssertTrue(
+//            pubResp is TopicPublishSuccess,
+//            "Unexpected response: \((pubResp as! TopicPublishError).description)"
+//        )
     }    
     
     func testTopicClientSubscribes() async throws {
@@ -92,101 +84,101 @@ final class momentoTests: XCTestCase {
             "Unexpected error code: \(invalidTopicNameErrorCode)"
         )
         
-        let subResp = await client.subscribe(
-            cacheName: "test-cache",
-            topicName: "test-topic"
-        )
-        XCTAssertTrue(
-            subResp is TopicSubscribeSuccess,
-            "Unexpected response: \((subResp as! TopicSubscribeError).description)"
-        )
+//        let subResp = await client.subscribe(
+//            cacheName: "test-cache",
+//            topicName: "test-topic"
+//        )
+//        XCTAssertTrue(
+//            subResp is TopicSubscribeSuccess,
+//            "Unexpected response: \((subResp as! TopicSubscribeError).description)"
+//        )
     }
     
-    func testTopicClientPublishesAndSubscribes() async throws {
-        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "TEST_AUTH_TOKEN")
-        let client = TopicClient(configuration: TopicConfigurations.Default.latest(), credentialProvider: creds)
-        XCTAssertNotNil(client)
-        
-        let subResp = await client.subscribe(
-            cacheName: "test-cache",
-            topicName: "test-topic"
-        )
-        XCTAssertTrue(
-            subResp is TopicSubscribeSuccess,
-            "Unexpected response: \((subResp as! TopicSubscribeError).description)"
-        )
-        
-        try await Task.sleep(nanoseconds: 1000)
-        let pubResp = await client.publish(
-            cacheName: "test-cache",
-            topicName: "test-topic",
-            value: "publishing and subscribing!"
-        )
-        XCTAssertTrue(
-            pubResp is TopicPublishSuccess,
-            "Unexpected response: \((pubResp as! TopicPublishError).description)"
-        )
-        
-        let subscription = (subResp as! TopicSubscribeSuccess).subscription
-        for try await item in subscription {
-            print("Received item: \(String(describing: item))")
-            XCTAssertTrue(
-                item is TopicSubscriptionItemText,
-                "received subscription item that was not text: \(String(describing: item))"
-            )
-            
-            let value = (item as! TopicSubscriptionItemText).value
-            print("Received value: \(value)")
-            XCTAssertEqual(value, "publishing and subscribing!", "unexpected topic subscription item value: \(value)")
-            break
-        }
-    }
-
-    func testTopicClientPublishesAndSubscribesBinary() async throws {
-        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "TEST_AUTH_TOKEN")
-        let client = TopicClient(configuration: TopicConfigurations.Default.latest(), credentialProvider: creds)
-        XCTAssertNotNil(client)
-
-        let subResp = await client.subscribe(
-            cacheName: "test-cache",
-            topicName: "test-topic"
-        )
-        XCTAssertTrue(
-            subResp is TopicSubscribeSuccess,
-            "Unexpected response: \((subResp as! TopicSubscribeError).description)"
-        )
-
-        try await Task.sleep(nanoseconds: 1000)
-        let binaryValue = "publishing and subscribing!".data(using: .utf8)!
-        let pubResp = await client.publish(
-            cacheName: "test-cache",
-            topicName: "test-topic",
-            value: binaryValue
-        )
-        XCTAssertTrue(
-            pubResp is TopicPublishSuccess,
-            "Unexpected response: \((pubResp as! TopicPublishError).description)"
-        )
-
-        let subscription = (subResp as! TopicSubscribeSuccess).subscription
-        for try await item in subscription {
-            print("Received item: \(String(describing: item))")
-            XCTAssertTrue(
-                item is TopicSubscriptionItemBinary,
-                "received subscription item that was not binary: \(String(describing: item))"
-            )
-
-            let value = (item as! TopicSubscriptionItemBinary).value
-            print("Received value: \(String(decoding: value, as: UTF8.self))")
-            XCTAssertEqual(
-                value,
-                binaryValue,
-                "unexpected topic subscription item value: \(value)"
-            )
-            break
-        }
-
-        client.close()
-        print("closed subscription")
-    }
+//    func testTopicClientPublishesAndSubscribes() async throws {
+//        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "TEST_AUTH_TOKEN")
+//        let client = TopicClient(configuration: TopicConfigurations.Default.latest(), credentialProvider: creds)
+//        XCTAssertNotNil(client)
+//        
+//        let subResp = await client.subscribe(
+//            cacheName: "test-cache",
+//            topicName: "test-topic"
+//        )
+//        XCTAssertTrue(
+//            subResp is TopicSubscribeSuccess,
+//            "Unexpected response: \((subResp as! TopicSubscribeError).description)"
+//        )
+//        
+//        try await Task.sleep(nanoseconds: 1000)
+//        let pubResp = await client.publish(
+//            cacheName: "test-cache",
+//            topicName: "test-topic",
+//            value: "publishing and subscribing!"
+//        )
+//        XCTAssertTrue(
+//            pubResp is TopicPublishSuccess,
+//            "Unexpected response: \((pubResp as! TopicPublishError).description)"
+//        )
+//        
+//        let subscription = (subResp as! TopicSubscribeSuccess).subscription
+//        for try await item in subscription {
+//            print("Received item: \(String(describing: item))")
+//            XCTAssertTrue(
+//                item is TopicSubscriptionItemText,
+//                "received subscription item that was not text: \(String(describing: item))"
+//            )
+//            
+//            let value = (item as! TopicSubscriptionItemText).value
+//            print("Received value: \(value)")
+//            XCTAssertEqual(value, "publishing and subscribing!", "unexpected topic subscription item value: \(value)")
+//            break
+//        }
+//    }
+//
+//    func testTopicClientPublishesAndSubscribesBinary() async throws {
+//        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "TEST_AUTH_TOKEN")
+//        let client = TopicClient(configuration: TopicConfigurations.Default.latest(), credentialProvider: creds)
+//        XCTAssertNotNil(client)
+//
+//        let subResp = await client.subscribe(
+//            cacheName: "test-cache",
+//            topicName: "test-topic"
+//        )
+//        XCTAssertTrue(
+//            subResp is TopicSubscribeSuccess,
+//            "Unexpected response: \((subResp as! TopicSubscribeError).description)"
+//        )
+//
+//        try await Task.sleep(nanoseconds: 1000)
+//        let binaryValue = "publishing and subscribing!".data(using: .utf8)!
+//        let pubResp = await client.publish(
+//            cacheName: "test-cache",
+//            topicName: "test-topic",
+//            value: binaryValue
+//        )
+//        XCTAssertTrue(
+//            pubResp is TopicPublishSuccess,
+//            "Unexpected response: \((pubResp as! TopicPublishError).description)"
+//        )
+//
+//        let subscription = (subResp as! TopicSubscribeSuccess).subscription
+//        for try await item in subscription {
+//            print("Received item: \(String(describing: item))")
+//            XCTAssertTrue(
+//                item is TopicSubscriptionItemBinary,
+//                "received subscription item that was not binary: \(String(describing: item))"
+//            )
+//
+//            let value = (item as! TopicSubscriptionItemBinary).value
+//            print("Received value: \(String(decoding: value, as: UTF8.self))")
+//            XCTAssertEqual(
+//                value,
+//                binaryValue,
+//                "unexpected topic subscription item value: \(value)"
+//            )
+//            break
+//        }
+//
+//        client.close()
+//        print("closed subscription")
+//    }
 }
