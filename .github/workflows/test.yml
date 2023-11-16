@@ -1,0 +1,34 @@
+name: Test
+
+on:
+  workflow_call:
+    secrets:
+      auth-token:
+        description: "Auth token used for live testing"
+        required: true
+      github-token:
+        description: "Token for running Github actions"
+        required: true
+
+jobs:
+  test:
+    strategy:
+        matrix:
+            swift: ["5.4", "5.9"]
+    runs-on: ubuntu-latest
+    env:
+        TEST_AUTH_TOKEN: ${{ secrets.auth-token }}
+    steps:
+      - uses: swift-actions/setup-swift@65540b95f51493d65f5e59e97dcef9629ddf11bf
+        with: 
+            swift-version: ${{ matrix.swift }}
+      - name: Setup repo
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.github-token }}
+
+      - name: Build
+        run: make build
+
+      - name: Run test
+        run: make test
