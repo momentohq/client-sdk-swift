@@ -29,7 +29,7 @@ Check out our [topics example](./Examples/topics/README.md) directory for a comp
 
 ## Getting Started and Documentation
 
-General documentation on Momento and the Momento SDKs is available on the [Momento Docs website](https://docs.momentohq.com/). Specific usage exmaples for the Swift SDK will be available there as well soon!
+General documentation on Momento and the Momento SDKs is available on the [Momento Docs website](https://docs.momentohq.com/). Specific usage examples for the Swift SDK will be available there as well soon!
 
 ## Examples
 
