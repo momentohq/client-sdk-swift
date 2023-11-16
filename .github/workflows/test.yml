@@ -16,7 +16,7 @@ jobs:
     #     matrix:
     #         swift: ["5.4", "5.8"]
     runs-on: ubuntu-latest
-    container: swift:5.8
+    container: swift:5.4
     env:
         TEST_AUTH_TOKEN: ${{ secrets.auth-token }}
     steps:
