@@ -19,9 +19,9 @@ internal func processResult(item: CacheClient_Pubsub__SubscriptionItem) -> Topic
     case .item:
         return createTopicItemResponse(item: item.item)
     case .heartbeat:
-        logger.info(msg: "topic client received a heartbeat")
+        logger.debug(msg: "topic client received a heartbeat")
     case .discontinuity:
-        logger.info(msg: "topic client received a discontinuity")
+        logger.debug(msg: "topic client received a discontinuity")
     default:
         logger.error(msg: "topic client received unknown subscription item: \(item)")
     }

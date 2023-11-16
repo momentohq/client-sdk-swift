@@ -28,6 +28,34 @@ func main() async {
         return
     }
     
+    let receiveTask = Task {
+        let subscription = (subscribeResponse as! TopicSubscribeSuccess).subscription
+        do {
+            for try await item in subscription {
+                var value: String = ""
+                switch item {
+                case is TopicSubscriptionItemText:
+                    value = (item as! TopicSubscriptionItemText).value
+                    print("Subscriber recieved text message: \(value)")
+                case is TopicSubscriptionItemBinary:
+                    let binaryValue = (item as! TopicSubscriptionItemBinary).value
+                    value = String(decoding: binaryValue, as: UTF8.self)
+                    print("Subscriber recieved binary message: \(value)")
+                default:
+                    print("received unknown item type: \(item)")
+                }
+
+                // we can exit the loop once we receive the last message
+                if value == "topics" {
+                    return
+                }
+            }
+        } catch {
+            print("Error while awaiting subscription item: \(error)")
+            return
+        }
+    }
+
     let messages = ["hello", "welcome", "to", "momento", "topics"]
     for message in messages {
         // Publish the message
@@ -46,24 +74,6 @@ func main() async {
         }
     }
     
-    let receiveTask = Task {
-        let subscription = (subscribeResponse as! TopicSubscribeSuccess).subscription
-        do {
-            for try await item in subscription {
-                let value = (item as! TopicSubscriptionItemText).value
-                print("Subscriber received message: \(value)")
-                
-                // we can exit the loop once we receive the last message
-                if value == "topics" {
-                    return
-                }
-            }
-        } catch {
-            print("Error while awaiting subscription item: \(error)")
-            return
-        }
-    }
-
     // timeout in 10 seconds
     let timeoutTask = Task {
         try await Task.sleep(nanoseconds: 10_000_000_000)
