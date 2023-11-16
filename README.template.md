@@ -1,10 +1,4 @@
-<head>
-  <meta name="Momento Go Client Library Documentation" content="Go client software development kit for Momento Cache">
-</head>
-<img src="https://docs.momentohq.com/img/logo.svg" alt="logo" width="400"/>
-
-[![project status](https://momentohq.github.io/standards-and-practices/badges/project-status-official.svg)](https://github.com/momentohq/standards-and-practices/blob/main/docs/momento-on-github.md)
-[![project stability](https://momentohq.github.io/standards-and-practices/badges/project-stability-alpha.svg)](https://github.com/momentohq/standards-and-practices/blob/main/docs/momento-on-github.md)
+{{ ossHeader }}
 
 # Momento Swift SDK
 
@@ -29,7 +23,7 @@ Check out our [topics example](./Examples/topics/README.md) directory for a comp
 
 ## Getting Started and Documentation
 
-General documentation on Momento and the Momento SDKs is available on the [Momento Docs website](https://docs.momentohq.com/). Specific usage examples for the Swift SDK will be available there as well soon!
+General documentation on Momento and the Momento SDKs is available on the [Momento Docs website](https://docs.momentohq.com/). Specific usage exmaples for the Swift SDK will be available there as well soon!
 
 ## Examples
 
@@ -39,5 +33,5 @@ Check out full working code in the [topics example](./Examples/topics/README.md)
 
 If you are interested in contributing to the SDK, please see the [CONTRIBUTING](./CONTRIBUTING.md) docs.
 
-----------------------------------------------------------------------------------------
-For more info, visit our website at [https://gomomento.com](https://gomomento.com)!
+{{ ossFooter }}
+
