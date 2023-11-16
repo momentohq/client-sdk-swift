@@ -12,20 +12,19 @@ public class TopicSubscribeSuccess: TopicSubscribeResponse {
     }
 }
 
+public var subscribeLogger = DefaultMomentoLogger(loggerName: "momento-topics-subscribe", level: DefaultMomentoLoggerLevel.debug)
+
 internal func processResult(item: CacheClient_Pubsub__SubscriptionItem) -> TopicSubscriptionItemResponse? {
     let messageType = item.kind
     switch messageType {
     case .item:
         return createTopicItemResponse(item: item.item)
     case .heartbeat:
-        // TODO: should go to a logger
-        print("topic client received a heartbeat")
+        subscribeLogger.info(msg: "topic client received a heartbeat")
     case .discontinuity:
-        // TODO: should go to a logger
-        print("topic client received a discontinuity")
+        subscribeLogger.info(msg: "topic client received a discontinuity")
     default:
-        // TODO: should go to a logger
-        print("topic client received unknown subscription item: \(item)")
+        subscribeLogger.error(msg: "topic client received unknown subscription item: \(item)")
     }
     return nil
 }

@@ -39,7 +39,7 @@ public class DefaultMomentoLogger: MomentoLoggerProtocol {
     }
     
     private func outputMessage(level: String, msg: String) {
-        debugPrint("[\(self.getCurrentTime())] \(level) (Momento: \(loggerName): \(msg)")
+        fputs("[\(self.getCurrentTime())] \(level) (Momento: \(loggerName): \(msg)", stderr)
     }
     
     private func getCurrentTime() -> String {
