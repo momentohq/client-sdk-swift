@@ -163,7 +163,7 @@ class PubsubClient: PubsubClientProtocol {
         request.topic = topicName
         
         let result = self.client.subscribe(request)
-        return TopicSubscribeSuccess(subscription: result)
+        return TopicSubscribeSuccess(subscription: result, logger: self.logger)
     }
     
     func close() {

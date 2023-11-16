@@ -5,28 +5,31 @@ public protocol TopicSubscribeResponse {}
 
 @available(macOS 10.15, iOS 13, *)
 public class TopicSubscribeSuccess: TopicSubscribeResponse {
-    public let subscription: AsyncCompactMapSequence<GRPCAsyncResponseStream<CacheClient_Pubsub__SubscriptionItem>, TopicSubscriptionItemResponse>
+    public lazy var subscription: AsyncCompactMapSequence<GRPCAsyncResponseStream<CacheClient_Pubsub__SubscriptionItem>, TopicSubscriptionItemResponse> = _subscription.compactMap(self.processResult)
     
-    init(subscription: GRPCAsyncResponseStream<CacheClient_Pubsub__SubscriptionItem>) {
-        self.subscription = subscription.compactMap(processResult)
+    private let _subscription: GRPCAsyncResponseStream<CacheClient_Pubsub__SubscriptionItem>
+    
+    private let logger: MomentoLoggerProtocol
+    
+    init(subscription: GRPCAsyncResponseStream<CacheClient_Pubsub__SubscriptionItem>, logger: MomentoLoggerProtocol) {
+        self._subscription = subscription
+        self.logger = logger
     }
-}
-
-public var subscribeLogger = DefaultMomentoLogger(loggerName: "momento-topics-subscribe", level: DefaultMomentoLoggerLevel.debug)
-
-internal func processResult(item: CacheClient_Pubsub__SubscriptionItem) -> TopicSubscriptionItemResponse? {
-    let messageType = item.kind
-    switch messageType {
-    case .item:
-        return createTopicItemResponse(item: item.item)
-    case .heartbeat:
-        subscribeLogger.info(msg: "topic client received a heartbeat")
-    case .discontinuity:
-        subscribeLogger.info(msg: "topic client received a discontinuity")
-    default:
-        subscribeLogger.error(msg: "topic client received unknown subscription item: \(item)")
+    
+    internal func processResult(item: CacheClient_Pubsub__SubscriptionItem) -> TopicSubscriptionItemResponse? {
+        let messageType = item.kind
+        switch messageType {
+        case .item:
+            return createTopicItemResponse(item: item.item)
+        case .heartbeat:
+            self.logger.info(msg: "topic client received a heartbeat")
+        case .discontinuity:
+            self.logger.info(msg: "topic client received a discontinuity")
+        default:
+            self.logger.error(msg: "topic client received unknown subscription item: \(item)")
+        }
+        return nil
     }
-    return nil
 }
 
 public class TopicSubscribeError: ErrorResponseBase, TopicSubscribeResponse {}
