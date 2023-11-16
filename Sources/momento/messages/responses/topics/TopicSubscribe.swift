@@ -5,7 +5,7 @@ public protocol TopicSubscribeResponse {}
 
 @available(macOS 10.15, iOS 13, *)
 public class TopicSubscribeSuccess: TopicSubscribeResponse {
-    public var subscription: AsyncCompactMapSequence<GRPCAsyncResponseStream<CacheClient_Pubsub__SubscriptionItem>, TopicSubscriptionItemResponse>
+    public let subscription: AsyncCompactMapSequence<GRPCAsyncResponseStream<CacheClient_Pubsub__SubscriptionItem>, TopicSubscriptionItemResponse>
     
     init(subscription: GRPCAsyncResponseStream<CacheClient_Pubsub__SubscriptionItem>) {
         self.subscription = subscription.compactMap(processResult)
