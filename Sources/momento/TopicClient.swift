@@ -43,16 +43,17 @@ public class TopicClient: TopicClientProtocol {
         topicName: String,
         value: String
     ) async -> TopicPublishResponse {
-        if cacheName.count < 1 {
-            return TopicPublishError(
-                error: InvalidArgumentError(message: "Must provide a cache name")
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateTopicName(topicName: topicName)
+        } catch let err as SdkError {
+            return TopicPublishError(error: err)
+        } catch {
+            return TopicPublishError(error: UnknownError(
+                message: "unexpected error: \(error)")
             )
         }
-        if topicName.count < 1 {
-            return TopicPublishError(
-                error: InvalidArgumentError(message: "Must provide a topic name")
-            )
-        }
+        
         do {
             let result = try await self.pubsubClient.publish(
                 cacheName: cacheName,
@@ -75,16 +76,17 @@ public class TopicClient: TopicClientProtocol {
         topicName: String,
         value: Data
     ) async -> TopicPublishResponse {
-        if cacheName.count < 1 {
-            return TopicPublishError(
-                error: InvalidArgumentError(message: "Must provide a cache name")
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateTopicName(topicName: topicName)
+        } catch let err as SdkError {
+            return TopicPublishError(error: err)
+        } catch {
+            return TopicPublishError(error: UnknownError(
+                message: "unexpected error: \(error)")
             )
         }
-        if topicName.count < 1 {
-            return TopicPublishError(
-                error: InvalidArgumentError(message: "Must provide a topic name")
-            )
-        }
+        
         do {
             let result = try await self.pubsubClient.publish(
                 cacheName: cacheName,
@@ -103,16 +105,17 @@ public class TopicClient: TopicClientProtocol {
     }
 
     public func subscribe(cacheName: String, topicName: String) async -> TopicSubscribeResponse {
-        if cacheName.count < 1 {
-            return TopicSubscribeError(
-                error: InvalidArgumentError(message: "Must provide a cache name")
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateTopicName(topicName: topicName)
+        } catch let err as SdkError {
+            return TopicSubscribeError(error: err)
+        } catch {
+            return TopicSubscribeError(error: UnknownError(
+                message: "unexpected error: \(error)")
             )
         }
-        if topicName.count < 1 {
-            return TopicSubscribeError(
-                error: InvalidArgumentError(message: "Must provide a topic name")
-            )
-        }
+        
         do {
             let result = try await self.pubsubClient.subscribe(
                 cacheName: cacheName, 
