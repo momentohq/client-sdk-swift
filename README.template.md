@@ -1,5 +1,14 @@
 {{ ossHeader }}
 
+# Momento Swift SDK
+
+To get started with Momento you will need a Momento Auth Token. You can get one from the [Momento Console](https://console.gomomento.com).
+
+* Website: [https://www.gomomento.com/](https://www.gomomento.com/)
+* Momento Documentation: [https://docs.momentohq.com/](https://docs.momentohq.com/)
+* Getting Started: [https://docs.momentohq.com/getting-started](https://docs.momentohq.com/getting-started)
+* Discuss: [Momento Discord](https://discord.gg/3HkAKjUZGq)
+
 ## Packages
 
 The Momento Swift SDK is available here on github: [momentohq/client-sdk-swift](https://github.com/momentohq/client-sdk-swift). Add the following to the `dependencies` section of your `Package.swift` file to include the SDK in your project:
