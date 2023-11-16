@@ -7,6 +7,12 @@ public protocol TopicClientProtocol {
         value: String
     ) async -> TopicPublishResponse
     
+    func publish(
+        cacheName: String,
+        topicName: String,
+        value: Data
+    ) async -> TopicPublishResponse
+
     func subscribe(
         cacheName: String,
         topicName: String
