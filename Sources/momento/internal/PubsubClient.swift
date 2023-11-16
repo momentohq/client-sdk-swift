@@ -81,6 +81,7 @@ class PubsubClient: PubsubClientProtocol {
     ) {
         self.configuration = configuration
         self.credentialProvider = credentialProvider
+        self.logger = LogProvider.getLogger(name: "PubsubClient")
         
         do {
             self.sharedChannel = try GRPCChannelPool.with(
@@ -99,12 +100,6 @@ class PubsubClient: PubsubClientProtocol {
                 }
         } catch {
             fatalError("Failed to open GRPC channel")
-        }
-        
-        do {
-            self.logger = try LogProvider.getLogger(name: "PubsubClient")
-        } catch  {
-            fatalError("Failed to initialize PubsubClient logger")
         }
         
         let headers = ["agent": "swift:0.1.0"]

@@ -13,13 +13,7 @@ public class TopicSubscribeSuccess: TopicSubscribeResponse {
 }
 
 internal func processResult(item: CacheClient_Pubsub__SubscriptionItem) -> TopicSubscriptionItemResponse? {
-    var logger: MomentoLoggerProtocol
-    do {
-        logger = try LogProvider.getLogger(name: "TopicSubscribeResponse")
-    } catch {
-        fatalError("Failed to initialize TopicSubscribeResponse logger")
-    }
-    
+    let logger = LogProvider.getLogger(name: "TopicSubscribeResponse")
     let messageType = item.kind
     switch messageType {
     case .item:
