@@ -45,21 +45,40 @@ func main() async {
             return
         }
     }
-
-    let subscription = (subscribeResponse as! TopicSubscribeSuccess).subscription
-    do {
-        for try await item in subscription {
-            let value = (item as! TopicSubscriptionItemText).value
-            print("Subscriber received message: \(value)")
-            
-            // we can exit the loop once we receive the last message
-            if value == "topics" {
-                break
+    
+    let receiveTask = Task {
+        let subscription = (subscribeResponse as! TopicSubscribeSuccess).subscription
+        do {
+            for try await item in subscription {
+                let value = (item as! TopicSubscriptionItemText).value
+                print("Subscriber received message: \(value)")
+                
+                // we can exit the loop once we receive the last message
+                if value == "topics" {
+                    return
+                }
             }
+        } catch {
+            print("Error while awaiting subscription item: \(error)")
+            return
         }
-    } catch {
-        print("Error while awaiting subscription item: \(error)")
+    }
+
+    // timeout in 10 seconds
+    let timeoutTask = Task {
+        try await Task.sleep(nanoseconds: 10_000_000_000)
+        receiveTask.cancel()
+    }
+
+    // set up safeguard mechanism to stop the example if not all
+    // messages are received within 10 seconds
+    await withTaskCancellationHandler {
+        await receiveTask.value
+        timeoutTask.cancel()
         return
+    } onCancel: {
+        receiveTask.cancel()
+        timeoutTask.cancel()
     }
 
     client.close()
