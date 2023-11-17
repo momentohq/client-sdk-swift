@@ -2,8 +2,8 @@ import momento
 
 func main() async {
     print("Running Momento Topics example!")
-        let cacheName = "my-cache"
-        let topicName = "my-topic"
+    let cacheName = "my-cache"
+    let topicName = "my-topic"
 
     var creds: CredentialProviderProtocol
     do {
@@ -18,8 +18,8 @@ func main() async {
     let subscribeResponse = await client.subscribe(cacheName: cacheName, topicName: topicName)
     
     switch subscribeResponse {
-    case is TopicSubscribeError:
-        print("Subscribe error: \((subscribeResponse as! TopicSubscribeError).description)")
+    case let subscribeError as TopicSubscribeError:
+        print("Subscribe error: \(subscribeError.description)")
         return
     case is TopicSubscribeSuccess:
         print("Successful subscription!")
@@ -34,12 +34,11 @@ func main() async {
             for try await item in subscription {
                 var value: String = ""
                 switch item {
-                case is TopicSubscriptionItemText:
-                    value = (item as! TopicSubscriptionItemText).value
+                case let textItem as TopicSubscriptionItemText:
+                    value = textItem.value
                     print("Subscriber recieved text message: \(value)")
-                case is TopicSubscriptionItemBinary:
-                    let binaryValue = (item as! TopicSubscriptionItemBinary).value
-                    value = String(decoding: binaryValue, as: UTF8.self)
+                case let binaryItem as TopicSubscriptionItemBinary:
+                    value = String(decoding: binaryItem.value, as: UTF8.self)
                     print("Subscriber recieved binary message: \(value)")
                 default:
                     print("received unknown item type: \(item)")
@@ -63,8 +62,8 @@ func main() async {
 
         // Check the response type (error or success?)
         switch publishResponse {
-        case is TopicPublishError:
-            print("Publish error: \((publishResponse as! TopicPublishError).description)")
+        case let publishError as TopicPublishError:
+            print("Publish error: \(publishError.description)")
             return
         case is TopicPublishSuccess:
             print("Successfully published: \(message)")
