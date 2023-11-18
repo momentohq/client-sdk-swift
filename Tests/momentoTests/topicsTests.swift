@@ -151,7 +151,7 @@ final class topicsTests: XCTestCase {
             "Unexpected response: \((subResp as! TopicSubscribeError).description)"
         )
 
-        try await Task.sleep(nanoseconds: 1000)
+        try await Task.sleep(nanoseconds: 1_000_000_000)
         let binaryValue = "publishing and subscribing!".data(using: .utf8)!
         let pubResp = await client.publish(
             cacheName: "test-cache",
