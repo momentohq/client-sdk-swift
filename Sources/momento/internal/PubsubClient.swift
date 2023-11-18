@@ -3,45 +3,6 @@ import GRPC
 import NIO
 import NIOHPACK
 
-final class AuthHeaderInterceptor<Request, Response>: ClientInterceptor<Request, Response> {
-
-    private let apiKey: String
-
-    init(apiKey: String) {
-        self.apiKey = apiKey
-    }
-
-    override func send(
-        _ part: GRPCClientRequestPart<Request>,
-        promise: EventLoopPromise<Void>?,
-        context: ClientInterceptorContext<Request, Response>
-    ) {
-        guard case .metadata(var headers) = part else {
-            return context.send(part, promise: promise)
-        }
-
-        headers.add(name: "authorization", value: apiKey)
-        context.send(.metadata(headers), promise: promise)
-    }
-}
-
-final class PubsubClientInterceptorFactory: CacheClient_Pubsub_PubsubClientInterceptorFactoryProtocol {
-    
-    private let apiKey: String
-    
-    init(apiKey: String) {
-        self.apiKey = apiKey
-    }
-    
-    func makePublishInterceptors() -> [ClientInterceptor<CacheClient_Pubsub__PublishRequest, CacheClient_Pubsub__Empty>] {
-        [AuthHeaderInterceptor(apiKey: apiKey)]
-    }
-
-    func makeSubscribeInterceptors() -> [ClientInterceptor<CacheClient_Pubsub__SubscriptionRequest, CacheClient_Pubsub__SubscriptionItem>] {
-        [AuthHeaderInterceptor(apiKey: apiKey)]
-    }
-}
-
 protocol PubsubClientProtocol {
     var logger: MomentoLoggerProtocol { get }
     var configuration: TopicClientConfigurationProtocol { get }
