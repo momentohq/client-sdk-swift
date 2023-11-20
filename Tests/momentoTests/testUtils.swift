@@ -18,7 +18,8 @@ func setUpIntegrationTests() async -> TestSetup {
         
         let cacheClient = CacheClient(
             configuration: CacheConfigurations.Default.latest(),
-            credentialProvider: creds
+            credentialProvider: creds,
+            defaultTtlMillis: 10000
         )
         
         let cacheName = "swift-test-\(UUID().uuidString)"

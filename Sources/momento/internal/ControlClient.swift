@@ -4,8 +4,6 @@ import NIO
 import NIOHPACK
 
 protocol ControlClientProtocol {
-    var logger: MomentoLoggerProtocol { get }
-    
     func createCache(cacheName: String) async -> CacheCreateResponse
     
     func deleteCache(cacheName: String) async -> CacheDeleteResponse
