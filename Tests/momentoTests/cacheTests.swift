@@ -20,6 +20,30 @@ final class cacheTests: XCTestCase {
         )
     }
     
+    func testCacheClientValidatesCacheName() async throws {
+        let createInvalidName = await self.cacheClient.createCache(cacheName: "   ")
+        XCTAssertTrue(
+            createInvalidName is CacheCreateError,
+            "Unexpected response: \(createInvalidName)"
+        )
+        let createErrorCode = (createInvalidName as! CacheCreateError).errorCode
+        XCTAssertEqual(
+            createErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
+            "Unexpected error code: \(createErrorCode)"
+        )
+        
+        let deleteInvalidName = await self.cacheClient.deleteCache(cacheName: "   ")
+        XCTAssertTrue(
+            deleteInvalidName is CacheDeleteError,
+            "Unexpected response: \(deleteInvalidName)"
+        )
+        let deleteErrorCode = (deleteInvalidName as! CacheDeleteError).errorCode
+        XCTAssertEqual(
+            deleteErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
+            "Unexpected error code: \(deleteErrorCode)"
+        )
+    }
+    
     func testCacheClientCreatesAndDeletesCache() async throws {
         let createResult = await self.cacheClient.createCache(cacheName: "a-totally-new-cache")
         XCTAssertTrue(

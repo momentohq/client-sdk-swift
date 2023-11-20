@@ -28,12 +28,28 @@ public class CacheClient: CacheClientProtocol {
     }
     
     public func createCache(cacheName: String) async -> CacheCreateResponse {
-        // validation
+        do {
+            try validateCacheName(cacheName: cacheName)
+        } catch let err as SdkError {
+            return CacheCreateError(error: err)
+        } catch {
+            return CacheCreateError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
         return await self.controlClient.createCache(cacheName: cacheName)
     }
     
     public func deleteCache(cacheName: String) async -> CacheDeleteResponse {
-        // validation
+        do {
+            try validateCacheName(cacheName: cacheName)
+        } catch let err as SdkError {
+            return CacheDeleteError(error: err)
+        } catch {
+            return CacheDeleteError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
         return await self.controlClient.deleteCache(cacheName: cacheName)
     }
     
