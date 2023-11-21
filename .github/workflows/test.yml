@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     container: swift:5.8
     env:
-        TEST_AUTH_TOKEN: ${{ secrets.auth-token }}
+        TEST_API_KEY: ${{ secrets.auth-token }}
     steps:
     #   - uses: swift-actions/setup-swift@65540b95f51493d65f5e59e97dcef9629ddf11bf
     #     with:
