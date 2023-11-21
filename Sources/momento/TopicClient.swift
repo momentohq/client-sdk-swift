@@ -25,7 +25,7 @@ public class TopicClient: TopicClientProtocol {
     private let pubsubClient: PubsubClientProtocol
     private let credentialProvider: CredentialProviderProtocol
     
-    @available(macOS 10.15, *)
+    @available(macOS 10.15, iOS 13, *)
     public init(
         configuration: TopicClientConfigurationProtocol,
         credentialProvider: CredentialProviderProtocol
