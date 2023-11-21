@@ -6,15 +6,24 @@ enum CredentialProviderError: Error {
     case badToken
 }
 
+/// Specifies the fields that are required for a Momento client to connect to and authenticate with the Momento service.
 public protocol CredentialProviderProtocol {
+    /// API key provided by user, required to authenticate with the Momento service
     var originalAuthToken: String { get }
+    
+    /// parsed API key
     var authToken: String { get }
+    
+    /// The host which the Momento client will connect to for Momento control plane operations
     var controlEndpoint: String { get }
+    
+    /// The host which the Momento client will connect to for Momento data plane operations
     var cacheEndpoint: String { get }
 }
 
 public class CredentialProvider {
     
+    /// Reads and parses a Momento API key stored as an environment variable.
     public static func fromEnvironmentVariable(envVariableName: String) throws -> CredentialProviderProtocol {
         do {
             let provider = try EnvMomentoTokenProvider(envVarName: envVariableName)
@@ -24,6 +33,7 @@ public class CredentialProvider {
         }
     }
     
+    /// Reads and parses a Momento API key stored as a string
     public static func fromString(authToken: String) throws -> CredentialProviderProtocol {
         do {
             let provider = try StringMomentoTokenProvider(authToken: authToken)

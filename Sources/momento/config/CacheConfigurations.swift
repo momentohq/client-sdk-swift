@@ -1,5 +1,4 @@
-// Prebuilt configurations for Momento Cache clients
-
+/// Prebuilt configurations for Momento Cache clients
 public enum CacheConfigurations {
 
     public enum Default {

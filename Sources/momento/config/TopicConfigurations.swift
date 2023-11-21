@@ -1,5 +1,4 @@
-// Prebuilt configurations for Momento Topics clients
-
+/// Prebuilt configurations for Momento Topics clients
 public enum TopicConfigurations {
 
     public enum Default {

@@ -38,6 +38,23 @@ public class TopicClient: TopicClientProtocol {
         )
     }
     
+    /**
+    Publishes a value to a topic
+     - Parameters:
+        - cacheName: name of the cache containing the topic
+        - topicName: name of the topic
+        - value: the value to be published as a string
+     - Returns: TopicPublishResponse representing the result of the publish operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch publishResponse {
+     case let publishError as TopicPublishError:
+        // handle error
+     case is TopicPublishSuccess:
+        // handle success
+     }
+    ```
+     */
     public func publish(
         cacheName: String,
         topicName: String,
@@ -71,6 +88,23 @@ public class TopicClient: TopicClientProtocol {
         }
     }
 
+    /**
+    Publishes a value to a topic
+     - Parameters:
+        - cacheName: name of the cache containing the topic
+        - topicName: name of the topic
+        - value: the value to be published as a byte buffer
+     - Returns: TopicPublishResponse representing the result of the publish operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch publishResponse {
+     case let publishError as TopicPublishError:
+        // handle error
+     case is TopicPublishSuccess:
+        // handle success
+     }
+    ```
+     */
     public func publish(
         cacheName: String,
         topicName: String,
@@ -104,6 +138,23 @@ public class TopicClient: TopicClientProtocol {
         }
     }
 
+    /**
+     Subscribe to a topic. The returned value can be used to iterate over newly published messages on the topic.
+     - Parameters:
+        - cacheName: name of the cache containing the topic
+        - topicName: name of the topic
+     - Returns: TopicSubscribeResponse representing the result of the subscribe operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch subscribeResponse {
+     case let subscribeError as TopicSubscribeError:
+        // handle error
+     case let subscribeSuccess as TopicSubscribeSuccess:
+        // handle success, iterate over newly published messages
+        for try await item in subscribeSuccess.subscription {...}
+     }
+    ```
+     */
     public func subscribe(cacheName: String, topicName: String) async -> TopicSubscribeResponse {
         do {
             try validateCacheName(cacheName: cacheName)

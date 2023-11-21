@@ -168,7 +168,7 @@ class DataClient: DataClientProtocol {
             )
         )
         do {
-            let result = try await call.response.get()
+            _ = try await call.response.get()
             return CacheSetSuccess()
         } catch let err as GRPCStatus {
             return CacheSetError(error: grpcStatusToSdkError(grpcStatus: err))
