@@ -21,9 +21,11 @@ final class topicsTests: XCTestCase {
     }
     
     func testTopicClientPublishes() async throws {
+        let topicName = generateStringWithUuid(prefix: "test-topic")
+        
         let invalidCacheNameResp = await self.topicClient.publish(
             cacheName: "",
-            topicName: "test-topic",
+            topicName: topicName,
             value: "test-message"
         )
         XCTAssertTrue(
@@ -53,7 +55,7 @@ final class topicsTests: XCTestCase {
         
         let pubResp = await self.topicClient.publish(
             cacheName: self.integrationTestCacheName,
-            topicName: "test-topic",
+            topicName: topicName,
             value: "test-message"
         )
         XCTAssertTrue(
@@ -63,9 +65,11 @@ final class topicsTests: XCTestCase {
     }    
     
     func testTopicClientSubscribes() async throws {
+        let topicName = generateStringWithUuid(prefix: "test-topic")
+        
         let invalidCacheNameResp = await self.topicClient.subscribe(
             cacheName: "",
-            topicName: "test-topic"
+            topicName: topicName
         )
         XCTAssertTrue(
             invalidCacheNameResp is TopicSubscribeError,
@@ -93,7 +97,7 @@ final class topicsTests: XCTestCase {
         
         let subResp = await self.topicClient.subscribe(
             cacheName: self.integrationTestCacheName,
-            topicName: "test-topic"
+            topicName: topicName
         )
         XCTAssertTrue(
             subResp is TopicSubscribeSuccess,
@@ -102,19 +106,21 @@ final class topicsTests: XCTestCase {
     }
     
     func testTopicClientPublishesAndSubscribes() async throws {
+        let topicName = generateStringWithUuid(prefix: "test-topic")
+        
         let subResp = await self.topicClient.subscribe(
             cacheName: self.integrationTestCacheName,
-            topicName: "test-topic"
+            topicName: topicName
         )
         XCTAssertTrue(
             subResp is TopicSubscribeSuccess,
             "Unexpected response: \((subResp as! TopicSubscribeError).description)"
         )
         
-        try await Task.sleep(nanoseconds: 1000)
+        try await Task.sleep(nanoseconds: 1_000_000_000)
         let pubResp = await self.topicClient.publish(
             cacheName: self.integrationTestCacheName,
-            topicName: "test-topic",
+            topicName: topicName,
             value: "publishing and subscribing!"
         )
         XCTAssertTrue(
@@ -124,27 +130,23 @@ final class topicsTests: XCTestCase {
         
         let subscription = (subResp as! TopicSubscribeSuccess).subscription
         for try await item in subscription {
-            print("Received item: \(String(describing: item))")
             XCTAssertTrue(
                 item is TopicSubscriptionItemText,
                 "received subscription item that was not text: \(String(describing: item))"
             )
             
             let value = (item as! TopicSubscriptionItemText).value
-            print("Received value: \(value)")
             XCTAssertEqual(value, "publishing and subscribing!", "unexpected topic subscription item value: \(value)")
             break
         }
     }
 
     func testTopicClientPublishesAndSubscribesBinary() async throws {
-        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "TEST_AUTH_TOKEN")
-        let client = TopicClient(configuration: TopicConfigurations.Default.latest(), credentialProvider: creds)
-        XCTAssertNotNil(client)
-
-        let subResp = await client.subscribe(
-            cacheName: "test-cache",
-            topicName: "test-topic"
+        let topicName = generateStringWithUuid(prefix: "test-topic")
+        
+        let subResp = await self.topicClient.subscribe(
+            cacheName: self.integrationTestCacheName,
+            topicName: topicName
         )
         XCTAssertTrue(
             subResp is TopicSubscribeSuccess,
@@ -153,9 +155,9 @@ final class topicsTests: XCTestCase {
 
         try await Task.sleep(nanoseconds: 1_000_000_000)
         let binaryValue = "publishing and subscribing!".data(using: .utf8)!
-        let pubResp = await client.publish(
-            cacheName: "test-cache",
-            topicName: "test-topic",
+        let pubResp = await self.topicClient.publish(
+            cacheName: self.integrationTestCacheName,
+            topicName: topicName,
             value: binaryValue
         )
         XCTAssertTrue(
@@ -165,14 +167,12 @@ final class topicsTests: XCTestCase {
 
         let subscription = (subResp as! TopicSubscribeSuccess).subscription
         for try await item in subscription {
-            print("Received item: \(String(describing: item))")
             XCTAssertTrue(
                 item is TopicSubscriptionItemBinary,
                 "received subscription item that was not binary: \(String(describing: item))"
             )
 
             let value = (item as! TopicSubscriptionItemBinary).value
-            print("Received value: \(String(decoding: value, as: UTF8.self))")
             XCTAssertEqual(
                 value,
                 binaryValue,
@@ -180,8 +180,5 @@ final class topicsTests: XCTestCase {
             )
             break
         }
-
-        client.close()
-        print("closed subscription")
     }
 }

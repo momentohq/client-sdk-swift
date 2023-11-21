@@ -21,7 +21,7 @@ final class configTests: XCTestCase {
     }
 
     func testCreateClientWithDefaultConfig() throws {
-        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "TEST_AUTH_TOKEN")
+        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: apiKeyEnvVarName)
         XCTAssertNotNil(creds)
         
         let client = TopicClient(
@@ -32,7 +32,7 @@ final class configTests: XCTestCase {
     }
 
     func testCreateClientWithCustomTimeout() throws {
-        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "TEST_AUTH_TOKEN")
+        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: apiKeyEnvVarName)
         XCTAssertNotNil(creds)
         
         let config = TopicClientConfiguration(loggerFactory: DefaultMomentoLoggerFactory(), transportStrategy: StaticTransportStrategy(grpcConfig: StaticGrpcConfiguration(deadline: 60)))
@@ -41,12 +41,13 @@ final class configTests: XCTestCase {
     }
 
     func testTimeoutForImpossibleDeadline() async throws {
-        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "TEST_AUTH_TOKEN")
+        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: apiKeyEnvVarName)
         let configuration = TopicConfigurations.Default.latest().withClientTimeout(timeout: 0.001)
         let topicClient = TopicClient(configuration: configuration, credentialProvider: creds)
+        
         let pubResp = await topicClient.publish(
             cacheName: self.integrationTestCacheName,
-            topicName: "test-topic",
+            topicName: generateStringWithUuid(prefix: "test-topic"),
             value: "test-message"
         )
         XCTAssertTrue(pubResp is TopicPublishError)
