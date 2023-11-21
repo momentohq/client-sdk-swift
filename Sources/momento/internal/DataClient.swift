@@ -18,7 +18,7 @@ class DataClient: DataClientProtocol {
     internal let logger: MomentoLoggerProtocol
     private let credentialProvider: CredentialProviderProtocol
     private let configuration: CacheClientConfigurationProtocol
-    private let sharedChannel: GRPCChannel
+    private let grpcChannel: GRPCChannel
     private let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
     private let client: CacheClient_ScsNIOClient
     private let headers: Dictionary<String, String>
@@ -35,7 +35,7 @@ class DataClient: DataClientProtocol {
         self.defaultTtl = defaultTtl
         
         do {
-            self.sharedChannel = try GRPCChannelPool.with(
+            self.grpcChannel = try GRPCChannelPool.with(
                 target: .host(credentialProvider.cacheEndpoint, port: 443),
                 transportSecurity: .tls(
                     GRPCTLSConfiguration.makeClientDefault(compatibleWith: eventLoopGroup)
@@ -56,7 +56,7 @@ class DataClient: DataClientProtocol {
         self.headers = ["agent": "swift:0.1.0"]
         
         self.client = CacheClient_ScsNIOClient(
-            channel: self.sharedChannel,
+            channel: self.grpcChannel,
             defaultCallOptions: .init(
                 customMetadata: .init(self.headers.map { ($0, $1) }),
                 timeLimit: .timeout(.seconds(Int64(self.configuration.transportStrategy.getClientTimeout())))

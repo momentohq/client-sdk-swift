@@ -16,7 +16,7 @@ class ControlClient: ControlClientProtocol {
     internal let logger: MomentoLoggerProtocol
     private let credentialProvider: CredentialProviderProtocol
     private let configuration: CacheClientConfigurationProtocol
-    private let sharedChannel: GRPCChannel
+    private let grpcChannel: GRPCChannel
     private let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
     private let client: ControlClient_ScsControlNIOClient
     
@@ -29,7 +29,7 @@ class ControlClient: ControlClientProtocol {
         self.logger = LogProvider.getLogger(name: "CacheControlClient")
         
         do {
-            self.sharedChannel = try GRPCChannelPool.with(
+            self.grpcChannel = try GRPCChannelPool.with(
                 target: .host(credentialProvider.controlEndpoint, port: 443),
                 transportSecurity: .tls(
                     GRPCTLSConfiguration.makeClientDefault(compatibleWith: eventLoopGroup)
@@ -50,7 +50,7 @@ class ControlClient: ControlClientProtocol {
         let headers = ["agent": "swift:0.1.0"]
         
         self.client = ControlClient_ScsControlNIOClient(
-            channel: self.sharedChannel,
+            channel: self.grpcChannel,
             defaultCallOptions: .init(
                 customMetadata: .init(headers.map { ($0, $1) }),
                 timeLimit: .timeout(.seconds(Int64(self.configuration.transportStrategy.getClientTimeout())))
