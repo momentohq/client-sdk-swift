@@ -322,13 +322,16 @@ final class cacheTests: XCTestCase {
             cacheName: self.integrationTestCacheName,
             key: testKey5,
             value: testValue5,
-            ttl: 1
+            ttl: 1 // ttl = 1 second
         )
         XCTAssertTrue(
             shortTtl is CacheSetSuccess,
             "Unexpected response: \(shortTtl)"
         )
-        try await Task.sleep(nanoseconds: 5_000_000)
+        
+        // sleep for 5 seconds
+        try await Task.sleep(nanoseconds: 5_000_000_000)
+        
         let getShortTtl = await self.cacheClient.get(
             cacheName: self.integrationTestCacheName, key: testKey5
         )

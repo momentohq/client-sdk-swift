@@ -12,7 +12,7 @@ public class CacheClient: CacheClientProtocol {
     init(
         configuration: CacheClientConfigurationProtocol,
         credentialProvider: CredentialProviderProtocol,
-        defaultTtlMillis: TimeInterval
+        defaultTtlSeconds: TimeInterval
     ) {
         // TODO: determine how to handle static logger class
         // LogProvider.setLogger(loggerFactory: configuration.loggerFactory)
@@ -26,7 +26,7 @@ public class CacheClient: CacheClientProtocol {
         self.dataClient = DataClient(
             configuration: configuration,
             credentialProvider: credentialProvider,
-            defaultTtl: defaultTtlMillis
+            defaultTtlSeconds: defaultTtlSeconds
         )
     }
     

@@ -22,17 +22,17 @@ class DataClient: DataClientProtocol {
     private let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
     private let client: CacheClient_ScsNIOClient
     private let headers: Dictionary<String, String>
-    private let defaultTtl: TimeInterval
+    private let defaultTtlSeconds: TimeInterval
     
     init(
         configuration: CacheClientConfigurationProtocol,
         credentialProvider: CredentialProviderProtocol,
-        defaultTtl: TimeInterval
+        defaultTtlSeconds: TimeInterval
     ) {
         self.configuration = configuration
         self.credentialProvider = credentialProvider
         self.logger = LogProvider.getLogger(name: "CacheDataClient")
-        self.defaultTtl = defaultTtl
+        self.defaultTtlSeconds = defaultTtlSeconds
         
         do {
             self.grpcChannel = try GRPCChannelPool.with(
@@ -123,7 +123,7 @@ class DataClient: DataClientProtocol {
         var request = CacheClient__SetRequest()
         request.cacheKey = Data(key.utf8)
         request.cacheBody = Data(value.utf8)
-        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtl)
+        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
         let headers = self.makeHeaders(cacheName: cacheName)
         return await doSet(request: request, headers: headers)
     }
@@ -132,7 +132,7 @@ class DataClient: DataClientProtocol {
         var request = CacheClient__SetRequest()
         request.cacheKey = key
         request.cacheBody = Data(value.utf8)
-        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtl)
+        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
         let headers = self.makeHeaders(cacheName: cacheName)
         return await doSet(request: request, headers: headers)
     }
@@ -141,7 +141,7 @@ class DataClient: DataClientProtocol {
         var request = CacheClient__SetRequest()
         request.cacheKey = Data(key.utf8)
         request.cacheBody = value
-        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtl)
+        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
         let headers = self.makeHeaders(cacheName: cacheName)
         return await doSet(request: request, headers: headers)
     }
@@ -150,7 +150,7 @@ class DataClient: DataClientProtocol {
         var request = CacheClient__SetRequest()
         request.cacheKey = key
         request.cacheBody = value
-        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtl)
+        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
         let headers = self.makeHeaders(cacheName: cacheName)
         return await doSet(request: request, headers: headers)
     }
