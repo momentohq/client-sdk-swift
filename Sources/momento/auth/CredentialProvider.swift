@@ -9,9 +9,6 @@ enum CredentialProviderError: Error {
 /// Specifies the fields that are required for a Momento client to connect to and authenticate with the Momento service.
 public protocol CredentialProviderProtocol {
     /// API key provided by user, required to authenticate with the Momento service
-    var originalAuthToken: String { get }
-    
-    /// parsed API key
     var authToken: String { get }
     
     /// The host which the Momento client will connect to for Momento control plane operations
@@ -114,7 +111,6 @@ public class CredentialProvider {
 }
 
 public class StringMomentoTokenProvider : CredentialProviderProtocol {
-    public let originalAuthToken: String
     public let authToken: String
     public let controlEndpoint: String
     public let cacheEndpoint: String
@@ -123,7 +119,6 @@ public class StringMomentoTokenProvider : CredentialProviderProtocol {
         if authToken.isEmpty {
             throw CredentialProviderError.emptyAuthToken
         }
-        self.originalAuthToken = authToken
         let (_cacheEndpoint, _controlEndpoint, _authToken) = try CredentialProvider.parseAuthToken(authToken: authToken)
         self.controlEndpoint = controlEndpoint ?? _controlEndpoint
         self.cacheEndpoint = cacheEndpoint ?? _cacheEndpoint
