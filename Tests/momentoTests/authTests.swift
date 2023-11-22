@@ -78,7 +78,7 @@ final class authTests: XCTestCase {
     func testEmptyToken() throws {
         do {
             let _ = try CredentialProvider.fromString(apiKey: "")
-        } catch CredentialProviderError.emptyapiKey {
+        } catch CredentialProviderError.emptyApiKey {
             XCTAssert(true)
             return
         }
