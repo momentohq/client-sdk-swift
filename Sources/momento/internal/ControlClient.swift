@@ -55,7 +55,7 @@ class ControlClient: ControlClientProtocol {
                 customMetadata: .init(headers.map { ($0, $1) }),
                 timeLimit: .timeout(.seconds(Int64(self.configuration.transportStrategy.getClientTimeout())))
             ),
-            interceptors: ControlClientInterceptorFactory(apiKey: credentialProvider.authToken)
+            interceptors: ControlClientInterceptorFactory(apiKey: credentialProvider.apiKey)
         )
     }
     

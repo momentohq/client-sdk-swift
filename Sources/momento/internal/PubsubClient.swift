@@ -71,7 +71,7 @@ class PubsubClient: PubsubClientProtocol {
                 customMetadata: .init(headers.map { ($0, $1) }),
                 timeLimit: .timeout(.seconds(Int64(self.configuration.transportStrategy.getClientTimeout())))
             ),
-            interceptors: PubsubClientInterceptorFactory(apiKey: credentialProvider.authToken)
+            interceptors: PubsubClientInterceptorFactory(apiKey: credentialProvider.apiKey)
         )
     }
     

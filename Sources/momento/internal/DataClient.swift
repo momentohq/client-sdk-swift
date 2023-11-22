@@ -61,7 +61,7 @@ class DataClient: DataClientProtocol {
                 customMetadata: .init(self.headers.map { ($0, $1) }),
                 timeLimit: .timeout(.seconds(Int64(self.configuration.transportStrategy.getClientTimeout())))
             ),
-            interceptors: DataClientInterceptorFactory(apiKey: credentialProvider.authToken)
+            interceptors: DataClientInterceptorFactory(apiKey: credentialProvider.apiKey)
         )
     }
     

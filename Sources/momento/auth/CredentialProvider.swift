@@ -1,7 +1,7 @@
 import Foundation
 
 enum CredentialProviderError: Error {
-    case emptyAuthToken
+    case emptyapiKey
     case emptyAuthEnvironmentVariable
     case badToken
 }
@@ -9,7 +9,7 @@ enum CredentialProviderError: Error {
 /// Specifies the fields that are required for a Momento client to connect to and authenticate with the Momento service.
 public protocol CredentialProviderProtocol {
     /// API key provided by user, required to authenticate with the Momento service
-    var authToken: String { get }
+    var apiKey: String { get }
     
     /// The host which the Momento client will connect to for Momento control plane operations
     var controlEndpoint: String { get }
@@ -31,35 +31,35 @@ public class CredentialProvider {
     }
     
     /// Reads and parses a Momento API key stored as a string
-    public static func fromString(authToken: String) throws -> CredentialProviderProtocol {
+    public static func fromString(apiKey: String) throws -> CredentialProviderProtocol {
         do {
-            let provider = try StringMomentoTokenProvider(authToken: authToken)
+            let provider = try StringMomentoTokenProvider(apiKey: apiKey)
             return provider
         } catch {
             throw error
         }
     }
 
-    internal static func parseAuthToken(authToken: String) throws -> (cacheEndpoint: String, controlEnpoint: String, authToken: String) {
-        let isBase64 = Data(base64Encoded: authToken) != nil
+    internal static func parseapiKey(apiKey: String) throws -> (cacheEndpoint: String, controlEnpoint: String, apiKey: String) {
+        let isBase64 = Data(base64Encoded: apiKey) != nil
         if isBase64 {
-            return try CredentialProvider.parseV1Token(authToken: authToken)
+            return try CredentialProvider.parseV1Token(apiKey: apiKey)
         } else {
-            return try CredentialProvider.parseJwtToken(authToken: authToken)
+            return try CredentialProvider.parseJwtToken(apiKey: apiKey)
         }
     }
 
-    private static func parseJwtToken(authToken: String) throws -> (cacheEndpoint: String, controlEnpoint: String, authToken: String) {
+    private static func parseJwtToken(apiKey: String) throws -> (cacheEndpoint: String, controlEnpoint: String, apiKey: String) {
         do {
-            let payload = try CredentialProvider.decodeJwt(jwtToken: authToken)
-            return (payload["c"] as! String, payload["cp"] as! String, authToken)
+            let payload = try CredentialProvider.decodeJwt(jwtToken: apiKey)
+            return (payload["c"] as! String, payload["cp"] as! String, apiKey)
         } catch {
             throw error
         }
     }
 
-    private static func parseV1Token(authToken: String) throws -> (cacheEndpoint: String, controlEnpoint: String, authToken: String) {
-        guard let decoded = Data(base64Encoded: authToken) else {
+    private static func parseV1Token(apiKey: String) throws -> (cacheEndpoint: String, controlEnpoint: String, apiKey: String) {
+        guard let decoded = Data(base64Encoded: apiKey) else {
             throw CredentialProviderError.badToken
         }
         do {
@@ -111,18 +111,18 @@ public class CredentialProvider {
 }
 
 public class StringMomentoTokenProvider : CredentialProviderProtocol {
-    public let authToken: String
+    public let apiKey: String
     public let controlEndpoint: String
     public let cacheEndpoint: String
 
-    init(authToken: String = "", controlEndpoint: String? = nil, cacheEndpoint: String? = nil) throws {
-        if authToken.isEmpty {
-            throw CredentialProviderError.emptyAuthToken
+    init(apiKey: String = "", controlEndpoint: String? = nil, cacheEndpoint: String? = nil) throws {
+        if apiKey.isEmpty {
+            throw CredentialProviderError.emptyapiKey
         }
-        let (_cacheEndpoint, _controlEndpoint, _authToken) = try CredentialProvider.parseAuthToken(authToken: authToken)
+        let (_cacheEndpoint, _controlEndpoint, _apiKey) = try CredentialProvider.parseapiKey(apiKey: apiKey)
         self.controlEndpoint = controlEndpoint ?? _controlEndpoint
         self.cacheEndpoint = cacheEndpoint ?? _cacheEndpoint
-        self.authToken = _authToken
+        self.apiKey = _apiKey
     }
 }
 
@@ -131,7 +131,7 @@ public class EnvMomentoTokenProvider : StringMomentoTokenProvider {
         if envVarName.isEmpty {
             throw CredentialProviderError.emptyAuthEnvironmentVariable
         }
-        let authToken = ProcessInfo.processInfo.environment[envVarName]
-        try super.init(authToken: authToken ?? "", controlEndpoint: controlEndpoint, cacheEndpoint: cacheEndpoint)
+        let apiKey = ProcessInfo.processInfo.environment[envVarName]
+        try super.init(apiKey: apiKey ?? "", controlEndpoint: controlEndpoint, cacheEndpoint: cacheEndpoint)
     }
 }
