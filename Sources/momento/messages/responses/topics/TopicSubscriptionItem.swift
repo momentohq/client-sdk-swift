@@ -1,10 +1,5 @@
 import Foundation
 
-public enum TopicValue {
-    case string(String)
-    case bytes(Data)
-}
-
 public protocol TopicSubscriptionItemResponse {}
 
 public class TopicSubscriptionItemText: TopicSubscriptionItemResponse {
