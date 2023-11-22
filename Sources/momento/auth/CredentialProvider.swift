@@ -1,7 +1,7 @@
 import Foundation
 
 enum CredentialProviderError: Error {
-    case emptyapiKey
+    case emptyApiKey
     case emptyAuthEnvironmentVariable
     case badToken
 }
@@ -40,7 +40,7 @@ public class CredentialProvider {
         }
     }
 
-    internal static func parseapiKey(apiKey: String) throws -> (cacheEndpoint: String, controlEnpoint: String, apiKey: String) {
+    internal static func parseApiKey(apiKey: String) throws -> (cacheEndpoint: String, controlEnpoint: String, apiKey: String) {
         let isBase64 = Data(base64Encoded: apiKey) != nil
         if isBase64 {
             return try CredentialProvider.parseV1Token(apiKey: apiKey)
@@ -117,9 +117,9 @@ public class StringMomentoTokenProvider : CredentialProviderProtocol {
 
     init(apiKey: String = "", controlEndpoint: String? = nil, cacheEndpoint: String? = nil) throws {
         if apiKey.isEmpty {
-            throw CredentialProviderError.emptyapiKey
+            throw CredentialProviderError.emptyApiKey
         }
-        let (_cacheEndpoint, _controlEndpoint, _apiKey) = try CredentialProvider.parseapiKey(apiKey: apiKey)
+        let (_cacheEndpoint, _controlEndpoint, _apiKey) = try CredentialProvider.parseApiKey(apiKey: apiKey)
         self.controlEndpoint = controlEndpoint ?? _controlEndpoint
         self.cacheEndpoint = cacheEndpoint ?? _cacheEndpoint
         self.apiKey = _apiKey
