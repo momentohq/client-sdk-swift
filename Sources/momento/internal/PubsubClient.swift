@@ -66,7 +66,7 @@ protocol PubsubClientProtocol {
     func close()
 }
 
-@available(macOS 10.15, *)
+@available(macOS 10.15, iOS 13, *)
 class PubsubClient: PubsubClientProtocol {
     var logger: MomentoLoggerProtocol
     var configuration: TopicClientConfigurationProtocol
