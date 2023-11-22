@@ -4,13 +4,7 @@ public protocol TopicClientProtocol {
     func publish(
         cacheName: String,
         topicName: String,
-        value: String
-    ) async -> TopicPublishResponse
-    
-    func publish(
-        cacheName: String,
-        topicName: String,
-        value: Data
+        value: StringOrData
     ) async -> TopicPublishResponse
 
     func subscribe(
@@ -43,7 +37,7 @@ public class TopicClient: TopicClientProtocol {
      - Parameters:
         - cacheName: name of the cache containing the topic
         - topicName: name of the topic
-        - value: the value to be published as a string
+        - value: the value to be published
      - Returns: TopicPublishResponse representing the result of the publish operation.
      Pattern matching can be used to operate on the appropriate subtype.
     ```
@@ -58,61 +52,12 @@ public class TopicClient: TopicClientProtocol {
     public func publish(
         cacheName: String,
         topicName: String,
-        value: String
+        value: StringOrData
     ) async -> TopicPublishResponse {
         do {
             try validateCacheName(cacheName: cacheName)
             try validateTopicName(topicName: topicName)
-        } catch let err as SdkError {
-            return TopicPublishError(error: err)
-        } catch {
-            return TopicPublishError(error: UnknownError(
-                message: "unexpected error: \(error)")
-            )
-        }
-        
-        do {
-            let result = try await self.pubsubClient.publish(
-                cacheName: cacheName,
-                topicName: topicName,
-                value: value
-            )
-            return result
-        } catch {
-            return TopicPublishError(
-                error: UnknownError(
-                    message: "Unknown error from publish",
-                    innerException: error
-                )
-            )
-        }
-    }
-
-    /**
-    Publishes a value to a topic
-     - Parameters:
-        - cacheName: name of the cache containing the topic
-        - topicName: name of the topic
-        - value: the value to be published as a byte buffer
-     - Returns: TopicPublishResponse representing the result of the publish operation.
-     Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch publishResponse {
-     case let publishError as TopicPublishError:
-        // handle error
-     case is TopicPublishSuccess:
-        // handle success
-     }
-    ```
-     */
-    public func publish(
-        cacheName: String,
-        topicName: String,
-        value: Data
-    ) async -> TopicPublishResponse {
-        do {
-            try validateCacheName(cacheName: cacheName)
-            try validateTopicName(topicName: topicName)
+            try validateCacheValue(value: value)
         } catch let err as SdkError {
             return TopicPublishError(error: err)
         } catch {

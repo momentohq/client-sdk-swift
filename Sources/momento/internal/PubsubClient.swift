@@ -10,13 +10,7 @@ protocol PubsubClientProtocol {
     func publish(
         cacheName: String,
         topicName: String,
-        value: String
-    ) async throws -> TopicPublishResponse
-
-    func publish(
-        cacheName: String,
-        topicName: String,
-        value: Data
+        value: StringOrData
     ) async throws -> TopicPublishResponse
 
     func subscribe(
@@ -78,28 +72,19 @@ class PubsubClient: PubsubClientProtocol {
     func publish(
         cacheName: String,
         topicName: String,
-        value: String
+        value: StringOrData
     ) async -> TopicPublishResponse {
         var request = CacheClient_Pubsub__PublishRequest()
         request.cacheName = cacheName
         request.topic = topicName
-        request.value.text = value
-        return await self.doPublish(request: request)
-    }
-
-    func publish(
-        cacheName: String,
-        topicName: String,
-        value: Data
-    ) async -> TopicPublishResponse {
-        var request = CacheClient_Pubsub__PublishRequest()
-        request.cacheName = cacheName
-        request.topic = topicName
-        request.value.binary = value
-        return await doPublish(request: request)
-    }
-
-    private func doPublish(request: CacheClient_Pubsub__PublishRequest) async -> TopicPublishResponse {
+        
+        switch value {
+        case .string(let s):
+            request.value.text = s
+        case .bytes(let b):
+            request.value.binary = b
+        }
+        
         do {
             let result = try await self.client.publish(request)
             // Successful publish returns client_sdk_swift.CacheClient_Pubsub__Empty

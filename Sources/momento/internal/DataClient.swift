@@ -4,13 +4,14 @@ import NIO
 import NIOHPACK
 
 protocol DataClientProtocol {
-    func get(cacheName: String, key: String) async -> CacheGetResponse
-    func get(cacheName: String, key: Data) async -> CacheGetResponse
+    func get(cacheName: String, key: StringOrData) async -> CacheGetResponse
     
-    func set(cacheName: String, key: String, value: String, ttl: TimeInterval?) async -> CacheSetResponse
-    func set(cacheName: String, key: String, value: Data, ttl: TimeInterval?) async -> CacheSetResponse
-    func set(cacheName: String, key: Data, value: String, ttl: TimeInterval?) async -> CacheSetResponse
-    func set(cacheName: String, key: Data, value: Data, ttl: TimeInterval?) async -> CacheSetResponse
+    func set(
+        cacheName: String,
+        key: StringOrData,
+        value: StringOrData,
+        ttl: TimeInterval?
+    ) async -> CacheSetResponse
 }
 
 @available(macOS 10.15, iOS 13, *)
@@ -69,24 +70,17 @@ class DataClient: DataClientProtocol {
         return self.headers.merging(["cache": cacheName]) { (_, new) in new }
     }
     
-    func get(cacheName: String, key: String) async -> CacheGetResponse {
+    func get(cacheName: String, key: StringOrData) async -> CacheGetResponse {
         var request = CacheClient__GetRequest()
-        request.cacheKey = Data(key.utf8)
+        
+        switch key {
+        case .string(let s):
+            request.cacheKey = Data(s.utf8)
+        case .bytes(let b):
+            request.cacheKey = b
+        }
+        
         let headers = self.makeHeaders(cacheName: cacheName)
-        return await doGet(request: request, headers: headers)
-    }
-    
-    func get(cacheName: String, key: Data) async -> CacheGetResponse {
-        var request = CacheClient__GetRequest()
-        request.cacheKey = key
-        let headers = self.makeHeaders(cacheName: cacheName)
-        return await doGet(request: request, headers: headers)
-    }
-    
-    private func doGet(
-        request: CacheClient__GetRequest,
-        headers: Dictionary<String, String>
-    ) async -> CacheGetResponse {
         let call = self.client.get(
             request,
             callOptions: CallOptions(
@@ -95,6 +89,7 @@ class DataClient: DataClientProtocol {
                 )
             )
         )
+        
         do {
             let result = try await call.response.get()
             if result.result == .hit {
@@ -119,46 +114,30 @@ class DataClient: DataClientProtocol {
         }
     }
     
-    func set(cacheName: String, key: String, value: String, ttl: TimeInterval? = nil) async -> CacheSetResponse {
-        var request = CacheClient__SetRequest()
-        request.cacheKey = Data(key.utf8)
-        request.cacheBody = Data(value.utf8)
-        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
-        let headers = self.makeHeaders(cacheName: cacheName)
-        return await doSet(request: request, headers: headers)
-    }
-    
-    func set(cacheName: String, key: Data, value: String, ttl: TimeInterval? = nil) async -> CacheSetResponse {
-        var request = CacheClient__SetRequest()
-        request.cacheKey = key
-        request.cacheBody = Data(value.utf8)
-        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
-        let headers = self.makeHeaders(cacheName: cacheName)
-        return await doSet(request: request, headers: headers)
-    }
-    
-    func set(cacheName: String, key: String, value: Data, ttl: TimeInterval? = nil) async -> CacheSetResponse {
-        var request = CacheClient__SetRequest()
-        request.cacheKey = Data(key.utf8)
-        request.cacheBody = value
-        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
-        let headers = self.makeHeaders(cacheName: cacheName)
-        return await doSet(request: request, headers: headers)
-    }
-    
-    func set(cacheName: String, key: Data, value: Data, ttl: TimeInterval? = nil) async -> CacheSetResponse {
-        var request = CacheClient__SetRequest()
-        request.cacheKey = key
-        request.cacheBody = value
-        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
-        let headers = self.makeHeaders(cacheName: cacheName)
-        return await doSet(request: request, headers: headers)
-    }
-    
-    private func doSet(
-        request: CacheClient__SetRequest,
-        headers: Dictionary<String, String>
+    func set(
+        cacheName: String,
+        key: StringOrData,
+        value: StringOrData,
+        ttl: TimeInterval? = nil
     ) async -> CacheSetResponse {
+        var request = CacheClient__SetRequest()
+        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
+        
+        switch key {
+        case .string(let s):
+            request.cacheKey = Data(s.utf8)
+        case .bytes(let b):
+            request.cacheKey = b
+        }
+        
+        switch value {
+        case .string(let s):
+            request.cacheBody = Data(s.utf8)
+        case .bytes(let b):
+            request.cacheBody = b
+        }
+        
+        let headers = self.makeHeaders(cacheName: cacheName)
         let call = self.client.set(
             request,
             callOptions: CallOptions(
@@ -167,6 +146,7 @@ class DataClient: DataClientProtocol {
                 )
             )
         )
+        
         do {
             _ = try await call.response.get()
             return CacheSetSuccess()
