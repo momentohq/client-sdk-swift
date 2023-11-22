@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.2.1](https://github.com/momentohq/client-sdk-swift/compare/v0.2.0...v0.2.1) (2023-11-22)
+
+
+### Bug Fixes
+
+* available tags should include iOS 13 ([#62](https://github.com/momentohq/client-sdk-swift/issues/62)) ([75a3035](https://github.com/momentohq/client-sdk-swift/commit/75a30350f9c797e37a2faf163206d1679118ca11))
+* cast matches in case statements ([#51](https://github.com/momentohq/client-sdk-swift/issues/51)) ([2653331](https://github.com/momentohq/client-sdk-swift/commit/2653331d880e81217405095b30d3e5ce8baeeeef))
+* re-enable credential provider tests using mock tokens ([#57](https://github.com/momentohq/client-sdk-swift/issues/57)) ([4163bc3](https://github.com/momentohq/client-sdk-swift/commit/4163bc3d40935a66fcf4051e904984609ecc4b80))
+
 ## [0.2.0](https://github.com/momentohq/client-sdk-swift/compare/v0.1.0...v0.2.0) (2023-11-17)
 
 
