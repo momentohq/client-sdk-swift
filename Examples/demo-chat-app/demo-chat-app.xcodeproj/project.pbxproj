@@ -14,6 +14,7 @@
 		0809ED5E2B0E9CE000EF52B2 /* demo_chat_app.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0809ED5C2B0E9CE000EF52B2 /* demo_chat_app.xcdatamodeld */; };
 		0809ED852B0EC38300EF52B2 /* momento in Frameworks */ = {isa = PBXBuildFile; productRef = 0809ED842B0EC38300EF52B2 /* momento */; };
 		08D78C9D2B1536C700539D4B /* MessageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08D78C9C2B1536C700539D4B /* MessageStore.swift */; };
+		08D78C9F2B15471200539D4B /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 08D78C9E2B15471200539D4B /* README.md */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		0809ED582B0E9CE000EF52B2 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		0809ED5D2B0E9CE000EF52B2 /* demo_chat_app.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = demo_chat_app.xcdatamodel; sourceTree = "<group>"; };
 		08D78C9C2B1536C700539D4B /* MessageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageStore.swift; sourceTree = "<group>"; };
+		08D78C9E2B15471200539D4B /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -41,6 +43,7 @@
 		0809ED452B0E9CDF00EF52B2 = {
 			isa = PBXGroup;
 			children = (
+				08D78C9E2B15471200539D4B /* README.md */,
 				0809ED502B0E9CDF00EF52B2 /* demo-chat-app */,
 				0809ED4F2B0E9CDF00EF52B2 /* Products */,
 				0809ED832B0EC38300EF52B2 /* Frameworks */,
@@ -147,6 +150,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				08D78C9F2B15471200539D4B /* README.md in Resources */,
 				0809ED592B0E9CE000EF52B2 /* Preview Assets.xcassets in Resources */,
 				0809ED562B0E9CE000EF52B2 /* Assets.xcassets in Resources */,
 			);
