@@ -7,48 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0809ED522B0E9CDF00EF52B2 /* demo_chat_appApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0809ED512B0E9CDF00EF52B2 /* demo_chat_appApp.swift */; };
+		0809ED522B0E9CDF00EF52B2 /* MomentoDemoChatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0809ED512B0E9CDF00EF52B2 /* MomentoDemoChatApp.swift */; };
 		0809ED542B0E9CDF00EF52B2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0809ED532B0E9CDF00EF52B2 /* ContentView.swift */; };
 		0809ED562B0E9CE000EF52B2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0809ED552B0E9CE000EF52B2 /* Assets.xcassets */; };
 		0809ED592B0E9CE000EF52B2 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0809ED582B0E9CE000EF52B2 /* Preview Assets.xcassets */; };
-		0809ED5B2B0E9CE000EF52B2 /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0809ED5A2B0E9CE000EF52B2 /* Persistence.swift */; };
 		0809ED5E2B0E9CE000EF52B2 /* demo_chat_app.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0809ED5C2B0E9CE000EF52B2 /* demo_chat_app.xcdatamodeld */; };
-		0809ED682B0E9CE000EF52B2 /* demo_chat_appTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0809ED672B0E9CE000EF52B2 /* demo_chat_appTests.swift */; };
-		0809ED722B0E9CE000EF52B2 /* demo_chat_appUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0809ED712B0E9CE000EF52B2 /* demo_chat_appUITests.swift */; };
-		0809ED742B0E9CE000EF52B2 /* demo_chat_appUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0809ED732B0E9CE000EF52B2 /* demo_chat_appUITestsLaunchTests.swift */; };
 		0809ED852B0EC38300EF52B2 /* momento in Frameworks */ = {isa = PBXBuildFile; productRef = 0809ED842B0EC38300EF52B2 /* momento */; };
+		08D78C9D2B1536C700539D4B /* MessageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08D78C9C2B1536C700539D4B /* MessageStore.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		0809ED642B0E9CE000EF52B2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0809ED462B0E9CDF00EF52B2 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0809ED4D2B0E9CDF00EF52B2;
-			remoteInfo = "demo-chat-app";
-		};
-		0809ED6E2B0E9CE000EF52B2 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0809ED462B0E9CDF00EF52B2 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 0809ED4D2B0E9CDF00EF52B2;
-			remoteInfo = "demo-chat-app";
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		0809ED4E2B0E9CDF00EF52B2 /* demo-chat-app.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "demo-chat-app.app"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0809ED512B0E9CDF00EF52B2 /* demo_chat_appApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = demo_chat_appApp.swift; sourceTree = "<group>"; };
+		0809ED512B0E9CDF00EF52B2 /* MomentoDemoChatApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentoDemoChatApp.swift; sourceTree = "<group>"; };
 		0809ED532B0E9CDF00EF52B2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		0809ED552B0E9CE000EF52B2 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0809ED582B0E9CE000EF52B2 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		0809ED5A2B0E9CE000EF52B2 /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		0809ED5D2B0E9CE000EF52B2 /* demo_chat_app.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = demo_chat_app.xcdatamodel; sourceTree = "<group>"; };
-		0809ED632B0E9CE000EF52B2 /* demo-chat-appTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "demo-chat-appTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0809ED672B0E9CE000EF52B2 /* demo_chat_appTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = demo_chat_appTests.swift; sourceTree = "<group>"; };
-		0809ED6D2B0E9CE000EF52B2 /* demo-chat-appUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "demo-chat-appUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		0809ED712B0E9CE000EF52B2 /* demo_chat_appUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = demo_chat_appUITests.swift; sourceTree = "<group>"; };
-		0809ED732B0E9CE000EF52B2 /* demo_chat_appUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = demo_chat_appUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		08D78C9C2B1536C700539D4B /* MessageStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageStore.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,20 +35,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0809ED602B0E9CE000EF52B2 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0809ED6A2B0E9CE000EF52B2 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -81,8 +42,6 @@
 			isa = PBXGroup;
 			children = (
 				0809ED502B0E9CDF00EF52B2 /* demo-chat-app */,
-				0809ED662B0E9CE000EF52B2 /* demo-chat-appTests */,
-				0809ED702B0E9CE000EF52B2 /* demo-chat-appUITests */,
 				0809ED4F2B0E9CDF00EF52B2 /* Products */,
 				0809ED832B0EC38300EF52B2 /* Frameworks */,
 			);
@@ -92,8 +51,6 @@
 			isa = PBXGroup;
 			children = (
 				0809ED4E2B0E9CDF00EF52B2 /* demo-chat-app.app */,
-				0809ED632B0E9CE000EF52B2 /* demo-chat-appTests.xctest */,
-				0809ED6D2B0E9CE000EF52B2 /* demo-chat-appUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -101,12 +58,12 @@
 		0809ED502B0E9CDF00EF52B2 /* demo-chat-app */ = {
 			isa = PBXGroup;
 			children = (
-				0809ED512B0E9CDF00EF52B2 /* demo_chat_appApp.swift */,
+				0809ED512B0E9CDF00EF52B2 /* MomentoDemoChatApp.swift */,
 				0809ED532B0E9CDF00EF52B2 /* ContentView.swift */,
 				0809ED552B0E9CE000EF52B2 /* Assets.xcassets */,
-				0809ED5A2B0E9CE000EF52B2 /* Persistence.swift */,
 				0809ED5C2B0E9CE000EF52B2 /* demo_chat_app.xcdatamodeld */,
 				0809ED572B0E9CE000EF52B2 /* Preview Content */,
+				08D78C9C2B1536C700539D4B /* MessageStore.swift */,
 			);
 			path = "demo-chat-app";
 			sourceTree = "<group>";
@@ -117,23 +74,6 @@
 				0809ED582B0E9CE000EF52B2 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		0809ED662B0E9CE000EF52B2 /* demo-chat-appTests */ = {
-			isa = PBXGroup;
-			children = (
-				0809ED672B0E9CE000EF52B2 /* demo_chat_appTests.swift */,
-			);
-			path = "demo-chat-appTests";
-			sourceTree = "<group>";
-		};
-		0809ED702B0E9CE000EF52B2 /* demo-chat-appUITests */ = {
-			isa = PBXGroup;
-			children = (
-				0809ED712B0E9CE000EF52B2 /* demo_chat_appUITests.swift */,
-				0809ED732B0E9CE000EF52B2 /* demo_chat_appUITestsLaunchTests.swift */,
-			);
-			path = "demo-chat-appUITests";
 			sourceTree = "<group>";
 		};
 		0809ED832B0EC38300EF52B2 /* Frameworks */ = {
@@ -166,42 +106,6 @@
 			productReference = 0809ED4E2B0E9CDF00EF52B2 /* demo-chat-app.app */;
 			productType = "com.apple.product-type.application";
 		};
-		0809ED622B0E9CE000EF52B2 /* demo-chat-appTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0809ED7A2B0E9CE000EF52B2 /* Build configuration list for PBXNativeTarget "demo-chat-appTests" */;
-			buildPhases = (
-				0809ED5F2B0E9CE000EF52B2 /* Sources */,
-				0809ED602B0E9CE000EF52B2 /* Frameworks */,
-				0809ED612B0E9CE000EF52B2 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				0809ED652B0E9CE000EF52B2 /* PBXTargetDependency */,
-			);
-			name = "demo-chat-appTests";
-			productName = "demo-chat-appTests";
-			productReference = 0809ED632B0E9CE000EF52B2 /* demo-chat-appTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		0809ED6C2B0E9CE000EF52B2 /* demo-chat-appUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 0809ED7D2B0E9CE000EF52B2 /* Build configuration list for PBXNativeTarget "demo-chat-appUITests" */;
-			buildPhases = (
-				0809ED692B0E9CE000EF52B2 /* Sources */,
-				0809ED6A2B0E9CE000EF52B2 /* Frameworks */,
-				0809ED6B2B0E9CE000EF52B2 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				0809ED6F2B0E9CE000EF52B2 /* PBXTargetDependency */,
-			);
-			name = "demo-chat-appUITests";
-			productName = "demo-chat-appUITests";
-			productReference = 0809ED6D2B0E9CE000EF52B2 /* demo-chat-appUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -214,14 +118,6 @@
 				TargetAttributes = {
 					0809ED4D2B0E9CDF00EF52B2 = {
 						CreatedOnToolsVersion = 15.0.1;
-					};
-					0809ED622B0E9CE000EF52B2 = {
-						CreatedOnToolsVersion = 15.0.1;
-						TestTargetID = 0809ED4D2B0E9CDF00EF52B2;
-					};
-					0809ED6C2B0E9CE000EF52B2 = {
-						CreatedOnToolsVersion = 15.0.1;
-						TestTargetID = 0809ED4D2B0E9CDF00EF52B2;
 					};
 				};
 			};
@@ -242,8 +138,6 @@
 			projectRoot = "";
 			targets = (
 				0809ED4D2B0E9CDF00EF52B2 /* demo-chat-app */,
-				0809ED622B0E9CE000EF52B2 /* demo-chat-appTests */,
-				0809ED6C2B0E9CE000EF52B2 /* demo-chat-appUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -258,20 +152,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		0809ED612B0E9CE000EF52B2 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0809ED6B2B0E9CE000EF52B2 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -279,44 +159,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0809ED5B2B0E9CE000EF52B2 /* Persistence.swift in Sources */,
+				08D78C9D2B1536C700539D4B /* MessageStore.swift in Sources */,
 				0809ED542B0E9CDF00EF52B2 /* ContentView.swift in Sources */,
 				0809ED5E2B0E9CE000EF52B2 /* demo_chat_app.xcdatamodeld in Sources */,
-				0809ED522B0E9CDF00EF52B2 /* demo_chat_appApp.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0809ED5F2B0E9CE000EF52B2 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0809ED682B0E9CE000EF52B2 /* demo_chat_appTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0809ED692B0E9CE000EF52B2 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				0809ED722B0E9CE000EF52B2 /* demo_chat_appUITests.swift in Sources */,
-				0809ED742B0E9CE000EF52B2 /* demo_chat_appUITestsLaunchTests.swift in Sources */,
+				0809ED522B0E9CDF00EF52B2 /* MomentoDemoChatApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		0809ED652B0E9CE000EF52B2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0809ED4D2B0E9CDF00EF52B2 /* demo-chat-app */;
-			targetProxy = 0809ED642B0E9CE000EF52B2 /* PBXContainerItemProxy */;
-		};
-		0809ED6F2B0E9CE000EF52B2 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 0809ED4D2B0E9CDF00EF52B2 /* demo-chat-app */;
-			targetProxy = 0809ED6E2B0E9CE000EF52B2 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		0809ED752B0E9CE000EF52B2 /* Debug */ = {
@@ -496,78 +346,6 @@
 			};
 			name = Release;
 		};
-		0809ED7B2B0E9CE000EF52B2 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "momento.demo-chat-appTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/demo-chat-app.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/demo-chat-app";
-			};
-			name = Debug;
-		};
-		0809ED7C2B0E9CE000EF52B2 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "momento.demo-chat-appTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/demo-chat-app.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/demo-chat-app";
-			};
-			name = Release;
-		};
-		0809ED7E2B0E9CE000EF52B2 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "momento.demo-chat-appUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "demo-chat-app";
-			};
-			name = Debug;
-		};
-		0809ED7F2B0E9CE000EF52B2 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "momento.demo-chat-appUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = "demo-chat-app";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -585,24 +363,6 @@
 			buildConfigurations = (
 				0809ED782B0E9CE000EF52B2 /* Debug */,
 				0809ED792B0E9CE000EF52B2 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		0809ED7A2B0E9CE000EF52B2 /* Build configuration list for PBXNativeTarget "demo-chat-appTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0809ED7B2B0E9CE000EF52B2 /* Debug */,
-				0809ED7C2B0E9CE000EF52B2 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		0809ED7D2B0E9CE000EF52B2 /* Build configuration list for PBXNativeTarget "demo-chat-appUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				0809ED7E2B0E9CE000EF52B2 /* Debug */,
-				0809ED7F2B0E9CE000EF52B2 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

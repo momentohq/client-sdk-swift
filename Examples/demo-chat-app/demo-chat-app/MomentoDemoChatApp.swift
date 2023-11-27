@@ -2,8 +2,11 @@ import SwiftUI
 import momento
 
 class Momento: ObservableObject {
-    public var topicClient: TopicClientProtocol
     private let momentoApiKey: String = ""
+    
+    public var topicClient: TopicClientProtocol
+    public let cacheName: String = "cache"
+    public let topicName: String = "demo"
     
     init() {
         if momentoApiKey.isEmpty {
@@ -12,7 +15,7 @@ class Momento: ObservableObject {
         do {
             let credProvider = try CredentialProvider.fromString(authToken: self.momentoApiKey)
             self.topicClient = TopicClient(
-                configuration: TopicConfigurations.Default.latest(),
+                configuration: TopicConfigurations.Default.latest().withClientTimeout(timeout: 600),
                 credentialProvider: credProvider
             )
         } catch {
@@ -22,15 +25,12 @@ class Momento: ObservableObject {
 }
 
 @main
-struct demo_chat_appApp: App {
-    let persistenceController = PersistenceController.shared
-    
-    @EnvironmentObject private var momento: Momento
+struct MomentoDemoChatApp: App {
+    private var momento: Momento = Momento()
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .environment(\.managedObjectContext, persistenceController.container.viewContext)
+            ContentView(momentoClient: momento)
         }
     }
 }
