@@ -26,21 +26,21 @@ internal func validateTopicName(topicName: String) throws {
     try validateString(str: topicName, errorMessage: "Invalid topic name")
 }
 
-internal func validateCacheKey(key: StringOrData) throws {
+internal func validateCacheKey(key: ScalarType) throws {
     switch key {
     case .string(let s):
         try validateString(str: s, errorMessage: "Invalid cache key")
-    case .bytes(let b):
-        try validateData(data: b, errorMessage: "Invalid cache key")
+    case .data(let d):
+        try validateData(data: d, errorMessage: "Invalid cache key")
     }
 }
 
-internal func validateCacheValue(value: StringOrData) throws {
+internal func validateCacheValue(value: ScalarType) throws {
     switch value {
     case .string(let s):
         try validateString(str: s, errorMessage: "Invalid cache value")
-    case .bytes(let b):
-        try validateData(data: b, errorMessage: "Invalid cache value")
+    case .data(let d):
+        try validateData(data: d, errorMessage: "Invalid cache value")
     }
 }
 

@@ -1,8 +1,8 @@
 import Foundation
 
-public enum StringOrData {
+public enum ScalarType {
     case string(String)
-    case bytes(Data)
+    case data(Data)
 }
 
 typealias CacheClientProtocol = ControlClientProtocol & DataClientProtocol
@@ -125,7 +125,7 @@ public class CacheClient: CacheClientProtocol {
      }
     ```
      */
-    public func get(cacheName: String, key: StringOrData) async -> CacheGetResponse {
+    public func get(cacheName: String, key: ScalarType) async -> CacheGetResponse {
         do {
             try validateCacheName(cacheName: cacheName)
             try validateCacheKey(key: key)
@@ -158,8 +158,8 @@ public class CacheClient: CacheClientProtocol {
      */
     public func set(
         cacheName: String,
-        key: StringOrData,
-        value: StringOrData,
+        key: ScalarType,
+        value: ScalarType,
         ttl: TimeInterval? = nil
     ) async -> CacheSetResponse {
         do {

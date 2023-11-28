@@ -4,12 +4,12 @@ import NIO
 import NIOHPACK
 
 protocol DataClientProtocol {
-    func get(cacheName: String, key: StringOrData) async -> CacheGetResponse
+    func get(cacheName: String, key: ScalarType) async -> CacheGetResponse
     
     func set(
         cacheName: String,
-        key: StringOrData,
-        value: StringOrData,
+        key: ScalarType,
+        value: ScalarType,
         ttl: TimeInterval?
     ) async -> CacheSetResponse
 }
@@ -70,13 +70,13 @@ class DataClient: DataClientProtocol {
         return self.headers.merging(["cache": cacheName]) { (_, new) in new }
     }
     
-    func get(cacheName: String, key: StringOrData) async -> CacheGetResponse {
+    func get(cacheName: String, key: ScalarType) async -> CacheGetResponse {
         var request = CacheClient__GetRequest()
         
         switch key {
         case .string(let s):
             request.cacheKey = Data(s.utf8)
-        case .bytes(let b):
+        case .data(let b):
             request.cacheKey = b
         }
         
@@ -116,8 +116,8 @@ class DataClient: DataClientProtocol {
     
     func set(
         cacheName: String,
-        key: StringOrData,
-        value: StringOrData,
+        key: ScalarType,
+        value: ScalarType,
         ttl: TimeInterval? = nil
     ) async -> CacheSetResponse {
         var request = CacheClient__SetRequest()
@@ -126,14 +126,14 @@ class DataClient: DataClientProtocol {
         switch key {
         case .string(let s):
             request.cacheKey = Data(s.utf8)
-        case .bytes(let b):
+        case .data(let b):
             request.cacheKey = b
         }
         
         switch value {
         case .string(let s):
             request.cacheBody = Data(s.utf8)
-        case .bytes(let b):
+        case .data(let b):
             request.cacheBody = b
         }
         

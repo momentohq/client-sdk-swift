@@ -48,7 +48,7 @@ final class configTests: XCTestCase {
         let pubResp = await topicClient.publish(
             cacheName: self.integrationTestCacheName,
             topicName: generateStringWithUuid(prefix: "test-topic"),
-            value: StringOrData.string("test-message")
+            value: ScalarType.string("test-message")
         )
         XCTAssertTrue(pubResp is TopicPublishError)
         XCTAssertEqual(MomentoErrorCode.TIMEOUT_ERROR, (pubResp as! TopicPublishError).errorCode)

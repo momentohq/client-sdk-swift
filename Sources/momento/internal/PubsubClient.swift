@@ -10,7 +10,7 @@ protocol PubsubClientProtocol {
     func publish(
         cacheName: String,
         topicName: String,
-        value: StringOrData
+        value: ScalarType
     ) async throws -> TopicPublishResponse
 
     func subscribe(
@@ -72,7 +72,7 @@ class PubsubClient: PubsubClientProtocol {
     func publish(
         cacheName: String,
         topicName: String,
-        value: StringOrData
+        value: ScalarType
     ) async -> TopicPublishResponse {
         var request = CacheClient_Pubsub__PublishRequest()
         request.cacheName = cacheName
@@ -81,7 +81,7 @@ class PubsubClient: PubsubClientProtocol {
         switch value {
         case .string(let s):
             request.value.text = s
-        case .bytes(let b):
+        case .data(let b):
             request.value.binary = b
         }
         

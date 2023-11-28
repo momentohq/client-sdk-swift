@@ -122,7 +122,7 @@ final class cacheTests: XCTestCase {
     func testScalarGet() async throws {
         let invalidCacheName = await self.cacheClient.get(
             cacheName: "   ",
-            key: StringOrData.string(generateStringWithUuid(prefix: "hello"))
+            key: ScalarType.string(generateStringWithUuid(prefix: "hello"))
         )
         XCTAssertTrue(
             invalidCacheName is CacheGetError,
@@ -136,7 +136,7 @@ final class cacheTests: XCTestCase {
         
         let invalidKey = await self.cacheClient.get(
             cacheName: self.integrationTestCacheName,
-            key: StringOrData.string("   ")
+            key: ScalarType.string("   ")
         )
         XCTAssertTrue(
             invalidKey is CacheGetError,
@@ -152,13 +152,13 @@ final class cacheTests: XCTestCase {
         
         let stringKey = await self.cacheClient.get(
             cacheName: self.integrationTestCacheName,
-            key: StringOrData.string(testKey)
+            key: ScalarType.string(testKey)
         )
         XCTAssertTrue(stringKey is CacheGetMiss, "Unexpected response: \(stringKey)")
         
         let bytesKey = await self.cacheClient.get(
             cacheName: self.integrationTestCacheName,
-            key: StringOrData.bytes(Data(testKey.utf8))
+            key: ScalarType.data(Data(testKey.utf8))
         )
         XCTAssertTrue(bytesKey is CacheGetMiss, "Unexpected response: \(bytesKey)")
     }
@@ -166,8 +166,8 @@ final class cacheTests: XCTestCase {
     func testScalarSet() async throws {
         let invalidCacheName = await self.cacheClient.set(
             cacheName: "   ", 
-            key: StringOrData.string("hello"),
-            value: StringOrData.string("world"),
+            key: ScalarType.string("hello"),
+            value: ScalarType.string("world"),
             ttl: nil
         )
         XCTAssertTrue(
@@ -182,8 +182,8 @@ final class cacheTests: XCTestCase {
         
         let invalidKey = await self.cacheClient.set(
             cacheName: self.integrationTestCacheName,
-            key: StringOrData.string("   "),
-            value: StringOrData.string("world"),
+            key: ScalarType.string("   "),
+            value: ScalarType.string("world"),
             ttl: nil
         )
         XCTAssertTrue(
@@ -198,8 +198,8 @@ final class cacheTests: XCTestCase {
         
         let invalidValue = await self.cacheClient.set(
             cacheName: self.integrationTestCacheName,
-            key: StringOrData.string("hello"),
-            value: StringOrData.string("    "),
+            key: ScalarType.string("hello"),
+            value: ScalarType.string("    "),
             ttl: nil
         )
         XCTAssertTrue(
@@ -214,8 +214,8 @@ final class cacheTests: XCTestCase {
         
         let invalidTtl = await self.cacheClient.set(
             cacheName: self.integrationTestCacheName,
-            key: StringOrData.string("hello"),
-            value: StringOrData.string("world"),
+            key: ScalarType.string("hello"),
+            value: ScalarType.string("world"),
             ttl: -5
         )
         XCTAssertTrue(
@@ -232,8 +232,8 @@ final class cacheTests: XCTestCase {
         let testValue1 = "world"
         let stringKeyStringValue = await self.cacheClient.set(
             cacheName: self.integrationTestCacheName,
-            key: StringOrData.string(testKey1),
-            value: StringOrData.string(testValue1),
+            key: ScalarType.string(testKey1),
+            value: ScalarType.string(testValue1),
             ttl: nil
         )
         XCTAssertTrue(
@@ -241,7 +241,7 @@ final class cacheTests: XCTestCase {
             "Unexpected response: \(stringKeyStringValue)"
         )
         let getStringKeyStringValue = await self.cacheClient.get(
-            cacheName: self.integrationTestCacheName, key: StringOrData.string(testKey1)
+            cacheName: self.integrationTestCacheName, key: ScalarType.string(testKey1)
         )
         XCTAssertTrue(
             getStringKeyStringValue is CacheGetHit,
@@ -254,8 +254,8 @@ final class cacheTests: XCTestCase {
         let testValue2 = Data("bar".utf8)
         let stringKeyBytesValue = await self.cacheClient.set(
             cacheName: self.integrationTestCacheName,
-            key: StringOrData.string(testKey2),
-            value: StringOrData.bytes(testValue2),
+            key: ScalarType.string(testKey2),
+            value: ScalarType.data(testValue2),
             ttl: nil
         )
         XCTAssertTrue(
@@ -263,21 +263,21 @@ final class cacheTests: XCTestCase {
             "Unexpected response: \(stringKeyBytesValue)"
         )
         let getStringKeyBytesValue = await self.cacheClient.get(
-            cacheName: self.integrationTestCacheName, key: StringOrData.string(testKey2)
+            cacheName: self.integrationTestCacheName, key: ScalarType.string(testKey2)
         )
         XCTAssertTrue(
             getStringKeyBytesValue is CacheGetHit,
             "Unexpected response: \(getStringKeyBytesValue)"
         )
-        let value2 = (getStringKeyBytesValue as! CacheGetHit).valueBytes
+        let value2 = (getStringKeyBytesValue as! CacheGetHit).valueData
         XCTAssertTrue(value2 == testValue2)
         
         let testKey3 = Data(generateStringWithUuid(prefix: "abc").utf8)
         let testValue3 = "123"
         let bytesKeyStringValue = await self.cacheClient.set(
             cacheName: self.integrationTestCacheName,
-            key: StringOrData.bytes(testKey3),
-            value: StringOrData.string(testValue3),
+            key: ScalarType.data(testKey3),
+            value: ScalarType.string(testValue3),
             ttl: nil
         )
         XCTAssertTrue(
@@ -285,7 +285,7 @@ final class cacheTests: XCTestCase {
             "Unexpected response: \(bytesKeyStringValue)"
         )
         let getBytesKeyStringValue = await self.cacheClient.get(
-            cacheName: self.integrationTestCacheName, key: StringOrData.bytes(testKey3)
+            cacheName: self.integrationTestCacheName, key: ScalarType.data(testKey3)
         )
         XCTAssertTrue(
             getBytesKeyStringValue is CacheGetHit,
@@ -298,8 +298,8 @@ final class cacheTests: XCTestCase {
         let testValue4 = Data("xyz".utf8)
         let bytesKeyBytesValue = await self.cacheClient.set(
             cacheName: self.integrationTestCacheName,
-            key: StringOrData.bytes(testKey4),
-            value: StringOrData.bytes(testValue4),
+            key: ScalarType.data(testKey4),
+            value: ScalarType.data(testValue4),
             ttl: nil
         )
         XCTAssertTrue(
@@ -307,21 +307,21 @@ final class cacheTests: XCTestCase {
             "Unexpected response: \(bytesKeyBytesValue)"
         )
         let getBytesKeyBytesValue = await self.cacheClient.get(
-            cacheName: self.integrationTestCacheName, key: StringOrData.bytes(testKey4)
+            cacheName: self.integrationTestCacheName, key: ScalarType.data(testKey4)
         )
         XCTAssertTrue(
             getBytesKeyBytesValue is CacheGetHit,
             "Unexpected response: \(getBytesKeyBytesValue)"
         )
-        let value4 = (getBytesKeyBytesValue as! CacheGetHit).valueBytes
+        let value4 = (getBytesKeyBytesValue as! CacheGetHit).valueData
         XCTAssertTrue(value4 == testValue4)
         
         let testKey5 = generateStringWithUuid(prefix: "apple")
         let testValue5 = "pie"
         let shortTtl = await self.cacheClient.set(
             cacheName: self.integrationTestCacheName,
-            key: StringOrData.string(testKey5),
-            value: StringOrData.string(testValue5),
+            key: ScalarType.string(testKey5),
+            value: ScalarType.string(testValue5),
             ttl: 1 // ttl = 1 second
         )
         XCTAssertTrue(
@@ -333,7 +333,7 @@ final class cacheTests: XCTestCase {
         try await Task.sleep(nanoseconds: 5_000_000_000)
         
         let getShortTtl = await self.cacheClient.get(
-            cacheName: self.integrationTestCacheName, key: StringOrData.string(testKey5)
+            cacheName: self.integrationTestCacheName, key: ScalarType.string(testKey5)
         )
         XCTAssertTrue(
             getShortTtl is CacheGetMiss,

@@ -26,7 +26,7 @@ final class topicsTests: XCTestCase {
         let invalidCacheNameResp = await self.topicClient.publish(
             cacheName: "",
             topicName: topicName,
-            value: StringOrData.string("test-message")
+            value: ScalarType.string("test-message")
         )
         XCTAssertTrue(
             invalidCacheNameResp is TopicPublishError,
@@ -41,7 +41,7 @@ final class topicsTests: XCTestCase {
         let invalidTopicNameResp = await self.topicClient.publish(
             cacheName: self.integrationTestCacheName,
             topicName: "",
-            value: StringOrData.string("test-message")
+            value: ScalarType.string("test-message")
         )
         XCTAssertTrue(
             invalidTopicNameResp is TopicPublishError,
@@ -56,7 +56,7 @@ final class topicsTests: XCTestCase {
         let pubResp = await self.topicClient.publish(
             cacheName: self.integrationTestCacheName,
             topicName: topicName,
-            value: StringOrData.string("test-message")
+            value: ScalarType.string("test-message")
         )
         XCTAssertTrue(
             pubResp is TopicPublishSuccess,
@@ -121,7 +121,7 @@ final class topicsTests: XCTestCase {
         let pubResp = await self.topicClient.publish(
             cacheName: self.integrationTestCacheName,
             topicName: topicName,
-            value: StringOrData.string("publishing and subscribing!")
+            value: ScalarType.string("publishing and subscribing!")
         )
         XCTAssertTrue(
             pubResp is TopicPublishSuccess,
@@ -158,7 +158,7 @@ final class topicsTests: XCTestCase {
         let pubResp = await self.topicClient.publish(
             cacheName: self.integrationTestCacheName,
             topicName: topicName,
-            value: StringOrData.bytes(binaryValue)
+            value: ScalarType.data(binaryValue)
         )
         XCTAssertTrue(
             pubResp is TopicPublishSuccess,

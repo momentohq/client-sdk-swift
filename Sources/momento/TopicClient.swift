@@ -4,7 +4,7 @@ public protocol TopicClientProtocol {
     func publish(
         cacheName: String,
         topicName: String,
-        value: StringOrData
+        value: ScalarType
     ) async -> TopicPublishResponse
 
     func subscribe(
@@ -52,7 +52,7 @@ public class TopicClient: TopicClientProtocol {
     public func publish(
         cacheName: String,
         topicName: String,
-        value: StringOrData
+        value: ScalarType
     ) async -> TopicPublishResponse {
         do {
             try validateCacheName(cacheName: cacheName)

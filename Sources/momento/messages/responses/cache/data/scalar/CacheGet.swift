@@ -4,10 +4,10 @@ public protocol CacheGetResponse {}
 
 public class CacheGetHit: CacheGetResponse {
     public let valueString: String
-    public let valueBytes: Data
+    public let valueData: Data
     
     init(value: Data) {
-        self.valueBytes = value
+        self.valueData = value
         self.valueString = String(decoding: value, as: UTF8.self)
     }
 }
