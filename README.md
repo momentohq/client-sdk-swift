@@ -20,11 +20,15 @@ To get started with Momento you will need a Momento API key. You can get one fro
 The Momento Swift SDK is available here on github: [momentohq/client-sdk-swift](https://github.com/momentohq/client-sdk-swift). Add the following to the `dependencies` section of your `Package.swift` file to include the SDK in your project:
 
 ```bash
-.package(
-    name: "momento", 
-    url: "https://github.com/momentohq/client-sdk-swift", 
-    "0.2.1"..."0.2.1"
-)
+.package(url: "https://github.com/momentohq/client-sdk-swift", exact: "0.2.1")
+```
+
+Your target dependencies will refer to the Momento SDK like so:
+
+```bash
+dependencies: [
+    .product(name: "momento", package: "client-sdk-swift"),
+],
 ```
 
 ## Usage
