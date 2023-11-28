@@ -15,6 +15,7 @@ struct ContentView: View {
         VStack {
             Text("Publish New Messages")
                 .font(.headline)
+                .foregroundStyle(Color(red: 196/225, green: 241/225, blue: 53/225))
             TextField("Enter your message:", text: $message)
                 .border(.secondary)
                 .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -30,17 +31,20 @@ struct ContentView: View {
             
             Text("Received Messages")
                 .font(.headline)
+                .foregroundStyle(Color(red: 196/225, green: 241/225, blue: 53/225))
             List {
                 ForEach(store.messages) { msg in
                     Text(msg.text)
                 }
             }
             .listStyle(InsetGroupedListStyle())
+            .background(Color(red: 37/225, green: 57/225, blue: 43/225))
         }
         .padding()
         .task {
             await store.receiveMessages()
         }
+        .background(Color(red: 37/225, green: 57/225, blue: 43/225))
     }
     
     private func publish() async {

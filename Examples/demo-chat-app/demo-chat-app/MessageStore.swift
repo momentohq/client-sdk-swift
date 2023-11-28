@@ -9,7 +9,7 @@ struct ReceivedMessage: Identifiable {
 
 public class MessageStore: ObservableObject {
     @State private var momentoClient: Momento
-    @Published var messages: [ReceivedMessage] = []
+    @Published var messages: [ReceivedMessage] = [ReceivedMessage(text: "Welcome to Momento Topics!")]
     private var subscription: TopicSubscribeSuccess? = nil
     
     init(momentoClient: Momento) {
