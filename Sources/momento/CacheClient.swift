@@ -145,6 +145,7 @@ public class CacheClient: CacheClientProtocol {
         - cacheName: the name of the cache to store the value in
         - key: the key to set the value for
         - value: the value to associate with the key
+        - ttl: the time to live for the item in the cache. Uses the client's default TTL if this is not supplied.
      - Returns: CacheSetResponse representing the result of the set operation.
      Pattern matching can be used to operate on the appropriate subtype.
     ```
@@ -175,5 +176,239 @@ public class CacheClient: CacheClientProtocol {
             )
         }
         return await self.dataClient.set(cacheName: cacheName, key: key, value: value, ttl: ttl)
+    }
+    
+    public func listConcatenateBack(
+        cacheName: String,
+        listName: String,
+        values: [ScalarType],
+        truncateFrontToSize: Int? = nil,
+        ttl: TimeInterval? = nil
+    ) async -> CacheListConcatenateBackResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+            try validateTtl(ttl: ttl)
+        } catch let err as SdkError {
+            return CacheListConcatenateBackError(error: err)
+        } catch {
+            return CacheListConcatenateBackError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listConcatenateBack(
+            cacheName: cacheName,
+            listName: listName,
+            values: values,
+            truncateFrontToSize: truncateFrontToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listConcatenateFront(
+        cacheName: String,
+        listName: String,
+        values: [ScalarType],
+        truncateBackToSize: Int? = nil,
+        ttl: TimeInterval? = nil
+    ) async -> CacheListConcatenateFrontResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+            try validateTtl(ttl: ttl)
+        } catch let err as SdkError {
+            return CacheListConcatenateFrontError(error: err)
+        } catch {
+            return CacheListConcatenateFrontError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listConcatenateFront(
+            cacheName: cacheName,
+            listName: listName,
+            values: values,
+            truncateBackToSize: truncateBackToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listFetch(
+        cacheName: String,
+        listName: String,
+        startIndex: Int?,
+        endIndex: Int?
+    ) async -> CacheListFetchResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+            try validateListSliceStartEnd(startIndex: startIndex, endIndex: endIndex)
+        } catch let err as SdkError {
+            return CacheListFetchError(error: err)
+        } catch {
+            return CacheListFetchError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listFetch(
+            cacheName: cacheName,
+            listName: listName,
+            startIndex: startIndex,
+            endIndex: endIndex
+        )
+    }
+    
+    public func listLength(
+        cacheName: String,
+        listName: String
+    ) async -> CacheListLengthResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+        } catch let err as SdkError {
+            return CacheListLengthError(error: err)
+        } catch {
+            return CacheListLengthError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listLength(cacheName: cacheName, listName: listName)
+    }
+    
+    public func listPopBack(
+        cacheName: String,
+        listName: String
+    ) async -> CacheListPopBackResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+        } catch let err as SdkError {
+            return CacheListPopBackError(error: err)
+        } catch {
+            return CacheListPopBackError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listPopBack(cacheName: cacheName, listName: listName)
+    }
+    
+    public func listPopFront(
+        cacheName: String,
+        listName: String
+    ) async -> CacheListPopFrontResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+        } catch let err as SdkError {
+            return CacheListPopFrontError(error: err)
+        } catch {
+            return CacheListPopFrontError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listPopFront(cacheName: cacheName, listName: listName)
+    }
+    
+    public func listPushBack(
+        cacheName: String,
+        listName: String,
+        value: ScalarType,
+        truncateFrontToSize: Int?,
+        ttl: TimeInterval?
+    ) async -> CacheListPushBackResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+            try validateTtl(ttl: ttl)
+        } catch let err as SdkError {
+            return CacheListPushBackError(error: err)
+        } catch {
+            return CacheListPushBackError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listPushBack(
+            cacheName: cacheName,
+            listName: listName,
+            value: value,
+            truncateFrontToSize: truncateFrontToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listPushFront(
+        cacheName: String,
+        listName: String,
+        value: ScalarType,
+        truncateBackToSize: Int?,
+        ttl: TimeInterval?
+    ) async -> CacheListPushFrontResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+            try validateTtl(ttl: ttl)
+        } catch let err as SdkError {
+            return CacheListPushFrontError(error: err)
+        } catch {
+            return CacheListPushFrontError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listPushFront(
+            cacheName: cacheName,
+            listName: listName,
+            value: value,
+            truncateBackToSize: truncateBackToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listRemoveValue(
+        cacheName: String,
+        listName: String,
+        value: ScalarType
+    ) async -> CacheListRemoveValueResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+        } catch let err as SdkError {
+            return CacheListRemoveValueError(error: err)
+        } catch {
+            return CacheListRemoveValueError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listRemoveValue(
+            cacheName: cacheName,
+            listName: listName,
+            value: value
+        )
+    }
+    
+    public func listRetain(
+        cacheName: String,
+        listName: String,
+        startIndex: Int?,
+        endIndex: Int?,
+        ttl: TimeInterval?
+    ) async -> CacheListRetainResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+            try validateListSliceStartEnd(startIndex: startIndex, endIndex: endIndex)
+            try validateTtl(ttl: ttl)
+        } catch let err as SdkError {
+            return CacheListRetainError(error: err)
+        } catch {
+            return CacheListRetainError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listRetain(
+            cacheName: cacheName,
+            listName: listName,
+            startIndex: startIndex,
+            endIndex: endIndex,
+            ttl: ttl
+        )
     }
 }

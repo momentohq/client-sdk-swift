@@ -12,6 +12,74 @@ protocol DataClientProtocol {
         value: ScalarType,
         ttl: TimeInterval?
     ) async -> CacheSetResponse
+    
+    func listConcatenateBack(
+        cacheName: String,
+        listName: String,
+        values: [ScalarType],
+        truncateFrontToSize: Int?,
+        ttl: TimeInterval?
+    ) async -> CacheListConcatenateBackResponse
+    
+    func listConcatenateFront(
+        cacheName: String,
+        listName: String,
+        values: [ScalarType],
+        truncateBackToSize: Int?,
+        ttl: TimeInterval?
+    ) async -> CacheListConcatenateFrontResponse
+    
+    func listFetch(
+        cacheName: String,
+        listName: String,
+        startIndex: Int?,
+        endIndex: Int?
+    ) async -> CacheListFetchResponse
+    
+    func listLength(
+        cacheName: String,
+        listName: String
+    ) async -> CacheListLengthResponse
+    
+    func listPopBack(
+        cacheName: String,
+        listName: String
+    ) async -> CacheListPopBackResponse
+    
+    func listPopFront(
+        cacheName: String,
+        listName: String
+    ) async -> CacheListPopFrontResponse
+    
+    func listPushBack(
+        cacheName: String,
+        listName: String,
+        value: ScalarType,
+        truncateFrontToSize: Int?,
+        ttl: TimeInterval?
+    ) async -> CacheListPushBackResponse
+    
+    func listPushFront(
+        cacheName: String,
+        listName: String,
+        value: ScalarType,
+        truncateBackToSize: Int?,
+        ttl: TimeInterval?
+    ) async -> CacheListPushFrontResponse
+    
+    func listRemoveValue(
+        cacheName: String,
+        listName: String,
+        value: ScalarType
+    ) async -> CacheListRemoveValueResponse
+    
+    func listRetain(
+        cacheName: String,
+        listName: String,
+        startIndex: Int?,
+        endIndex: Int?,
+        ttl: TimeInterval?
+    ) async -> CacheListRetainResponse
 }
 
 extension DataClientProtocol {
@@ -76,14 +144,23 @@ class DataClient: DataClientProtocol {
         return self.headers.merging(["cache": cacheName]) { (_, new) in new }
     }
     
+    private func convertScalarTypeToData(element: ScalarType) -> Data {
+        switch element {
+        case .string(let s):
+            return Data(s.utf8)
+        case .data(let d):
+            return d
+        }
+    }
+    
     func get(cacheName: String, key: ScalarType) async -> CacheGetResponse {
         var request = CacheClient__GetRequest()
         
         switch key {
         case .string(let s):
             request.cacheKey = Data(s.utf8)
-        case .data(let b):
-            request.cacheKey = b
+        case .data(let d):
+            request.cacheKey = d
         }
         
         let headers = self.makeHeaders(cacheName: cacheName)
@@ -139,8 +216,8 @@ class DataClient: DataClientProtocol {
         switch value {
         case .string(let s):
             request.cacheBody = Data(s.utf8)
-        case .data(let b):
-            request.cacheBody = b
+        case .data(let d):
+            request.cacheBody = d
         }
         
         let headers = self.makeHeaders(cacheName: cacheName)
@@ -165,6 +242,428 @@ class DataClient: DataClientProtocol {
         } catch {
             return CacheSetError(
                 error: UnknownError(message: "unknown cache set error \(error)")
+            )
+        }
+    }
+    
+    func listConcatenateBack(
+        cacheName: String,
+        listName: String,
+        values: [ScalarType],
+        truncateFrontToSize: Int? = nil,
+        ttl: TimeInterval? = nil
+    ) async -> CacheListConcatenateBackResponse {
+        var request = CacheClient__ListConcatenateBackRequest()
+        request.listName = Data(listName.utf8)
+        request.values = values.map(self.convertScalarTypeToData)
+        request.truncateFrontToSize = UInt32(truncateFrontToSize ?? 0)
+        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
+        
+        let headers = self.makeHeaders(cacheName: cacheName)
+        let call = self.client.listConcatenateBack(
+            request,
+            callOptions: CallOptions(
+                customMetadata: .init(
+                    headers.map { ($0, $1) }
+                )
+            )
+        )
+        
+        do {
+            _ = try await call.response.get()
+            return CacheListConcatenateBackSuccess()
+        } catch let err as GRPCStatus {
+            return CacheListConcatenateBackError(error: grpcStatusToSdkError(grpcStatus: err))
+        } catch let err as GRPCConnectionPoolError {
+            return CacheListConcatenateBackError(
+                error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
+            )
+        } catch {
+            return CacheListConcatenateBackError(
+                error: UnknownError(message: "unknown list concatenate back error \(error)")
+            )
+        }
+    }
+    
+    func listConcatenateFront(
+        cacheName: String,
+        listName: String,
+        values: [ScalarType],
+        truncateBackToSize: Int?,
+        ttl: TimeInterval?
+    ) async -> CacheListConcatenateFrontResponse {
+        var request = CacheClient__ListConcatenateFrontRequest()
+        request.listName = Data(listName.utf8)
+        request.values = values.map(self.convertScalarTypeToData)
+        request.truncateBackToSize = UInt32(truncateBackToSize ?? 0)
+        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
+        
+        let headers = self.makeHeaders(cacheName: cacheName)
+        let call = self.client.listConcatenateFront(
+            request,
+            callOptions: CallOptions(
+                customMetadata: .init(
+                    headers.map { ($0, $1) }
+                )
+            )
+        )
+        
+        do {
+            _ = try await call.response.get()
+            return CacheListConcatenateFrontSuccess()
+        } catch let err as GRPCStatus {
+            return CacheListConcatenateFrontError(error: grpcStatusToSdkError(grpcStatus: err))
+        } catch let err as GRPCConnectionPoolError {
+            return CacheListConcatenateFrontError(
+                error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
+            )
+        } catch {
+            return CacheListConcatenateFrontError(
+                error: UnknownError(message: "unknown list concatenate back error \(error)")
+            )
+        }
+    }
+    
+    func listFetch(
+        cacheName: String,
+        listName: String,
+        startIndex: Int?,
+        endIndex: Int?
+    ) async -> CacheListFetchResponse {
+        var request = CacheClient__ListFetchRequest()
+        request.listName = Data(listName.utf8)
+        
+        if let s = startIndex {
+            request.startIndex = CacheClient__ListFetchRequest.OneOf_StartIndex.inclusiveStart(Int32(s))
+        } else {
+            request.startIndex = CacheClient__ListFetchRequest.OneOf_StartIndex.unboundedStart(CacheClient__Unbounded())
+        }
+        
+        if let e = endIndex {
+            request.endIndex = CacheClient__ListFetchRequest.OneOf_EndIndex.exclusiveEnd(Int32(e))
+        } else {
+            request.endIndex = CacheClient__ListFetchRequest.OneOf_EndIndex.unboundedEnd(CacheClient__Unbounded())
+        }
+        
+        let headers = self.makeHeaders(cacheName: cacheName)
+        let call = self.client.listFetch(
+            request,
+            callOptions: CallOptions(
+                customMetadata: .init(
+                    headers.map { ($0, $1) }
+                )
+            )
+        )
+        
+        do {
+            let result = try await call.response.get()
+            switch result.list {
+            case .found(let foundList):
+                return CacheListFetchHit(values: foundList.values)
+            case .missing:
+                return CacheListFetchMiss()
+            default:
+                return CacheListFetchError(
+                    error: UnknownError(message: "unknown list fetch error \(result)")
+                )
+            }
+        } catch let err as GRPCStatus {
+            return CacheListFetchError(error: grpcStatusToSdkError(grpcStatus: err))
+        } catch let err as GRPCConnectionPoolError {
+            return CacheListFetchError(
+                error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
+            )
+        } catch {
+            return CacheListFetchError(
+                error: UnknownError(message: "unknown list fetch error \(error)")
+            )
+        }
+    }
+    
+    func listLength(
+        cacheName: String,
+        listName: String
+    ) async -> CacheListLengthResponse {
+        var request = CacheClient__ListLengthRequest()
+        request.listName = Data(listName.utf8)
+        
+        let headers = self.makeHeaders(cacheName: cacheName)
+        let call = self.client.listLength(
+            request,
+            callOptions: CallOptions(
+                customMetadata: .init(
+                    headers.map { ($0, $1) }
+                )
+            )
+        )
+        
+        do {
+            let result = try await call.response.get()
+            switch result.list {
+            case .found(let foundList):
+                return CacheListLengthHit(length: foundList.length)
+            case .missing:
+                return CacheListLengthMiss()
+            default:
+                return CacheListLengthError(
+                    error: UnknownError(message: "unknown list length error \(result)")
+                )
+            }
+        } catch let err as GRPCStatus {
+            return CacheListLengthError(error: grpcStatusToSdkError(grpcStatus: err))
+        } catch let err as GRPCConnectionPoolError {
+            return CacheListLengthError(
+                error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
+            )
+        } catch {
+            return CacheListLengthError(
+                error: UnknownError(message: "unknown list length error \(error)")
+            )
+        }
+    }
+    
+    func listPopBack(
+        cacheName: String,
+        listName: String
+    ) async -> CacheListPopBackResponse {
+        var request = CacheClient__ListPopBackRequest()
+        request.listName = Data(listName.utf8)
+        
+        let headers = self.makeHeaders(cacheName: cacheName)
+        let call = self.client.listPopBack(
+            request,
+            callOptions: CallOptions(
+                customMetadata: .init(
+                    headers.map { ($0, $1) }
+                )
+            )
+        )
+        
+        do {
+            let result = try await call.response.get()
+            switch result.list {
+            case .found(let foundList):
+                return CacheListPopBackHit(value: foundList.back)
+            case .missing:
+                return CacheListPopBackMiss()
+            default:
+                return CacheListPopBackError(
+                    error: UnknownError(message: "unknown list pop back error \(result)")
+                )
+            }
+        } catch let err as GRPCStatus {
+            return CacheListPopBackError(error: grpcStatusToSdkError(grpcStatus: err))
+        } catch let err as GRPCConnectionPoolError {
+            return CacheListPopBackError(
+                error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
+            )
+        } catch {
+            return CacheListPopBackError(
+                error: UnknownError(message: "unknown list pop back error \(error)")
+            )
+        }
+    }
+    
+    func listPopFront(
+        cacheName: String,
+        listName: String
+    ) async -> CacheListPopFrontResponse {
+        var request = CacheClient__ListPopFrontRequest()
+        request.listName = Data(listName.utf8)
+        
+        let headers = self.makeHeaders(cacheName: cacheName)
+        let call = self.client.listPopFront(
+            request,
+            callOptions: CallOptions(
+                customMetadata: .init(
+                    headers.map { ($0, $1) }
+                )
+            )
+        )
+        
+        do {
+            let result = try await call.response.get()
+            switch result.list {
+            case .found(let foundList):
+                return CacheListPopFrontHit(value: foundList.front)
+            case .missing:
+                return CacheListPopFrontMiss()
+            default:
+                return CacheListPopFrontError(
+                    error: UnknownError(message: "unknown list pop front error \(result)")
+                )
+            }
+        } catch let err as GRPCStatus {
+            return CacheListPopFrontError(error: grpcStatusToSdkError(grpcStatus: err))
+        } catch let err as GRPCConnectionPoolError {
+            return CacheListPopFrontError(
+                error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
+            )
+        } catch {
+            return CacheListPopFrontError(
+                error: UnknownError(message: "unknown list pop front error \(error)")
+            )
+        }
+    }
+    
+    func listPushBack(
+        cacheName: String,
+        listName: String,
+        value: ScalarType,
+        truncateFrontToSize: Int?,
+        ttl: TimeInterval?
+    ) async -> CacheListPushBackResponse {
+        var request = CacheClient__ListPushBackRequest()
+        request.listName = Data(listName.utf8)
+        request.value = self.convertScalarTypeToData(element: value)
+        request.truncateFrontToSize = UInt32(truncateFrontToSize ?? 0)
+        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
+        
+        let headers = self.makeHeaders(cacheName: cacheName)
+        let call = self.client.listPushBack(
+            request,
+            callOptions: CallOptions(
+                customMetadata: .init(
+                    headers.map { ($0, $1) }
+                )
+            )
+        )
+        
+        do {
+            _ = try await call.response.get()
+            return CacheListPushBackSuccess()
+        } catch let err as GRPCStatus {
+            return CacheListPushBackError(error: grpcStatusToSdkError(grpcStatus: err))
+        } catch let err as GRPCConnectionPoolError {
+            return CacheListPushBackError(
+                error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
+            )
+        } catch {
+            return CacheListPushBackError(
+                error: UnknownError(message: "unknown list push back error \(error)")
+            )
+        }
+    }
+    
+    func listPushFront(
+        cacheName: String,
+        listName: String,
+        value: ScalarType,
+        truncateBackToSize: Int?,
+        ttl: TimeInterval?
+    ) async -> CacheListPushFrontResponse {
+        var request = CacheClient__ListPushFrontRequest()
+        request.listName = Data(listName.utf8)
+        request.value = self.convertScalarTypeToData(element: value)
+        request.truncateBackToSize = UInt32(truncateBackToSize ?? 0)
+        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
+        
+        let headers = self.makeHeaders(cacheName: cacheName)
+        let call = self.client.listPushFront(
+            request,
+            callOptions: CallOptions(
+                customMetadata: .init(
+                    headers.map { ($0, $1) }
+                )
+            )
+        )
+        
+        do {
+            _ = try await call.response.get()
+            return CacheListPushFrontSuccess()
+        } catch let err as GRPCStatus {
+            return CacheListPushFrontError(error: grpcStatusToSdkError(grpcStatus: err))
+        } catch let err as GRPCConnectionPoolError {
+            return CacheListPushFrontError(
+                error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
+            )
+        } catch {
+            return CacheListPushFrontError(
+                error: UnknownError(message: "unknown list push front error \(error)")
+            )
+        }
+    }
+    
+    func listRemoveValue(
+        cacheName: String,
+        listName: String,
+        value: ScalarType
+    ) async -> CacheListRemoveValueResponse {
+        var request = CacheClient__ListRemoveRequest()
+        request.listName = Data(listName.utf8)
+        request.allElementsWithValue = self.convertScalarTypeToData(element: value)
+        
+        let headers = self.makeHeaders(cacheName: cacheName)
+        let call = self.client.listRemove(
+            request,
+            callOptions: CallOptions(
+                customMetadata: .init(
+                    headers.map { ($0, $1) }
+                )
+            )
+        )
+        
+        do {
+            _ = try await call.response.get()
+            return CacheListRemoveValueSuccess()
+        } catch let err as GRPCStatus {
+            return CacheListRemoveValueError(error: grpcStatusToSdkError(grpcStatus: err))
+        } catch let err as GRPCConnectionPoolError {
+            return CacheListRemoveValueError(
+                error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
+            )
+        } catch {
+            return CacheListRemoveValueError(
+                error: UnknownError(message: "unknown list remove value error \(error)")
+            )
+        }
+    }
+    
+    func listRetain(
+        cacheName: String,
+        listName: String,
+        startIndex: Int?,
+        endIndex: Int?,
+        ttl: TimeInterval?
+    ) async -> CacheListRetainResponse {
+        var request = CacheClient__ListRetainRequest()
+        request.listName = Data(listName.utf8)
+        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
+        
+        if let s = startIndex {
+            request.startIndex = CacheClient__ListRetainRequest.OneOf_StartIndex.inclusiveStart(Int32(s))
+        } else {
+            request.startIndex = CacheClient__ListRetainRequest.OneOf_StartIndex.unboundedStart(CacheClient__Unbounded())
+        }
+        
+        if let e = endIndex {
+            request.endIndex = CacheClient__ListRetainRequest.OneOf_EndIndex.exclusiveEnd(Int32(e))
+        } else {
+            request.endIndex = CacheClient__ListRetainRequest.OneOf_EndIndex.unboundedEnd(CacheClient__Unbounded())
+        }
+        
+        let headers = self.makeHeaders(cacheName: cacheName)
+        let call = self.client.listRetain(
+            request,
+            callOptions: CallOptions(
+                customMetadata: .init(
+                    headers.map { ($0, $1) }
+                )
+            )
+        )
+        
+        do {
+            _ = try await call.response.get()
+            return CacheListRetainSuccess()
+        } catch let err as GRPCStatus {
+            return CacheListRetainError(error: grpcStatusToSdkError(grpcStatus: err))
+        } catch let err as GRPCConnectionPoolError {
+            return CacheListRetainError(
+                error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
+            )
+        } catch {
+            return CacheListRetainError(
+                error: UnknownError(message: "unknown list retain error \(error)")
             )
         }
     }
