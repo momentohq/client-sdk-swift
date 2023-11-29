@@ -1,10 +1,10 @@
-/// Prebuilt configurations for Momento Topics clients
-public enum TopicConfigurations {
+/// Prebuilt configurations for Momento Cache clients
+public enum CacheConfigurations {
 
     public enum Default {
 
-        public static func latest() -> TopicClientConfiguration {
-            return TopicClientConfiguration(
+        public static func latest() -> CacheClientConfiguration {
+            return CacheClientConfiguration(
                 loggerFactory: DefaultMomentoLoggerFactory(),
                 transportStrategy: StaticTransportStrategy(
                     grpcConfig: StaticGrpcConfiguration(deadline: 15.0)
@@ -12,7 +12,7 @@ public enum TopicConfigurations {
             )
         }
 
-        public static func v1()  -> TopicClientConfiguration {
+        public static func v1()  -> CacheClientConfiguration {
             return latest()
         }
 

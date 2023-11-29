@@ -16,7 +16,7 @@ final class authTests: XCTestCase {
     }
 
     func testStringCredentialProviderJwt() throws {
-        let smp = try StringMomentoTokenProvider(authToken: testLegacyToken)
+        let smp = try StringMomentoTokenProvider(apiKey: testLegacyToken)
         XCTAssertEqual(smp.controlEndpoint, testLegacyControlEndpoint)
         XCTAssertEqual(smp.cacheEndpoint, testLegacyCacheEndpoint)
     }
@@ -28,7 +28,7 @@ final class authTests: XCTestCase {
     }
 
     func testStringCredentialProviderV1() throws {
-        let smp = try StringMomentoTokenProvider(authToken: testV1Token)
+        let smp = try StringMomentoTokenProvider(apiKey: testV1Token)
         XCTAssertEqual(smp.controlEndpoint, testV1ControlEndpoint)
         XCTAssertEqual(smp.cacheEndpoint, testV1CacheEndpoint)
     }
@@ -40,13 +40,13 @@ final class authTests: XCTestCase {
     }
 
     func testStaticStringCredentialProviderJwt() throws {
-        let smp = try CredentialProvider.fromString(authToken: testLegacyToken)
+        let smp = try CredentialProvider.fromString(apiKey: testLegacyToken)
         XCTAssertEqual(smp.controlEndpoint, testLegacyControlEndpoint)
         XCTAssertEqual(smp.cacheEndpoint, testLegacyCacheEndpoint)
     }
 
     func testStaticStringCredentialProviderV1() throws {
-        let smp = try CredentialProvider.fromString(authToken: testV1Token)
+        let smp = try CredentialProvider.fromString(apiKey: testV1Token)
         XCTAssertEqual(smp.controlEndpoint, testV1ControlEndpoint)
         XCTAssertEqual(smp.cacheEndpoint, testV1CacheEndpoint)
     }
@@ -64,7 +64,7 @@ final class authTests: XCTestCase {
     }
 
     func testStringEndpointOverrides() throws {
-        let smp = try StringMomentoTokenProvider(authToken: testLegacyToken, controlEndpoint: "ctrl", cacheEndpoint: "cache")
+        let smp = try StringMomentoTokenProvider(apiKey: testLegacyToken, controlEndpoint: "ctrl", cacheEndpoint: "cache")
         XCTAssertEqual(smp.cacheEndpoint, "cache")
         XCTAssertEqual(smp.controlEndpoint, "ctrl")
     }
@@ -77,17 +77,17 @@ final class authTests: XCTestCase {
 
     func testEmptyToken() throws {
         do {
-            let _ = try CredentialProvider.fromString(authToken: "")
-        } catch CredentialProviderError.emptyAuthToken {
+            let _ = try CredentialProvider.fromString(apiKey: "")
+        } catch CredentialProviderError.emptyApiKey {
             XCTAssert(true)
             return
         }
-        XCTFail("didn't get expected CredentialProviderError.emptyAuthToken error")
+        XCTFail("didn't get expected CredentialProviderError.emptyapiKey error")
     }
 
     func testBadToken() throws {
         do {
-            let _ = try CredentialProvider.fromString(authToken: "this.isaninvalidtoken.yo")
+            let _ = try CredentialProvider.fromString(apiKey: "this.isaninvalidtoken.yo")
         } catch CredentialProviderError.badToken {
             XCTAssert(true)
             return

@@ -3,45 +3,6 @@ import GRPC
 import NIO
 import NIOHPACK
 
-final class AuthHeaderInterceptor<Request, Response>: ClientInterceptor<Request, Response> {
-
-    private let apiKey: String
-
-    init(apiKey: String) {
-        self.apiKey = apiKey
-    }
-
-    override func send(
-        _ part: GRPCClientRequestPart<Request>,
-        promise: EventLoopPromise<Void>?,
-        context: ClientInterceptorContext<Request, Response>
-    ) {
-        guard case .metadata(var headers) = part else {
-            return context.send(part, promise: promise)
-        }
-
-        headers.add(name: "authorization", value: apiKey)
-        context.send(.metadata(headers), promise: promise)
-    }
-}
-
-final class PubsubClientInterceptorFactory: CacheClient_Pubsub_PubsubClientInterceptorFactoryProtocol {
-    
-    private let apiKey: String
-    
-    init(apiKey: String) {
-        self.apiKey = apiKey
-    }
-    
-    func makePublishInterceptors() -> [ClientInterceptor<CacheClient_Pubsub__PublishRequest, CacheClient_Pubsub__Empty>] {
-        [AuthHeaderInterceptor(apiKey: apiKey)]
-    }
-
-    func makeSubscribeInterceptors() -> [ClientInterceptor<CacheClient_Pubsub__SubscriptionRequest, CacheClient_Pubsub__SubscriptionItem>] {
-        [AuthHeaderInterceptor(apiKey: apiKey)]
-    }
-}
-
 protocol PubsubClientProtocol {
     var logger: MomentoLoggerProtocol { get }
     var configuration: TopicClientConfigurationProtocol { get }
@@ -49,13 +10,7 @@ protocol PubsubClientProtocol {
     func publish(
         cacheName: String,
         topicName: String,
-        value: String
-    ) async throws -> TopicPublishResponse
-
-    func publish(
-        cacheName: String,
-        topicName: String,
-        value: Data
+        value: ScalarType
     ) async throws -> TopicPublishResponse
 
     func subscribe(
@@ -110,35 +65,26 @@ class PubsubClient: PubsubClientProtocol {
                 customMetadata: .init(headers.map { ($0, $1) }),
                 timeLimit: .timeout(.seconds(Int64(self.configuration.transportStrategy.getClientTimeout())))
             ),
-            interceptors: PubsubClientInterceptorFactory(apiKey: credentialProvider.authToken)
+            interceptors: PubsubClientInterceptorFactory(apiKey: credentialProvider.apiKey)
         )
     }
     
     func publish(
         cacheName: String,
         topicName: String,
-        value: String
+        value: ScalarType
     ) async -> TopicPublishResponse {
         var request = CacheClient_Pubsub__PublishRequest()
         request.cacheName = cacheName
         request.topic = topicName
-        request.value.text = value
-        return await self.doPublish(request: request)
-    }
-
-    func publish(
-        cacheName: String,
-        topicName: String,
-        value: Data
-    ) async -> TopicPublishResponse {
-        var request = CacheClient_Pubsub__PublishRequest()
-        request.cacheName = cacheName
-        request.topic = topicName
-        request.value.binary = value
-        return await doPublish(request: request)
-    }
-
-    private func doPublish(request: CacheClient_Pubsub__PublishRequest) async -> TopicPublishResponse {
+        
+        switch value {
+        case .string(let s):
+            request.value.text = s
+        case .data(let b):
+            request.value.binary = b
+        }
+        
         do {
             let result = try await self.client.publish(request)
             // Successful publish returns client_sdk_swift.CacheClient_Pubsub__Empty
