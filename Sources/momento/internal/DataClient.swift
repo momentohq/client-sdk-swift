@@ -5,13 +5,19 @@ import NIOHPACK
 
 protocol DataClientProtocol {
     func get(cacheName: String, key: ScalarType) async -> CacheGetResponse
-    
+
     func set(
         cacheName: String,
         key: ScalarType,
         value: ScalarType,
         ttl: TimeInterval?
     ) async -> CacheSetResponse
+}
+
+extension DataClientProtocol {
+    func set(cacheName: String, key: ScalarType, value: ScalarType) async -> CacheSetResponse {
+        return await set(cacheName: cacheName, key: key, value: value, ttl: nil)
+    }
 }
 
 @available(macOS 10.15, iOS 13, *)
