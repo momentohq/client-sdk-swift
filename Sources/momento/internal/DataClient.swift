@@ -86,6 +86,100 @@ extension DataClientProtocol {
     func set(cacheName: String, key: ScalarType, value: ScalarType, ttl: TimeInterval? = nil) async -> CacheSetResponse {
         return await set(cacheName: cacheName, key: key, value: value, ttl: ttl)
     }
+    
+    func listConcatenateBack(
+        cacheName: String,
+        listName: String,
+        values: [ScalarType],
+        truncateFrontToSize: Int? = nil,
+        ttl: TimeInterval? =  nil
+    ) async -> CacheListConcatenateBackResponse {
+        return await listConcatenateBack(
+            cacheName: cacheName,
+            listName: listName,
+            values: values,
+            truncateFrontToSize: truncateFrontToSize,
+            ttl: ttl
+        )
+    }
+    
+    func listConcatenateFront(
+        cacheName: String,
+        listName: String,
+        values: [ScalarType],
+        truncateBackToSize: Int? = nil,
+        ttl: TimeInterval? = nil
+    ) async -> CacheListConcatenateFrontResponse {
+        return await listConcatenateFront(
+            cacheName: cacheName,
+            listName: listName,
+            values: values,
+            truncateBackToSize: truncateBackToSize,
+            ttl: ttl
+        )
+    }
+    
+    func listFetch(
+        cacheName: String,
+        listName: String,
+        startIndex: Int? = nil,
+        endIndex: Int? = nil
+    ) async -> CacheListFetchResponse {
+        return await listFetch(
+            cacheName: cacheName,
+            listName: listName,
+            startIndex: startIndex,
+            endIndex: endIndex
+        )
+    }
+    
+    func listPushBack(
+        cacheName: String,
+        listName: String,
+        value: ScalarType,
+        truncateFrontToSize: Int? = nil,
+        ttl: TimeInterval? = nil
+    ) async -> CacheListPushBackResponse {
+        return await listPushBack(
+            cacheName: cacheName,
+            listName: listName,
+            value: value,
+            truncateFrontToSize: truncateFrontToSize,
+            ttl: ttl
+        )
+    }
+    
+    func listPushFront(
+        cacheName: String,
+        listName: String,
+        value: ScalarType,
+        truncateBackToSize: Int? = nil,
+        ttl: TimeInterval? = nil
+    ) async -> CacheListPushFrontResponse {
+        return await listPushFront(
+            cacheName: cacheName,
+            listName: listName,
+            value: value,
+            truncateBackToSize: truncateBackToSize,
+            ttl: ttl
+        )
+    }
+    
+    func listRetain(
+        cacheName: String,
+        listName: String,
+        startIndex: Int? = nil,
+        endIndex: Int? = nil,
+        ttl: TimeInterval? = nil
+    ) async -> CacheListRetainResponse {
+        return await listRetain(
+            cacheName: cacheName,
+            listName: listName,
+            startIndex: startIndex,
+            endIndex: endIndex,
+            ttl: ttl
+        )
+    }
 }
 
 @available(macOS 10.15, iOS 13, *)
