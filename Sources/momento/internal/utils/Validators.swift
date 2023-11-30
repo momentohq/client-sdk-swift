@@ -56,6 +56,12 @@ internal func validateTtl(ttl: TimeInterval?) throws {
     }
 }
 
+internal func validateTruncateSize(size: Int?) throws {
+    if (size != nil && size! < 0) {
+        throw InvalidArgumentError(message: "size to truncate to must be a positive number")
+    }
+}
+
 internal func validateListSliceStartEnd(startIndex: Int?, endIndex: Int?) throws {
     if startIndex == nil || endIndex == nil {
         return
