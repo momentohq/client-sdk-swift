@@ -16,7 +16,7 @@ protocol DataClientProtocol {
 
 extension DataClientProtocol {
     func set(cacheName: String, key: ScalarType, value: ScalarType, ttl: TimeInterval? = nil) async -> CacheSetResponse {
-        return await set(cacheName: cacheName, key: key, value: value, ttl: nil)
+        return await set(cacheName: cacheName, key: key, value: value, ttl: ttl)
     }
 }
 
