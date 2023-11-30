@@ -16,63 +16,79 @@ final class authTests: XCTestCase {
     }
 
     func testStringCredentialProviderJwt() throws {
-        let smp = try StringMomentoTokenProvider(apiKey: testLegacyToken)
-        XCTAssertEqual(smp.controlEndpoint, testLegacyControlEndpoint)
-        XCTAssertEqual(smp.cacheEndpoint, testLegacyCacheEndpoint)
+        let credentialProvider = try StringMomentoTokenProvider(apiKey: testLegacyToken)
+        XCTAssertEqual(credentialProvider.controlEndpoint, testLegacyControlEndpoint)
+        XCTAssertEqual(credentialProvider.cacheEndpoint, testLegacyCacheEndpoint)
     }
 
     func testEnvCredentialProviderJwt() throws {
-        let smp = try EnvMomentoTokenProvider(envVarName: "MOMENTO_AUTH_TOKEN_JWT")
-        XCTAssertEqual(smp.controlEndpoint, testLegacyControlEndpoint)
-        XCTAssertEqual(smp.cacheEndpoint, testLegacyCacheEndpoint)
+        let credentialProvider = try EnvMomentoTokenProvider(envVarName: "MOMENTO_AUTH_TOKEN_JWT")
+        XCTAssertEqual(credentialProvider.controlEndpoint, testLegacyControlEndpoint)
+        XCTAssertEqual(credentialProvider.cacheEndpoint, testLegacyCacheEndpoint)
     }
 
     func testStringCredentialProviderV1() throws {
-        let smp = try StringMomentoTokenProvider(apiKey: testV1Token)
-        XCTAssertEqual(smp.controlEndpoint, testV1ControlEndpoint)
-        XCTAssertEqual(smp.cacheEndpoint, testV1CacheEndpoint)
+        let credentialProvider = try StringMomentoTokenProvider(apiKey: testV1Token)
+        XCTAssertEqual(credentialProvider.controlEndpoint, testV1ControlEndpoint)
+        XCTAssertEqual(credentialProvider.cacheEndpoint, testV1CacheEndpoint)
+    }
+
+    func testStringCredentialProviderV1BadKey() throws {
+        // strip off a couple characters from the token
+        let truncatedV1Token = String(testV1Token[
+            testV1Token.startIndex...testV1Token.index(testV1Token.startIndex, offsetBy: testV1Token.count - 2)
+        ])
+        do {
+            let credentialProvider = try CredentialProvider.fromString(apiKey: truncatedV1Token)
+        } catch CredentialProviderError.badToken {
+            XCTAssertTrue(true)
+            return
+        } catch {
+            XCTFail("didn't get expected CredentialProviderError.badToken error")
+        }
+        XCTFail("didn't get expected CredentialProviderError.badToken error")
     }
 
     func testEnvCredentialProviderV1() throws {
-        let smp = try EnvMomentoTokenProvider(envVarName: "MOMENTO_AUTH_TOKEN_V1")
-        XCTAssertEqual(smp.controlEndpoint, testV1ControlEndpoint)
-        XCTAssertEqual(smp.cacheEndpoint, testV1CacheEndpoint)
+        let credentialProvider = try EnvMomentoTokenProvider(envVarName: "MOMENTO_AUTH_TOKEN_V1")
+        XCTAssertEqual(credentialProvider.controlEndpoint, testV1ControlEndpoint)
+        XCTAssertEqual(credentialProvider.cacheEndpoint, testV1CacheEndpoint)
     }
 
     func testStaticStringCredentialProviderJwt() throws {
-        let smp = try CredentialProvider.fromString(apiKey: testLegacyToken)
-        XCTAssertEqual(smp.controlEndpoint, testLegacyControlEndpoint)
-        XCTAssertEqual(smp.cacheEndpoint, testLegacyCacheEndpoint)
+        let credentialProvider = try CredentialProvider.fromString(apiKey: testLegacyToken)
+        XCTAssertEqual(credentialProvider.controlEndpoint, testLegacyControlEndpoint)
+        XCTAssertEqual(credentialProvider.cacheEndpoint, testLegacyCacheEndpoint)
     }
 
     func testStaticStringCredentialProviderV1() throws {
-        let smp = try CredentialProvider.fromString(apiKey: testV1Token)
-        XCTAssertEqual(smp.controlEndpoint, testV1ControlEndpoint)
-        XCTAssertEqual(smp.cacheEndpoint, testV1CacheEndpoint)
+        let credentialProvider = try CredentialProvider.fromString(apiKey: testV1Token)
+        XCTAssertEqual(credentialProvider.controlEndpoint, testV1ControlEndpoint)
+        XCTAssertEqual(credentialProvider.cacheEndpoint, testV1CacheEndpoint)
     }
 
     func testStaticEnvCredentialProviderJwt() throws {
-        let smp = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_AUTH_TOKEN_JWT")
-        XCTAssertEqual(smp.controlEndpoint, testLegacyControlEndpoint)
-        XCTAssertEqual(smp.cacheEndpoint, testLegacyCacheEndpoint)
+        let credentialProvider = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_AUTH_TOKEN_JWT")
+        XCTAssertEqual(credentialProvider.controlEndpoint, testLegacyControlEndpoint)
+        XCTAssertEqual(credentialProvider.cacheEndpoint, testLegacyCacheEndpoint)
     }
 
     func testStaticEnvCredentialProviderV1() throws {
-        let smp = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_AUTH_TOKEN_V1")
-        XCTAssertEqual(smp.controlEndpoint, testV1ControlEndpoint)
-        XCTAssertEqual(smp.cacheEndpoint, testV1CacheEndpoint)
+        let credentialProvider = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_AUTH_TOKEN_V1")
+        XCTAssertEqual(credentialProvider.controlEndpoint, testV1ControlEndpoint)
+        XCTAssertEqual(credentialProvider.cacheEndpoint, testV1CacheEndpoint)
     }
 
     func testStringEndpointOverrides() throws {
-        let smp = try StringMomentoTokenProvider(apiKey: testLegacyToken, controlEndpoint: "ctrl", cacheEndpoint: "cache")
-        XCTAssertEqual(smp.cacheEndpoint, "cache")
-        XCTAssertEqual(smp.controlEndpoint, "ctrl")
+        let credentialProvider = try StringMomentoTokenProvider(apiKey: testLegacyToken, controlEndpoint: "ctrl", cacheEndpoint: "cache")
+        XCTAssertEqual(credentialProvider.cacheEndpoint, "cache")
+        XCTAssertEqual(credentialProvider.controlEndpoint, "ctrl")
     }
 
     func testEnvEndpointOverrides() throws {
-        let smp = try EnvMomentoTokenProvider(envVarName: "MOMENTO_AUTH_TOKEN_JWT", controlEndpoint: "ctrl", cacheEndpoint: "cache")
-        XCTAssertEqual(smp.cacheEndpoint, "cache")
-        XCTAssertEqual(smp.controlEndpoint, "ctrl")
+        let credentialProvider = try EnvMomentoTokenProvider(envVarName: "MOMENTO_AUTH_TOKEN_JWT", controlEndpoint: "ctrl", cacheEndpoint: "cache")
+        XCTAssertEqual(credentialProvider.cacheEndpoint, "cache")
+        XCTAssertEqual(credentialProvider.controlEndpoint, "ctrl")
     }
 
     func testEmptyToken() throws {
@@ -81,6 +97,8 @@ final class authTests: XCTestCase {
         } catch CredentialProviderError.emptyApiKey {
             XCTAssert(true)
             return
+        } catch {
+            XCTFail("didn't get expected CredentialProviderError.emptyapiKey error")
         }
         XCTFail("didn't get expected CredentialProviderError.emptyapiKey error")
     }
@@ -91,6 +109,8 @@ final class authTests: XCTestCase {
         } catch CredentialProviderError.badToken {
             XCTAssert(true)
             return
+        } catch {
+            XCTFail("didn't get expected CredentialProviderError.badToken error")
         }
         XCTFail("didn't get expected CredentialProviderError.badToken error")
     }
