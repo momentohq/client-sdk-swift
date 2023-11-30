@@ -1,5 +1,5 @@
 import Foundation
-@testable import momento
+@testable import Momento
 
 let apiKeyEnvVarName = "TEST_API_KEY"
 
