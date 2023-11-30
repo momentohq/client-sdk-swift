@@ -35,15 +35,6 @@ internal func validateCacheKey(key: ScalarType) throws {
     }
 }
 
-internal func validateCacheValue(value: ScalarType) throws {
-    switch value {
-    case .string(let s):
-        try validateString(str: s, errorMessage: "Invalid cache value")
-    case .data(let d):
-        try validateData(data: d, errorMessage: "Invalid cache value")
-    }
-}
-
 internal func validateTtl(ttl: TimeInterval?) throws {
     if (ttl != nil) {
         if (ttl!.isLessThanOrEqualTo(0) || ttl!.isInfinite) {

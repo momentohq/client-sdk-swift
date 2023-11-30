@@ -165,7 +165,6 @@ public class CacheClient: CacheClientProtocol {
         do {
             try validateCacheName(cacheName: cacheName)
             try validateCacheKey(key: key)
-            try validateCacheValue(value: value)
             try validateTtl(ttl: ttl)
         } catch let err as SdkError {
             return CacheSetError(error: err)

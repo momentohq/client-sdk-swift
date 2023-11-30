@@ -57,7 +57,6 @@ public class TopicClient: TopicClientProtocol {
         do {
             try validateCacheName(cacheName: cacheName)
             try validateTopicName(topicName: topicName)
-            try validateCacheValue(value: value)
         } catch let err as SdkError {
             return TopicPublishError(error: err)
         } catch {
