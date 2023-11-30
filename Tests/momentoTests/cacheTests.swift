@@ -339,5 +339,26 @@ final class cacheTests: XCTestCase {
             getShortTtl is CacheGetMiss,
             "Unexpected response: \(getShortTtl)"
         )
+
+        let testKey6 = generateStringWithUuid(prefix: "hello")
+        let testValue6 = "world"
+        let noTtlSetValue = await self.cacheClient.set(
+            cacheName: self.integrationTestCacheName,
+            key: ScalarType.string(testKey6),
+            value: ScalarType.string(testValue6)
+        )
+        XCTAssertTrue(
+            noTtlSetValue is CacheSetSuccess,
+            "Unexpected response: \(stringKeyStringValue)"
+        )
+        let getNoTtlValue = await self.cacheClient.get(
+            cacheName: self.integrationTestCacheName, key: ScalarType.string(testKey6)
+        )
+        XCTAssertTrue(
+            getNoTtlValue is CacheGetHit,
+            "Unexpected response: \(getNoTtlValue)"
+        )
+        let value6 = (getNoTtlValue as! CacheGetHit).valueString
+        XCTAssertTrue(value6 == testValue6)
     }
 }
