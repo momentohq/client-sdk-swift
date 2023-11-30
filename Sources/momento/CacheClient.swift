@@ -451,6 +451,7 @@ public class CacheClient: CacheClientProtocol {
         do {
             try validateCacheName(cacheName: cacheName)
             try validateListName(listName: listName)
+            try validateTruncateSize(size: truncateFrontToSize)
             try validateTtl(ttl: ttl)
         } catch let err as SdkError {
             return CacheListPushBackError(error: err)
@@ -497,6 +498,7 @@ public class CacheClient: CacheClientProtocol {
         do {
             try validateCacheName(cacheName: cacheName)
             try validateListName(listName: listName)
+            try validateTruncateSize(size: truncateBackToSize)
             try validateTtl(ttl: ttl)
         } catch let err as SdkError {
             return CacheListPushFrontError(error: err)

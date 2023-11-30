@@ -3,13 +3,11 @@ import XCTest
 
 final class cacheTests: XCTestCase {
     private var integrationTestCacheName: String!
-    private var topicClient: TopicClientProtocol!
     private var cacheClient: CacheClientProtocol!
     
     override func setUp() async throws {
         let testSetup = await setUpIntegrationTests()
         self.integrationTestCacheName = testSetup.cacheName
-        self.topicClient = testSetup.topicClient
         self.cacheClient = testSetup.cacheClient
     }
     

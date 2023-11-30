@@ -66,7 +66,7 @@ internal func validateListSliceStartEnd(startIndex: Int?, endIndex: Int?) throws
     if startIndex == nil || endIndex == nil {
         return
     }
-    if startIndex! > 0 || endIndex! < 0 {
+    if startIndex! > 0 && endIndex! < 0 {
         return
     }
     if endIndex! <= startIndex! {
