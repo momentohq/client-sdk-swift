@@ -7,4 +7,9 @@
 
 ## Running the example
 
-Open this directory as an Xcode project, then click Run.
+1. Open this directory as an Xcode project.
+2. Paste your Momento API key in the `demo-chat-app/MomentoDemoChatApp.swift` file where the `momentoApiKey` variable is expecting it.
+    ```
+    private let momentoApiKey: String = "<your Momento API key>"
+    ```
+3. Click Run (in the Product menu). 
