@@ -1,5 +1,5 @@
 import XCTest
-@testable import momento
+@testable import Momento
 
 // All of the below are fake mock data and are unusable to access Momento services
 let testLegacyToken = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyQHRlc3QuY29tIiwiY3AiOiJjb250cm9sLnRlc3QuY29tIiwiYyI6ImNhY2hlLnRlc3QuY29tIn0.c0Z8Ipetl6raCNHSHs7Mpq3qtWkFy4aLvGhIFR4CoR0OnBdGbdjN-4E58bAabrSGhRA8-B2PHzgDd4JF4clAzg"
@@ -39,7 +39,7 @@ final class authTests: XCTestCase {
             testV1Token.startIndex...testV1Token.index(testV1Token.startIndex, offsetBy: testV1Token.count - 2)
         ])
         do {
-            let credentialProvider = try CredentialProvider.fromString(apiKey: truncatedV1Token)
+            let _ = try CredentialProvider.fromString(apiKey: truncatedV1Token)
         } catch CredentialProviderError.badToken {
             XCTAssertTrue(true)
             return

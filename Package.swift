@@ -4,12 +4,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "momento",
+    name: "Momento",
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "momento",
-            targets: ["momento"]),
+            name: "Momento",
+            targets: ["Momento"]),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-protobuf.git", from: "1.6.0"),
@@ -19,7 +19,7 @@ let package = Package(
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "momento",
+            name: "Momento",
             dependencies: [
                 .product(name: "SwiftProtobuf", package: "swift-protobuf"),
                 .product(name: "GRPC", package: "grpc-swift")],
@@ -38,8 +38,8 @@ let package = Package(
             ]
         ),
         .testTarget(
-            name: "momentoTests",
-            dependencies: ["momento", .product(name: "SwiftProtobuf", package: "swift-protobuf"), .product(name: "GRPC", package: "grpc-swift")]
+            name: "MomentoTests",
+            dependencies: ["Momento", .product(name: "SwiftProtobuf", package: "swift-protobuf"), .product(name: "GRPC", package: "grpc-swift")]
         )
     ]
 )

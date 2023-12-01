@@ -1,5 +1,5 @@
 import XCTest
-@testable import momento
+@testable import Momento
 
 final class configTests: XCTestCase {
     private var integrationTestCacheName: String!
