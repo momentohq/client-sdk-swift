@@ -1,17 +1,17 @@
 /**
- * Represents the desired behavior for managing the TTL on collection
- * objects (dictionaries, lists, sets) in your cache.
- *
- * For cache operations that modify a collection, there are a few things
- * to consider.  The first time the collection is created, we need to
- * set a TTL on it.  For subsequent operations that modify the collection
- * you may choose to update the TTL in order to prolong the life of the
- * cached collection object, or you may choose to leave the TTL unmodified
- * in order to ensure that the collection expires at the original TTL.
- *
- * The default behavior is to refresh the TTL (to prolong the life of the
- * collection) each time it is written.  This behavior can be modified
- * by calling withNoRefreshTtlOnUpdates.
+  Represents the desired behavior for managing the TTL on collection
+  objects (dictionaries, lists, sets) in your cache.
+ 
+  For cache operations that modify a collection, there are a few things
+  to consider.  The first time the collection is created, we need to
+  set a TTL on it.  For subsequent operations that modify the collection
+  you may choose to update the TTL in order to prolong the life of the
+  cached collection object, or you may choose to leave the TTL unmodified
+  in order to ensure that the collection expires at the original TTL.
+ 
+  The default behavior is to refresh the TTL (to prolong the life of the
+  collection) each time it is written.  This behavior can be modified
+  by calling withNoRefreshTtlOnUpdates.
  */
 public class CollectionTtl {
     private var _ttlSeconds: Int?
@@ -59,7 +59,7 @@ public class CollectionTtl {
     /**
      The default way to handle TTLs for collections. The default TTL that was specified when constructing the
      CacheClient will be used, and the TTL for the collection will be refreshed any time the collection is modified.
-     - Returns: CollectionTtl with
+     - Returns: CollectionTtl
     ```
      */
     public static func fromCacheTtl() -> CollectionTtl {
@@ -68,11 +68,20 @@ public class CollectionTtl {
     
     /** 
      Constructs a CollectionTtl with the specified TTL in seconds.  The TTL for the collection will be refreshed any time the collection is modified.
-     - Parameter ttlSeconds:
+     - Parameter ttlSeconds: The number of seconds after which to expire the collection from the cache.
      - Returns: CollectionTtl
     */
     public static func of(ttlSeconds: Int) -> CollectionTtl {
         return CollectionTtl(ttlSeconds: ttlSeconds);
+    }
+    
+    /**
+     Constructs a CollectionTtl with the specified TTL in seconds. Will only refresh if the TTL is not nil.
+     - Parameter ttlSeconds: The number of seconds after which to expire the collection from the cache. Defaults to nil.
+     - Returns: CollectionTtl
+    */
+    public static func RefreshTtlIfProvided(ttlSeconds: Int? = nil) -> CollectionTtl {
+        return CollectionTtl(ttlSeconds: ttlSeconds, refreshTtl: (ttlSeconds == nil));
     }
     
     /** 
