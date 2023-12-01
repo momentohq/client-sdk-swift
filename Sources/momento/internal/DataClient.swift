@@ -18,7 +18,7 @@ protocol DataClientProtocol {
         listName: String,
         values: [ScalarType],
         truncateFrontToSize: Int?,
-        ttl: TimeInterval?
+        ttl: CollectionTtl?
     ) async -> CacheListConcatenateBackResponse
     
     func listConcatenateFront(
@@ -26,7 +26,7 @@ protocol DataClientProtocol {
         listName: String,
         values: [ScalarType],
         truncateBackToSize: Int?,
-        ttl: TimeInterval?
+        ttl: CollectionTtl?
     ) async -> CacheListConcatenateFrontResponse
     
     func listFetch(
@@ -56,7 +56,7 @@ protocol DataClientProtocol {
         listName: String,
         value: ScalarType,
         truncateFrontToSize: Int?,
-        ttl: TimeInterval?
+        ttl: CollectionTtl?
     ) async -> CacheListPushBackResponse
     
     func listPushFront(
@@ -64,7 +64,7 @@ protocol DataClientProtocol {
         listName: String,
         value: ScalarType,
         truncateBackToSize: Int?,
-        ttl: TimeInterval?
+        ttl: CollectionTtl?
     ) async -> CacheListPushFrontResponse
     
     func listRemoveValue(
@@ -78,7 +78,7 @@ protocol DataClientProtocol {
         listName: String,
         startIndex: Int?,
         endIndex: Int?,
-        ttl: TimeInterval?
+        ttl: CollectionTtl?
     ) async -> CacheListRetainResponse
 }
 
@@ -92,7 +92,7 @@ extension DataClientProtocol {
         listName: String,
         values: [ScalarType],
         truncateFrontToSize: Int? = nil,
-        ttl: TimeInterval? =  nil
+        ttl: CollectionTtl? =  nil
     ) async -> CacheListConcatenateBackResponse {
         return await listConcatenateBack(
             cacheName: cacheName,
@@ -108,7 +108,7 @@ extension DataClientProtocol {
         listName: String,
         values: [ScalarType],
         truncateBackToSize: Int? = nil,
-        ttl: TimeInterval? = nil
+        ttl: CollectionTtl? = nil
     ) async -> CacheListConcatenateFrontResponse {
         return await listConcatenateFront(
             cacheName: cacheName,
@@ -138,7 +138,7 @@ extension DataClientProtocol {
         listName: String,
         value: ScalarType,
         truncateFrontToSize: Int? = nil,
-        ttl: TimeInterval? = nil
+        ttl: CollectionTtl? = nil
     ) async -> CacheListPushBackResponse {
         return await listPushBack(
             cacheName: cacheName,
@@ -154,7 +154,7 @@ extension DataClientProtocol {
         listName: String,
         value: ScalarType,
         truncateBackToSize: Int? = nil,
-        ttl: TimeInterval? = nil
+        ttl: CollectionTtl? = nil
     ) async -> CacheListPushFrontResponse {
         return await listPushFront(
             cacheName: cacheName,
@@ -170,7 +170,7 @@ extension DataClientProtocol {
         listName: String,
         startIndex: Int? = nil,
         endIndex: Int? = nil,
-        ttl: TimeInterval? = nil
+        ttl: CollectionTtl? = nil
     ) async -> CacheListRetainResponse {
         return await listRetain(
             cacheName: cacheName,
@@ -345,13 +345,16 @@ class DataClient: DataClientProtocol {
         listName: String,
         values: [ScalarType],
         truncateFrontToSize: Int? = nil,
-        ttl: TimeInterval? = nil
+        ttl: CollectionTtl? = nil
     ) async -> CacheListConcatenateBackResponse {
         var request = CacheClient__ListConcatenateBackRequest()
         request.listName = Data(listName.utf8)
         request.values = values.map(self.convertScalarTypeToData)
         request.truncateFrontToSize = UInt32(truncateFrontToSize ?? 0)
-        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
+        
+        let _ttl = ttl ?? CollectionTtl.fromCacheTtl()
+        request.ttlMilliseconds = UInt64(_ttl.ttlMilliseconds() ?? Int(self.defaultTtlSeconds) * 1000)
+        request.refreshTtl = _ttl.refreshTtl()
         
         let headers = self.makeHeaders(cacheName: cacheName)
         let call = self.client.listConcatenateBack(
@@ -383,14 +386,17 @@ class DataClient: DataClientProtocol {
         cacheName: String,
         listName: String,
         values: [ScalarType],
-        truncateBackToSize: Int?,
-        ttl: TimeInterval?
+        truncateBackToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
     ) async -> CacheListConcatenateFrontResponse {
         var request = CacheClient__ListConcatenateFrontRequest()
         request.listName = Data(listName.utf8)
         request.values = values.map(self.convertScalarTypeToData)
         request.truncateBackToSize = UInt32(truncateBackToSize ?? 0)
-        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
+        
+        let _ttl = ttl ?? CollectionTtl.fromCacheTtl()
+        request.ttlMilliseconds = UInt64(_ttl.ttlMilliseconds() ?? Int(self.defaultTtlSeconds) * 1000)
+        request.refreshTtl = _ttl.refreshTtl()
         
         let headers = self.makeHeaders(cacheName: cacheName)
         let call = self.client.listConcatenateFront(
@@ -421,8 +427,8 @@ class DataClient: DataClientProtocol {
     func listFetch(
         cacheName: String,
         listName: String,
-        startIndex: Int?,
-        endIndex: Int?
+        startIndex: Int? = nil,
+        endIndex: Int? = nil
     ) async -> CacheListFetchResponse {
         var request = CacheClient__ListFetchRequest()
         request.listName = Data(listName.utf8)
@@ -604,14 +610,17 @@ class DataClient: DataClientProtocol {
         cacheName: String,
         listName: String,
         value: ScalarType,
-        truncateFrontToSize: Int?,
-        ttl: TimeInterval?
+        truncateFrontToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
     ) async -> CacheListPushBackResponse {
         var request = CacheClient__ListPushBackRequest()
         request.listName = Data(listName.utf8)
         request.value = self.convertScalarTypeToData(element: value)
         request.truncateFrontToSize = UInt32(truncateFrontToSize ?? 0)
-        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
+        
+        let _ttl = ttl ?? CollectionTtl.fromCacheTtl()
+        request.ttlMilliseconds = UInt64(_ttl.ttlMilliseconds() ?? Int(self.defaultTtlSeconds) * 1000)
+        request.refreshTtl = _ttl.refreshTtl()
         
         let headers = self.makeHeaders(cacheName: cacheName)
         let call = self.client.listPushBack(
@@ -643,14 +652,17 @@ class DataClient: DataClientProtocol {
         cacheName: String,
         listName: String,
         value: ScalarType,
-        truncateBackToSize: Int?,
-        ttl: TimeInterval?
+        truncateBackToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
     ) async -> CacheListPushFrontResponse {
         var request = CacheClient__ListPushFrontRequest()
         request.listName = Data(listName.utf8)
         request.value = self.convertScalarTypeToData(element: value)
         request.truncateBackToSize = UInt32(truncateBackToSize ?? 0)
-        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
+
+        let _ttl = ttl ?? CollectionTtl.fromCacheTtl()
+        request.ttlMilliseconds = UInt64(_ttl.ttlMilliseconds() ?? Int(self.defaultTtlSeconds) * 1000)
+        request.refreshTtl = _ttl.refreshTtl()
         
         let headers = self.makeHeaders(cacheName: cacheName)
         let call = self.client.listPushFront(
@@ -716,13 +728,16 @@ class DataClient: DataClientProtocol {
     func listRetain(
         cacheName: String,
         listName: String,
-        startIndex: Int?,
-        endIndex: Int?,
-        ttl: TimeInterval?
+        startIndex: Int? = nil,
+        endIndex: Int? = nil,
+        ttl: CollectionTtl?
     ) async -> CacheListRetainResponse {
         var request = CacheClient__ListRetainRequest()
         request.listName = Data(listName.utf8)
-        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
+        
+        let _ttl = ttl ?? CollectionTtl.fromCacheTtl()
+        request.ttlMilliseconds = UInt64(_ttl.ttlMilliseconds() ?? Int(self.defaultTtlSeconds) * 1000)
+        request.refreshTtl = _ttl.refreshTtl()
         
         if let s = startIndex {
             request.startIndex = CacheClient__ListRetainRequest.OneOf_StartIndex.inclusiveStart(Int32(s))

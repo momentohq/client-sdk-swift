@@ -69,23 +69,6 @@ final class listTests: XCTestCase {
             invalidTruncateSizeCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
             "Unexpected error code: \(invalidTruncateSizeCode)"
         )
-        
-        // Checks ttl
-        let invalidTtl = await self.cacheClient.listConcatenateBack(
-            cacheName: self.integrationTestCacheName,
-            listName: listName,
-            values: [ScalarType.string("abc"), ScalarType.string("xyz")],
-            ttl: TimeInterval.infinity
-        )
-        XCTAssertTrue(
-            invalidTtl is CacheListConcatenateBackError,
-            "Unexpected response: \(invalidTtl)"
-        )
-        let invalidTtlCode = (invalidTtl as! CacheListConcatenateBackError).errorCode
-        XCTAssertEqual(
-            invalidTtlCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidTtlCode)"
-        )
     }
     
     func testConcatBack() async throws {
@@ -202,23 +185,6 @@ final class listTests: XCTestCase {
         XCTAssertEqual(
             invalidTruncateSizeCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
             "Unexpected error code: \(invalidTruncateSizeCode)"
-        )
-        
-        // Checks ttl
-        let invalidTtl = await self.cacheClient.listConcatenateFront(
-            cacheName: self.integrationTestCacheName,
-            listName: listName,
-            values: [ScalarType.string("abc"), ScalarType.string("xyz")],
-            ttl: TimeInterval.infinity
-        )
-        XCTAssertTrue(
-            invalidTtl is CacheListConcatenateFrontError,
-            "Unexpected response: \(invalidTtl)"
-        )
-        let invalidTtlCode = (invalidTtl as! CacheListConcatenateFrontError).errorCode
-        XCTAssertEqual(
-            invalidTtlCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidTtlCode)"
         )
     }
     
@@ -717,23 +683,6 @@ final class listTests: XCTestCase {
             invalidTruncateSizeCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
             "Unexpected error code: \(invalidTruncateSizeCode)"
         )
-        
-        // Checks ttl
-        let invalidTtl = await self.cacheClient.listPushBack(
-            cacheName: self.integrationTestCacheName,
-            listName: listName,
-            value: ScalarType.string("abc"),
-            ttl: TimeInterval.infinity
-        )
-        XCTAssertTrue(
-            invalidTtl is CacheListPushBackError,
-            "Unexpected response: \(invalidTtl)"
-        )
-        let invalidTtlCode = (invalidTtl as! CacheListPushBackError).errorCode
-        XCTAssertEqual(
-            invalidTtlCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidTtlCode)"
-        )
     }
     
     func testPushBack() async throws {
@@ -840,23 +789,6 @@ final class listTests: XCTestCase {
         XCTAssertEqual(
             invalidTruncateSizeCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
             "Unexpected error code: \(invalidTruncateSizeCode)"
-        )
-        
-        // Checks ttl
-        let invalidTtl = await self.cacheClient.listPushFront(
-            cacheName: self.integrationTestCacheName,
-            listName: listName,
-            value: ScalarType.string("abc"),
-            ttl: TimeInterval.infinity
-        )
-        XCTAssertTrue(
-            invalidTtl is CacheListPushFrontError,
-            "Unexpected response: \(invalidTtl)"
-        )
-        let invalidTtlCode = (invalidTtl as! CacheListPushFrontError).errorCode
-        XCTAssertEqual(
-            invalidTtlCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidTtlCode)"
         )
     }
     
@@ -1116,22 +1048,6 @@ final class listTests: XCTestCase {
         XCTAssertEqual(
             invalidSliceCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
             "Unexpected error code: \(invalidSliceCode)"
-        )
-        
-        // Checks ttl
-        let invalidTtl = await self.cacheClient.listRetain(
-            cacheName: self.integrationTestCacheName,
-            listName: listName,
-            ttl: TimeInterval.infinity
-        )
-        XCTAssertTrue(
-            invalidTtl is CacheListRetainError,
-            "Unexpected response: \(invalidTtl)"
-        )
-        let invalidTtlCode = (invalidTtl as! CacheListRetainError).errorCode
-        XCTAssertEqual(
-            invalidTtlCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidTtlCode)"
         )
     }
     

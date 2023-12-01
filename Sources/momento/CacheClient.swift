@@ -202,13 +202,12 @@ public class CacheClient: CacheClientProtocol {
         listName: String,
         values: [ScalarType],
         truncateFrontToSize: Int? = nil,
-        ttl: TimeInterval? = nil
+        ttl: CollectionTtl? = nil
     ) async -> CacheListConcatenateBackResponse {
         do {
             try validateCacheName(cacheName: cacheName)
             try validateListName(listName: listName)
             try validateTruncateSize(size: truncateFrontToSize)
-            try validateTtl(ttl: ttl)
         } catch let err as SdkError {
             return CacheListConcatenateBackError(error: err)
         } catch {
@@ -249,13 +248,12 @@ public class CacheClient: CacheClientProtocol {
         listName: String,
         values: [ScalarType],
         truncateBackToSize: Int? = nil,
-        ttl: TimeInterval? = nil
+        ttl: CollectionTtl? = nil
     ) async -> CacheListConcatenateFrontResponse {
         do {
             try validateCacheName(cacheName: cacheName)
             try validateListName(listName: listName)
             try validateTruncateSize(size: truncateBackToSize)
-            try validateTtl(ttl: ttl)
         } catch let err as SdkError {
             return CacheListConcatenateFrontError(error: err)
         } catch {
@@ -446,13 +444,12 @@ public class CacheClient: CacheClientProtocol {
         listName: String,
         value: ScalarType,
         truncateFrontToSize: Int?,
-        ttl: TimeInterval?
+        ttl: CollectionTtl?
     ) async -> CacheListPushBackResponse {
         do {
             try validateCacheName(cacheName: cacheName)
             try validateListName(listName: listName)
             try validateTruncateSize(size: truncateFrontToSize)
-            try validateTtl(ttl: ttl)
         } catch let err as SdkError {
             return CacheListPushBackError(error: err)
         } catch {
@@ -493,13 +490,12 @@ public class CacheClient: CacheClientProtocol {
         listName: String,
         value: ScalarType,
         truncateBackToSize: Int?,
-        ttl: TimeInterval?
+        ttl: CollectionTtl?
     ) async -> CacheListPushFrontResponse {
         do {
             try validateCacheName(cacheName: cacheName)
             try validateListName(listName: listName)
             try validateTruncateSize(size: truncateBackToSize)
-            try validateTtl(ttl: ttl)
         } catch let err as SdkError {
             return CacheListPushFrontError(error: err)
         } catch {
@@ -579,13 +575,12 @@ public class CacheClient: CacheClientProtocol {
         listName: String,
         startIndex: Int?,
         endIndex: Int?,
-        ttl: TimeInterval?
+        ttl: CollectionTtl?
     ) async -> CacheListRetainResponse {
         do {
             try validateCacheName(cacheName: cacheName)
             try validateListName(listName: listName)
             try validateListSliceStartEnd(startIndex: startIndex, endIndex: endIndex)
-            try validateTtl(ttl: ttl)
         } catch let err as SdkError {
             return CacheListRetainError(error: err)
         } catch {
