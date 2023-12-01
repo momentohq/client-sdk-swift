@@ -51,7 +51,7 @@ internal func validateCacheValue(value: ScalarType) throws {
 internal func validateTtl(ttl: TimeInterval?) throws {
     if (ttl != nil) {
         if (ttl!.isLessThanOrEqualTo(0) || ttl!.isInfinite) {
-            throw InvalidArgumentError(message: "TTL must be a positive number of milliseconds")
+            throw InvalidArgumentError(message: "TTL must be a non-zero positive number")
         }
     }
 }

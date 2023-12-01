@@ -208,6 +208,7 @@ public class CacheClient: CacheClientProtocol {
             try validateCacheName(cacheName: cacheName)
             try validateListName(listName: listName)
             try validateTruncateSize(size: truncateFrontToSize)
+            try validateTtl(ttl: ttl?.ttlSeconds())
         } catch let err as SdkError {
             return CacheListConcatenateBackError(error: err)
         } catch {
@@ -254,6 +255,7 @@ public class CacheClient: CacheClientProtocol {
             try validateCacheName(cacheName: cacheName)
             try validateListName(listName: listName)
             try validateTruncateSize(size: truncateBackToSize)
+            try validateTtl(ttl: ttl?.ttlSeconds())
         } catch let err as SdkError {
             return CacheListConcatenateFrontError(error: err)
         } catch {
@@ -450,6 +452,7 @@ public class CacheClient: CacheClientProtocol {
             try validateCacheName(cacheName: cacheName)
             try validateListName(listName: listName)
             try validateTruncateSize(size: truncateFrontToSize)
+            try validateTtl(ttl: ttl?.ttlSeconds())
         } catch let err as SdkError {
             return CacheListPushBackError(error: err)
         } catch {
@@ -496,6 +499,7 @@ public class CacheClient: CacheClientProtocol {
             try validateCacheName(cacheName: cacheName)
             try validateListName(listName: listName)
             try validateTruncateSize(size: truncateBackToSize)
+            try validateTtl(ttl: ttl?.ttlSeconds())
         } catch let err as SdkError {
             return CacheListPushFrontError(error: err)
         } catch {
@@ -581,6 +585,7 @@ public class CacheClient: CacheClientProtocol {
             try validateCacheName(cacheName: cacheName)
             try validateListName(listName: listName)
             try validateListSliceStartEnd(startIndex: startIndex, endIndex: endIndex)
+            try validateTtl(ttl: ttl?.ttlSeconds())
         } catch let err as SdkError {
             return CacheListRetainError(error: err)
         } catch {
