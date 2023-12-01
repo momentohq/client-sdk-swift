@@ -22,7 +22,20 @@ let package = Package(
             name: "momento",
             dependencies: [
                 .product(name: "SwiftProtobuf", package: "swift-protobuf"),
-                .product(name: "GRPC", package: "grpc-swift")]
+                .product(name: "GRPC", package: "grpc-swift")],
+            exclude: [
+                "internal/protos/auth.proto",
+                "internal/protos/cacheclient.proto",
+                "internal/protos/cacheping.proto",
+                "internal/protos/cachepubsub.proto",
+                "internal/protos/controlclient.proto",
+                "internal/protos/extensions.proto",
+                "internal/protos/leaderboard.proto",
+                "internal/protos/permissionmessages.proto",
+                "internal/protos/token.proto",
+                "internal/protos/vectorindex.proto",
+                "internal/protos/webhook.proto"
+            ]
         ),
         .testTarget(
             name: "momentoTests",
