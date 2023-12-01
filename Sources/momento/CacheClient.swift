@@ -120,7 +120,7 @@ public class CacheClient: CacheClientProtocol {
         // handle error
      case let responseMiss as CacheGetMiss:
         // handle miss
-    case let responseHit as CacheGetHit:
+     case let responseHit as CacheGetHit:
         // handle hit
      }
     ```
@@ -145,6 +145,7 @@ public class CacheClient: CacheClientProtocol {
         - cacheName: the name of the cache to store the value in
         - key: the key to set the value for
         - value: the value to associate with the key
+        - ttl: the time to live for the item in the cache. Uses the client's default TTL if this is not supplied.
      - Returns: CacheSetResponse representing the result of the set operation.
      Pattern matching can be used to operate on the appropriate subtype.
     ```
@@ -175,5 +176,429 @@ public class CacheClient: CacheClientProtocol {
             )
         }
         return await self.dataClient.set(cacheName: cacheName, key: key, value: value, ttl: ttl)
+    }
+    
+    /**
+     Adds multiple elements to the back of the given list. Creates the list if it does not already exist.
+     - Parameters:
+        - cacheName: the name of the cache to store the list in
+        - listName: the list to add to
+        - values: the elements to add to the list
+        - truncateFrontToSize: If the list exceeds this length, remove excess from the front of the list. Must be positive.
+        - ttl: refreshes the list's TTL using the client's default if this is not supplied.
+     - Returns: CacheListConcatenateBackResponse representing the result of the operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheListConcatenateBackError:
+        // handle error
+     case let responseSuccess as CacheListConcatenateBackSuccess:
+        // handle success
+     }
+    ```
+     */
+    public func listConcatenateBack(
+        cacheName: String,
+        listName: String,
+        values: [ScalarType],
+        truncateFrontToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListConcatenateBackResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+            try validateTruncateSize(size: truncateFrontToSize)
+            try validateTtl(ttl: ttl?.ttlSeconds())
+        } catch let err as SdkError {
+            return CacheListConcatenateBackError(error: err)
+        } catch {
+            return CacheListConcatenateBackError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listConcatenateBack(
+            cacheName: cacheName,
+            listName: listName,
+            values: values,
+            truncateFrontToSize: truncateFrontToSize,
+            ttl: ttl
+        )
+    }
+    
+    /**
+     Adds multiple elements to the front of the given list. Creates the list if it does not already exist.
+     - Parameters:
+        - cacheName: the name of the cache to store the list in
+        - listName: the list to add to
+        - values: the elements to add to the list
+        - truncateBackToSize: If the list exceeds this length, remove excess from the back of the list. Must be positive.
+        - ttl: refreshes the list's TTL using the client's default if this is not supplied.
+     - Returns: CacheListConcatenateFrontResponse representing the result of the operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheListConcatenateFrontError:
+        // handle error
+     case let responseSuccess as CacheListConcatenateFrontSuccess:
+        // handle success
+     }
+    ```
+     */
+    public func listConcatenateFront(
+        cacheName: String,
+        listName: String,
+        values: [ScalarType],
+        truncateBackToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListConcatenateFrontResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+            try validateTruncateSize(size: truncateBackToSize)
+            try validateTtl(ttl: ttl?.ttlSeconds())
+        } catch let err as SdkError {
+            return CacheListConcatenateFrontError(error: err)
+        } catch {
+            return CacheListConcatenateFrontError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listConcatenateFront(
+            cacheName: cacheName,
+            listName: listName,
+            values: values,
+            truncateBackToSize: truncateBackToSize,
+            ttl: ttl
+        )
+    }
+    
+    /**
+     Fetches all elements of the given list.
+     - Parameters:
+        - cacheName: the name of the cache containing the list
+        - listName: the list to fetch
+        - startIndex: start index (inclusive) to begin fetching
+        - endIndex: end index (exclusive) to stop fetching
+     - Returns: CacheListFetchResponse representing the result of the operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheListFetchError:
+        // handle error
+     case let responseMiss as CacheListFetchMiss:
+        // list does not exist
+     case let responseHit as CacheListFetchHit:
+        // list exists, handle values
+     }
+    ```
+     */
+    public func listFetch(
+        cacheName: String,
+        listName: String,
+        startIndex: Int? = nil,
+        endIndex: Int? = nil
+    ) async -> CacheListFetchResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+            try validateListSliceStartEnd(startIndex: startIndex, endIndex: endIndex)
+        } catch let err as SdkError {
+            return CacheListFetchError(error: err)
+        } catch {
+            return CacheListFetchError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listFetch(
+            cacheName: cacheName,
+            listName: listName,
+            startIndex: startIndex,
+            endIndex: endIndex
+        )
+    }
+    
+    /**
+     Gets the number of elements in the given list.
+     - Parameters:
+        - cacheName: the name of the cache containing the list
+        - listName: the list to get the length of
+     - Returns: CacheListLengthResponse representing the result of the operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheListLengthError:
+        // handle error
+     case let responseMiss as CacheListLengthMiss:
+        // list does not exist
+     case let responseHit as CacheListLengthHit:
+        // list exists, handle length
+     }
+    ```
+     */
+    public func listLength(
+        cacheName: String,
+        listName: String
+    ) async -> CacheListLengthResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+        } catch let err as SdkError {
+            return CacheListLengthError(error: err)
+        } catch {
+            return CacheListLengthError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listLength(cacheName: cacheName, listName: listName)
+    }
+    
+    /**
+     Gets and removes the last value from the given list.
+     - Parameters:
+        - cacheName: the name of the cache containing the list
+        - listName: the list to get the last element from
+     - Returns: CacheListPopBackResponse representing the result of the operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheListPopBackError:
+        // handle error
+     case let responseMiss as CacheListPopBackMiss:
+        // list does not exist
+     case let responseHit as CacheListPopBackHit:
+        // list exists, handle value
+     }
+    ```
+     */
+    public func listPopBack(
+        cacheName: String,
+        listName: String
+    ) async -> CacheListPopBackResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+        } catch let err as SdkError {
+            return CacheListPopBackError(error: err)
+        } catch {
+            return CacheListPopBackError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listPopBack(cacheName: cacheName, listName: listName)
+    }
+    
+    /**
+     Gets and removes the first value from the given list.
+     - Parameters:
+        - cacheName: the name of the cache containing the list
+        - listName: the list to get the first element from
+     - Returns: CacheListPopFrontResponse representing the result of the operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheListPopFrontError:
+        // handle error
+     case let responseMiss as CacheListPopFrontMiss:
+        // list does not exist
+     case let responseHit as CacheListPopFrontHit:
+        // list exists, handle value
+     }
+    ```
+     */
+    public func listPopFront(
+        cacheName: String,
+        listName: String
+    ) async -> CacheListPopFrontResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+        } catch let err as SdkError {
+            return CacheListPopFrontError(error: err)
+        } catch {
+            return CacheListPopFrontError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listPopFront(cacheName: cacheName, listName: listName)
+    }
+    
+    /**
+     Adds an element to the back of the given list. Creates the list if it does not already exist.
+     - Parameters:
+        - cacheName: the name of the cache to store the list in
+        - listName: the list to add to
+        - value: the element to add to the list
+        - truncateFrontToSize: If the list exceeds this length, remove excess from the front of the list. Must be positive.
+        - ttl: refreshes the list's TTL using the client's default if this is not supplied.
+     - Returns: CacheListPushBackResponse representing the result of the operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheListPushBackError:
+        // handle error
+     case let responseSuccess as CacheListPushBackSuccess:
+        // handle success
+     }
+    ```
+     */
+    public func listPushBack(
+        cacheName: String,
+        listName: String,
+        value: ScalarType,
+        truncateFrontToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListPushBackResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+            try validateTruncateSize(size: truncateFrontToSize)
+            try validateTtl(ttl: ttl?.ttlSeconds())
+        } catch let err as SdkError {
+            return CacheListPushBackError(error: err)
+        } catch {
+            return CacheListPushBackError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listPushBack(
+            cacheName: cacheName,
+            listName: listName,
+            value: value,
+            truncateFrontToSize: truncateFrontToSize,
+            ttl: ttl
+        )
+    }
+    
+    /**
+     Adds an element to the front of the given list. Creates the list if it does not already exist.
+     - Parameters:
+        - cacheName: the name of the cache to store the list in
+        - listName: the list to add to
+        - value: the element to add to the list
+        - truncateBackToSize: If the list exceeds this length, remove excess from the back of the list. Must be positive.
+        - ttl: refreshes the list's TTL using the client's default if this is not supplied.
+     - Returns: CacheListPushFrontResponse representing the result of the operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheListPushFrontError:
+        // handle error
+     case let responseSuccess as CacheListPushFrontSuccess:
+        // handle success
+     }
+    ```
+     */
+    public func listPushFront(
+        cacheName: String,
+        listName: String,
+        value: ScalarType,
+        truncateBackToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListPushFrontResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+            try validateTruncateSize(size: truncateBackToSize)
+            try validateTtl(ttl: ttl?.ttlSeconds())
+        } catch let err as SdkError {
+            return CacheListPushFrontError(error: err)
+        } catch {
+            return CacheListPushFrontError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listPushFront(
+            cacheName: cacheName,
+            listName: listName,
+            value: value,
+            truncateBackToSize: truncateBackToSize,
+            ttl: ttl
+        )
+    }
+    
+    /**
+     Removes all elements from the given list equal to the given value.
+     - Parameters:
+        - cacheName: the name of the cache containing the list
+        - listName: the list to remove values from
+        - value: the value to remove
+     - Returns: CacheListRemoveValueResponse representing the result of the operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheListRemoveValueError:
+        // handle error
+     case let responseSuccess as CacheListRemoveValueSuccess:
+        // handle success
+     }
+    ```
+     */
+    public func listRemoveValue(
+        cacheName: String,
+        listName: String,
+        value: ScalarType
+    ) async -> CacheListRemoveValueResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+        } catch let err as SdkError {
+            return CacheListRemoveValueError(error: err)
+        } catch {
+            return CacheListRemoveValueError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listRemoveValue(
+            cacheName: cacheName,
+            listName: listName,
+            value: value
+        )
+    }
+    
+    /**
+     Retains slice of elements of a given list, deletes the rest of the list that isn't being retained.
+     - Parameters:
+        - cacheName: the name of the cache containing the list
+        - listName: the list to retain a slice of
+        - startIndex: start index (inclusive) of the slice to retain. Defaults to the start of the list.
+        - endIndex: end index (exclusive) of the slice to retain. Defaults to the end of the list.
+        - ttl: refreshes the list's TTL using the client's default if this is not supplied.
+     - Returns: CacheListRetainResponse representing the result of the operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheListRetainError:
+        // handle error
+     case let responseSuccess as CacheListRetainSuccess:
+        // handle success
+     }
+    ```
+     */
+    public func listRetain(
+        cacheName: String,
+        listName: String,
+        startIndex: Int? = nil,
+        endIndex: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListRetainResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+            try validateListSliceStartEnd(startIndex: startIndex, endIndex: endIndex)
+            try validateTtl(ttl: ttl?.ttlSeconds())
+        } catch let err as SdkError {
+            return CacheListRetainError(error: err)
+        } catch {
+            return CacheListRetainError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listRetain(
+            cacheName: cacheName,
+            listName: listName,
+            startIndex: startIndex,
+            endIndex: endIndex,
+            ttl: ttl
+        )
     }
 }
