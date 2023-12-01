@@ -84,6 +84,7 @@ final class listTests: XCTestCase {
             concatStrings is CacheListConcatenateBackSuccess,
             "Unexpected response: \(concatStrings)"
         )
+        XCTAssertEqual((concatStrings as! CacheListConcatenateBackSuccess).listLength, 3)
         let fetchStringList = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: stringListName
@@ -107,6 +108,7 @@ final class listTests: XCTestCase {
             concatData is CacheListConcatenateBackSuccess,
             "Unexpected response: \(concatData)"
         )
+        XCTAssertEqual((concatData as! CacheListConcatenateBackSuccess).listLength, 3)
         let fetchDataList = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: dataListName
@@ -201,6 +203,7 @@ final class listTests: XCTestCase {
             concatStrings is CacheListConcatenateFrontSuccess,
             "Unexpected response: \(concatStrings)"
         )
+        XCTAssertEqual((concatStrings as! CacheListConcatenateFrontSuccess).listLength, 3)
         let fetchStringList = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: stringListName
@@ -224,6 +227,7 @@ final class listTests: XCTestCase {
             concatData is CacheListConcatenateFrontSuccess,
             "Unexpected response: \(concatData)"
         )
+        XCTAssertEqual((concatData as! CacheListConcatenateFrontSuccess).listLength, 3)
         let fetchDataList = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: dataListName

@@ -367,8 +367,8 @@ class DataClient: DataClientProtocol {
         )
         
         do {
-            _ = try await call.response.get()
-            return CacheListConcatenateBackSuccess()
+            let result = try await call.response.get()
+            return CacheListConcatenateBackSuccess(length: result.listLength)
         } catch let err as GRPCStatus {
             return CacheListConcatenateBackError(error: grpcStatusToSdkError(grpcStatus: err))
         } catch let err as GRPCConnectionPoolError {
@@ -409,8 +409,8 @@ class DataClient: DataClientProtocol {
         )
         
         do {
-            _ = try await call.response.get()
-            return CacheListConcatenateFrontSuccess()
+            let result = try await call.response.get()
+            return CacheListConcatenateFrontSuccess(length: result.listLength)
         } catch let err as GRPCStatus {
             return CacheListConcatenateFrontError(error: grpcStatusToSdkError(grpcStatus: err))
         } catch let err as GRPCConnectionPoolError {
@@ -633,8 +633,8 @@ class DataClient: DataClientProtocol {
         )
         
         do {
-            _ = try await call.response.get()
-            return CacheListPushBackSuccess()
+            let result = try await call.response.get()
+            return CacheListPushBackSuccess(length: result.listLength)
         } catch let err as GRPCStatus {
             return CacheListPushBackError(error: grpcStatusToSdkError(grpcStatus: err))
         } catch let err as GRPCConnectionPoolError {
@@ -675,8 +675,8 @@ class DataClient: DataClientProtocol {
         )
         
         do {
-            _ = try await call.response.get()
-            return CacheListPushFrontSuccess()
+            let result = try await call.response.get()
+            return CacheListPushFrontSuccess(length: result.listLength)
         } catch let err as GRPCStatus {
             return CacheListPushFrontError(error: grpcStatusToSdkError(grpcStatus: err))
         } catch let err as GRPCConnectionPoolError {
