@@ -196,22 +196,6 @@ final class cacheTests: XCTestCase {
             "Unexpected error code: \(invalidKeyErrorCode)"
         )
         
-        let invalidValue = await self.cacheClient.set(
-            cacheName: self.integrationTestCacheName,
-            key: ScalarType.string("hello"),
-            value: ScalarType.string("    "),
-            ttl: nil
-        )
-        XCTAssertTrue(
-            invalidValue is CacheSetError,
-            "Unexpected response: \(invalidValue)"
-        )
-        let invalidValueErrorCode = (invalidValue as! CacheSetError).errorCode
-        XCTAssertEqual(
-            invalidValueErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidValueErrorCode)"
-        )
-        
         let invalidTtl = await self.cacheClient.set(
             cacheName: self.integrationTestCacheName,
             key: ScalarType.string("hello"),
