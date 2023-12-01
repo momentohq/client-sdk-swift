@@ -106,6 +106,9 @@ public class CredentialProvider {
         }
 
         let segments = jwt.components(separatedBy: ".")
+        if segments.count != 3 {
+            throw CredentialProviderError.badToken
+        }
         return try decodeJWTPart(segments[1])
     }
 }
