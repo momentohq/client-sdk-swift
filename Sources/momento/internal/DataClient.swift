@@ -353,7 +353,7 @@ class DataClient: DataClientProtocol {
         request.truncateFrontToSize = UInt32(truncateFrontToSize ?? 0)
         
         let _ttl = ttl ?? CollectionTtl.fromCacheTtl()
-        request.ttlMilliseconds = UInt64(_ttl.ttlMilliseconds() ?? Int(self.defaultTtlSeconds) * 1000)
+        request.ttlMilliseconds = UInt64(_ttl.ttlMilliseconds() ?? self.defaultTtlSeconds * 1000)
         request.refreshTtl = _ttl.refreshTtl()
         
         let headers = self.makeHeaders(cacheName: cacheName)
@@ -395,7 +395,7 @@ class DataClient: DataClientProtocol {
         request.truncateBackToSize = UInt32(truncateBackToSize ?? 0)
         
         let _ttl = ttl ?? CollectionTtl.fromCacheTtl()
-        request.ttlMilliseconds = UInt64(_ttl.ttlMilliseconds() ?? Int(self.defaultTtlSeconds) * 1000)
+        request.ttlMilliseconds = UInt64(_ttl.ttlMilliseconds() ?? self.defaultTtlSeconds * 1000)
         request.refreshTtl = _ttl.refreshTtl()
         
         let headers = self.makeHeaders(cacheName: cacheName)
@@ -619,7 +619,7 @@ class DataClient: DataClientProtocol {
         request.truncateFrontToSize = UInt32(truncateFrontToSize ?? 0)
         
         let _ttl = ttl ?? CollectionTtl.fromCacheTtl()
-        request.ttlMilliseconds = UInt64(_ttl.ttlMilliseconds() ?? Int(self.defaultTtlSeconds) * 1000)
+        request.ttlMilliseconds = UInt64(_ttl.ttlMilliseconds() ?? self.defaultTtlSeconds * 1000)
         request.refreshTtl = _ttl.refreshTtl()
         
         let headers = self.makeHeaders(cacheName: cacheName)
@@ -661,7 +661,7 @@ class DataClient: DataClientProtocol {
         request.truncateBackToSize = UInt32(truncateBackToSize ?? 0)
 
         let _ttl = ttl ?? CollectionTtl.fromCacheTtl()
-        request.ttlMilliseconds = UInt64(_ttl.ttlMilliseconds() ?? Int(self.defaultTtlSeconds) * 1000)
+        request.ttlMilliseconds = UInt64(_ttl.ttlMilliseconds() ?? self.defaultTtlSeconds * 1000)
         request.refreshTtl = _ttl.refreshTtl()
         
         let headers = self.makeHeaders(cacheName: cacheName)
@@ -736,7 +736,7 @@ class DataClient: DataClientProtocol {
         request.listName = Data(listName.utf8)
         
         let _ttl = ttl ?? CollectionTtl.fromCacheTtl()
-        request.ttlMilliseconds = UInt64(_ttl.ttlMilliseconds() ?? Int(self.defaultTtlSeconds) * 1000)
+        request.ttlMilliseconds = UInt64(_ttl.ttlMilliseconds() ?? self.defaultTtlSeconds * 1000)
         request.refreshTtl = _ttl.refreshTtl()
         
         if let s = startIndex {

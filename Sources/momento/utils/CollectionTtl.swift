@@ -1,3 +1,5 @@
+import Foundation
+
 /**
   Represents the desired behavior for managing the TTL on collection
   objects (dictionaries, lists, sets) in your cache.
@@ -14,7 +16,7 @@
   by calling withNoRefreshTtlOnUpdates.
  */
 public class CollectionTtl {
-    private var _ttlSeconds: Int?
+    private var _ttlSeconds: TimeInterval?
     private var _refreshTtl: Bool
     
     /**
@@ -23,24 +25,24 @@ public class CollectionTtl {
      - Parameter refreshTtl: If true, the collection's TTL will be refreshed (to prolong the life of the collection) on every update.
      If false, the collection's TTL will only be set when the collection is initially created.
      */
-    init(ttlSeconds: Int? = nil, refreshTtl: Bool = true) {
+    init(ttlSeconds: TimeInterval? = nil, refreshTtl: Bool = true) {
         self._ttlSeconds = ttlSeconds
         self._refreshTtl = refreshTtl
     }
     
     /** 
      Current time-to-live value in seconds if it's set.
-     - Returns Int or nil
+     - Returns TimeInterval or nil
     */
-    public func ttlSeconds() -> Int? {
+    public func ttlSeconds() -> TimeInterval? {
         return self._ttlSeconds
     }
     
     /** 
      Current time-to-live value in milliseconds if it's set.
-     - Returns Int or nil
+     - Returns TimeInterval or nil
     */
-    public func ttlMilliseconds() -> Int? {
+    public func ttlMilliseconds() -> TimeInterval? {
         if let s = self._ttlSeconds {
             return s * 1000
         } else {
@@ -71,7 +73,7 @@ public class CollectionTtl {
      - Parameter ttlSeconds: The number of seconds after which to expire the collection from the cache.
      - Returns: CollectionTtl
     */
-    public static func of(ttlSeconds: Int) -> CollectionTtl {
+    public static func of(ttlSeconds: TimeInterval) -> CollectionTtl {
         return CollectionTtl(ttlSeconds: ttlSeconds);
     }
     
@@ -80,7 +82,7 @@ public class CollectionTtl {
      - Parameter ttlSeconds: The number of seconds after which to expire the collection from the cache. Defaults to nil.
      - Returns: CollectionTtl
     */
-    public static func RefreshTtlIfProvided(ttlSeconds: Int? = nil) -> CollectionTtl {
+    public static func RefreshTtlIfProvided(ttlSeconds: TimeInterval? = nil) -> CollectionTtl {
         return CollectionTtl(ttlSeconds: ttlSeconds, refreshTtl: (ttlSeconds == nil));
     }
     
