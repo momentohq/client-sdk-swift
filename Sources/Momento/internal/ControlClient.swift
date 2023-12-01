@@ -25,7 +25,10 @@ class ControlClient: ControlClientProtocol {
     ) {
         self.configuration = configuration
         self.credentialProvider = credentialProvider
-        self.logger = LogProvider.getLogger(name: "CacheControlClient")
+        self.logger = LogProvider.getLogger(
+            name: "CacheControlClient",
+            client: MomentoClient.CacheClient
+        )
         
         do {
             self.grpcChannel = try GRPCChannelPool.with(

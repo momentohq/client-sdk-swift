@@ -12,7 +12,10 @@ public class TopicSubscribeSuccess: TopicSubscribeResponse {
 }
 
 internal func processResult(item: CacheClient_Pubsub__SubscriptionItem) -> TopicSubscriptionItemResponse? {
-    let logger = LogProvider.getLogger(name: "TopicSubscribeResponse")
+    let logger = LogProvider.getLogger(
+        name: "TopicSubscribeResponse",
+        client: MomentoClient.TopicClient
+    )
     let messageType = item.kind
     switch messageType {
     case .item:

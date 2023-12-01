@@ -200,7 +200,10 @@ class DataClient: DataClientProtocol {
     ) {
         self.configuration = configuration
         self.credentialProvider = credentialProvider
-        self.logger = LogProvider.getLogger(name: "CacheDataClient")
+        self.logger = LogProvider.getLogger(
+            name: "CacheDataClient",
+            client: MomentoClient.CacheClient
+        )
         self.defaultTtlSeconds = defaultTtlSeconds
         
         do {

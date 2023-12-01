@@ -19,9 +19,10 @@ public class CacheClient: CacheClientProtocol {
         credentialProvider: CredentialProviderProtocol,
         defaultTtlSeconds: TimeInterval
     ) {
-        // TODO: determine how to handle static logger class
-        // LogProvider.setLogger(loggerFactory: configuration.loggerFactory)
-        
+        LogProvider.setLoggerFactory(
+            loggerFactory: configuration.loggerFactory,
+            client: MomentoClient.CacheClient
+        )
         self.configuration = configuration
         self.credentialProvider = credentialProvider
         self.controlClient = ControlClient(
