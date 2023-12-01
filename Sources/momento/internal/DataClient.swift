@@ -419,7 +419,7 @@ class DataClient: DataClientProtocol {
             )
         } catch {
             return CacheListConcatenateFrontError(
-                error: UnknownError(message: "unknown list concatenate back error \(error)")
+                error: UnknownError(message: "unknown list concatenate front error \(error)")
             )
         }
     }
