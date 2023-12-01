@@ -1,5 +1,4 @@
 import GRPC
-import Foundation
 
 public protocol TopicSubscribeResponse {}
 
