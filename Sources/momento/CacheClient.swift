@@ -293,8 +293,8 @@ public class CacheClient: CacheClientProtocol {
     public func listFetch(
         cacheName: String,
         listName: String,
-        startIndex: Int?,
-        endIndex: Int?
+        startIndex: Int? = nil,
+        endIndex: Int? = nil
     ) async -> CacheListFetchResponse {
         do {
             try validateCacheName(cacheName: cacheName)
@@ -443,8 +443,8 @@ public class CacheClient: CacheClientProtocol {
         cacheName: String,
         listName: String,
         value: ScalarType,
-        truncateFrontToSize: Int?,
-        ttl: CollectionTtl?
+        truncateFrontToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
     ) async -> CacheListPushBackResponse {
         do {
             try validateCacheName(cacheName: cacheName)
@@ -489,8 +489,8 @@ public class CacheClient: CacheClientProtocol {
         cacheName: String,
         listName: String,
         value: ScalarType,
-        truncateBackToSize: Int?,
-        ttl: CollectionTtl?
+        truncateBackToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
     ) async -> CacheListPushFrontResponse {
         do {
             try validateCacheName(cacheName: cacheName)
@@ -573,9 +573,9 @@ public class CacheClient: CacheClientProtocol {
     public func listRetain(
         cacheName: String,
         listName: String,
-        startIndex: Int?,
-        endIndex: Int?,
-        ttl: CollectionTtl?
+        startIndex: Int? = nil,
+        endIndex: Int? = nil,
+        ttl: CollectionTtl? = nil
     ) async -> CacheListRetainResponse {
         do {
             try validateCacheName(cacheName: cacheName)
