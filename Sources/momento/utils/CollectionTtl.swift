@@ -30,7 +30,7 @@ public class CollectionTtl {
         self._refreshTtl = refreshTtl
     }
     
-    /** 
+    /**
      Current time-to-live value in seconds if it's set.
      - Returns TimeInterval or nil
     */
@@ -38,7 +38,7 @@ public class CollectionTtl {
         return self._ttlSeconds
     }
     
-    /** 
+    /**
      Current time-to-live value in milliseconds if it's set.
      - Returns TimeInterval or nil
     */
@@ -50,7 +50,7 @@ public class CollectionTtl {
         }
     }
     
-    /** 
+    /**
      Current value for whether to refresh a collection's TTL when it's modified.
      - Returns Bool
     */
@@ -62,14 +62,14 @@ public class CollectionTtl {
      The default way to handle TTLs for collections. The default TTL that was specified when constructing the
      CacheClient will be used, and the TTL for the collection will be refreshed any time the collection is modified.
      - Returns: CollectionTtl
-    ```
      */
     public static func fromCacheTtl() -> CollectionTtl {
         return CollectionTtl(refreshTtl: true)
     }
     
-    /** 
-     Constructs a CollectionTtl with the specified TTL in seconds.  The TTL for the collection will be refreshed any time the collection is modified.
+    /**
+     Constructs a CollectionTtl with the specified TTL in seconds.
+     The TTL for the collection will be refreshed any time the collection is modified.
      - Parameter ttlSeconds: The number of seconds after which to expire the collection from the cache.
      - Returns: CollectionTtl
     */
@@ -86,7 +86,7 @@ public class CollectionTtl {
         return CollectionTtl(ttlSeconds: ttlSeconds, refreshTtl: (ttlSeconds == nil));
     }
     
-    /** 
+    /**
      Specifies that the TTL for the collection should be refreshed when the collection is modified.  (This is the default behavior.)
      - Returns: CollectionTtl
     */
