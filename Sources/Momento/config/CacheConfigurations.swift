@@ -5,7 +5,6 @@ public enum CacheConfigurations {
 
         public static func latest() -> CacheClientConfiguration {
             return CacheClientConfiguration(
-                loggerFactory: DefaultMomentoLoggerFactory(),
                 transportStrategy: StaticTransportStrategy(
                     grpcConfig: StaticGrpcConfiguration(deadline: 15.0)
                 )
