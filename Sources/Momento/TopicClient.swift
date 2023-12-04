@@ -22,10 +22,7 @@ public class TopicClient: TopicClientProtocol {
         configuration: TopicClientConfigurationProtocol,
         credentialProvider: CredentialProviderProtocol
     ) {
-//        LogProvider.setLoggerFactory(
-//            loggerFactory: configuration.loggerFactory,
-//            client: MomentoClient.TopicClient
-//        )
+        LogProvider.setLogLevel(logLevel: configuration.logLevel)
         self.credentialProvider = credentialProvider
         self.pubsubClient = PubsubClient(
             configuration: configuration,

@@ -13,13 +13,13 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/momentohq/client-sdk-swift", exact: "0.2.1")
+        .package(name: "Momento", path: "../..")
     ],
     targets: [
         .executableTarget(
             name: "momento-topics-example",
             dependencies: [
-                .product(name: "momento", package: "client-sdk-swift"),
+                "Momento"
             ],
             path: "Sources"
         ),

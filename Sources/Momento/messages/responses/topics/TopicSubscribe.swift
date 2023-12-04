@@ -13,17 +13,17 @@ public class TopicSubscribeSuccess: TopicSubscribeResponse {
 }
 
 internal func processResult(item: CacheClient_Pubsub__SubscriptionItem) -> TopicSubscriptionItemResponse? {
-    let logger = Logger(label: "MomentoTopicSubscribeResponse")
+    let logger = LogProvider.getLogger(name: "TopicSubscribeResponse")
     let messageType = item.kind
     switch messageType {
     case .item:
         return createTopicItemResponse(item: item.item)
     case .heartbeat:
-        logger.debug("Momento: topic client received a heartbeat")
+        logger.debug("topic client received a heartbeat")
     case .discontinuity:
-        logger.debug("Momento: topic client received a discontinuity")
+        logger.debug("topic client received a discontinuity")
     default:
-        logger.error("Momento: topic client received unknown subscription item: \(item)")
+        logger.error("topic client received unknown subscription item: \(item)")
     }
     return nil
 }

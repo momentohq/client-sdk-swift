@@ -35,7 +35,7 @@ class PubsubClient: PubsubClientProtocol {
     ) {
         self.configuration = configuration
         self.credentialProvider = credentialProvider
-        self.logger = Logger(label: "MomentoPubsubClient")
+        self.logger = LogProvider.getLogger(name: "PubsubClient")
         
         do {
             self.sharedChannel = try GRPCChannelPool.with(
@@ -87,7 +87,7 @@ class PubsubClient: PubsubClientProtocol {
         do {
             let result = try await self.client.publish(request)
             // Successful publish returns client_sdk_swift.CacheClient_Pubsub__Empty
-            self.logger.debug("Momento: Publish response: \(result)")
+            self.logger.debug("Publish response: \(result)")
             // TODO: I'm just resetting customMetadata after it's sent once to prevent the agent
             //  header from being sent more than once. Need to repeat this in subscribe().
             self.client.defaultCallOptions.customMetadata = HPACKHeaders()

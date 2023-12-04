@@ -26,7 +26,7 @@ class ControlClient: ControlClientProtocol {
     ) {
         self.configuration = configuration
         self.credentialProvider = credentialProvider
-        self.logger = Logger(label: "MomentoCacheControlClient")
+        self.logger = LogProvider.getLogger(name: "CacheControlClient")
         
         do {
             self.grpcChannel = try GRPCChannelPool.with(
@@ -101,7 +101,7 @@ class ControlClient: ControlClientProtocol {
         do {
             let result = try await call.response.get()
             // Successful creation returns ControlClient__ListCachesResponse
-            self.logger.debug("Momento: list caches received: \(result.cache)")
+            self.logger.debug("list caches received: \(result.cache)")
             return CacheListSuccess(caches: result.cache)
         } catch let err as GRPCStatus {
             return CacheListError(error: grpcStatusToSdkError(grpcStatus: err))

@@ -21,6 +21,7 @@ public class CacheClient: CacheClientProtocol {
         defaultTtlSeconds: TimeInterval
     ) {
         self.configuration = configuration
+        LogProvider.setLogLevel(logLevel: configuration.logLevel)
         self.credentialProvider = credentialProvider
         self.controlClient = ControlClient(
             configuration: configuration, 

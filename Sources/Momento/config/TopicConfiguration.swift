@@ -1,7 +1,9 @@
 import Foundation
+import Logging
 
 public protocol TopicClientConfigurationProtocol {
     var transportStrategy: TransportStrategyProtocol { get }
+    var logLevel: Logger.Level { get set }
     
     func withTransportStrategy(transportStrategy: TransportStrategyProtocol) -> TopicClientConfigurationProtocol
     func withClientTimeout(timeout: TimeInterval) -> TopicClientConfigurationProtocol
@@ -9,9 +11,14 @@ public protocol TopicClientConfigurationProtocol {
 
 public class TopicClientConfiguration: TopicClientConfigurationProtocol {
     public var transportStrategy: TransportStrategyProtocol
+    public var logLevel: Logger.Level
     
-    init(transportStrategy: TransportStrategyProtocol) {
+    init(
+        transportStrategy: TransportStrategyProtocol,
+        logLevel: Logger.Level = .info
+    ) {
         self.transportStrategy = transportStrategy
+        self.logLevel = logLevel
     }
     
     public func withTransportStrategy(transportStrategy: TransportStrategyProtocol) -> TopicClientConfigurationProtocol {
