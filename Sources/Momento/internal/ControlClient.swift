@@ -1,6 +1,7 @@
 import GRPC
 import NIO
 import NIOHPACK
+import Logging
 
 protocol ControlClientProtocol {
     func createCache(cacheName: String) async -> CacheCreateResponse
@@ -12,7 +13,7 @@ protocol ControlClientProtocol {
 
 @available(macOS 10.15, iOS 13, *)
 class ControlClient: ControlClientProtocol {
-    internal let logger: MomentoLoggerProtocol
+    internal let logger: Logger
     private let credentialProvider: CredentialProviderProtocol
     private let configuration: CacheClientConfigurationProtocol
     private let grpcChannel: GRPCChannel
@@ -25,10 +26,7 @@ class ControlClient: ControlClientProtocol {
     ) {
         self.configuration = configuration
         self.credentialProvider = credentialProvider
-        self.logger = LogProvider.getLogger(
-            name: "CacheControlClient",
-            client: MomentoClient.CacheClient
-        )
+        self.logger = Logger(label: "CacheControlClient")
         
         do {
             self.grpcChannel = try GRPCChannelPool.with(
@@ -103,7 +101,7 @@ class ControlClient: ControlClientProtocol {
         do {
             let result = try await call.response.get()
             // Successful creation returns ControlClient__ListCachesResponse
-            self.logger.debug(msg: "list caches received: \(result.cache)")
+            self.logger.debug("list caches received: \(result.cache)")
             return CacheListSuccess(caches: result.cache)
         } catch let err as GRPCStatus {
             return CacheListError(error: grpcStatusToSdkError(grpcStatus: err))

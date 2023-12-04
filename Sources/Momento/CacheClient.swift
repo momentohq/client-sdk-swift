@@ -1,4 +1,5 @@
 import Foundation
+import Logging
 
 public enum ScalarType {
     case string(String)
@@ -19,10 +20,6 @@ public class CacheClient: CacheClientProtocol {
         credentialProvider: CredentialProviderProtocol,
         defaultTtlSeconds: TimeInterval
     ) {
-        LogProvider.setLoggerFactory(
-            loggerFactory: configuration.loggerFactory,
-            client: MomentoClient.CacheClient
-        )
         self.configuration = configuration
         self.credentialProvider = credentialProvider
         self.controlClient = ControlClient(
