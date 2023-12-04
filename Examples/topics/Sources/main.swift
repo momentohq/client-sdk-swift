@@ -1,5 +1,4 @@
-import Momento
-import Logging
+import momento
 
 func main() async {
     print("Running Momento Topics example!")
@@ -59,7 +58,7 @@ func main() async {
     let messages = ["hello", "welcome", "to", "momento", "topics"]
     for message in messages {
         // Publish the message
-        let publishResponse = await client.publish(cacheName: cacheName, topicName: topicName, value: ScalarType.string(message))
+        let publishResponse = await client.publish(cacheName: cacheName, topicName: topicName, value: message)
 
         // Check the response type (error or success?)
         switch publishResponse {

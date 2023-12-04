@@ -1,6 +1,15 @@
 {
   "pins" : [
     {
+      "identity" : "client-sdk-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/momentohq/client-sdk-swift",
+      "state" : {
+        "revision" : "385ffa1d6b887c035243dd50f1973437279fe950",
+        "version" : "0.2.1"
+      }
+    },
+    {
       "identity" : "grpc-swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/grpc/grpc-swift.git",
