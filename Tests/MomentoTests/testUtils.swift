@@ -19,7 +19,7 @@ func setUpIntegrationTests() async -> TestSetup {
         )
         
         let cacheClient = CacheClient(
-            configuration: CacheConfigurations.Default.latest(),
+            configuration: CacheConfigurations.Default.latest().withClientTimeout(timeout: 30),
             credentialProvider: creds,
             defaultTtlSeconds: 10
         )
