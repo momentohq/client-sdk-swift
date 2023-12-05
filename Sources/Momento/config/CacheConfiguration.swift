@@ -13,7 +13,7 @@ public class CacheClientConfiguration: CacheClientConfigurationProtocol {
     public var transportStrategy: TransportStrategyProtocol
     public var logLevel: Logger.Level
     
-    init(
+    public init(
         transportStrategy: TransportStrategyProtocol,
         logLevel: Logger.Level = .info
     ) {

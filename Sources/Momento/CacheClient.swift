@@ -15,7 +15,7 @@ public class CacheClient: CacheClientProtocol {
     private let controlClient: ControlClientProtocol
     private let dataClient: DataClientProtocol
     
-    init(
+    public init(
         configuration: CacheClientConfigurationProtocol,
         credentialProvider: CredentialProviderProtocol,
         defaultTtlSeconds: TimeInterval
