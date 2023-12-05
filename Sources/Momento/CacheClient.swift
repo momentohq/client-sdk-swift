@@ -1,5 +1,4 @@
 import Foundation
-import Logging
 
 public enum ScalarType {
     case string(String)
@@ -21,7 +20,6 @@ public class CacheClient: CacheClientProtocol {
         defaultTtlSeconds: TimeInterval
     ) {
         self.configuration = configuration
-        LogProvider.setLogLevel(logLevel: configuration.logLevel)
         self.credentialProvider = credentialProvider
         self.controlClient = ControlClient(
             configuration: configuration, 

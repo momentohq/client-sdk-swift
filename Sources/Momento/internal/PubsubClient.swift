@@ -35,7 +35,7 @@ class PubsubClient: PubsubClientProtocol {
     ) {
         self.configuration = configuration
         self.credentialProvider = credentialProvider
-        self.logger = LogProvider.getLogger(name: "PubsubClient")
+        self.logger = Logger(label: "PubsubClient")
         
         do {
             self.sharedChannel = try GRPCChannelPool.with(

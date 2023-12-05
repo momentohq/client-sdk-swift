@@ -26,7 +26,7 @@ class ControlClient: ControlClientProtocol {
     ) {
         self.configuration = configuration
         self.credentialProvider = credentialProvider
-        self.logger = LogProvider.getLogger(name: "CacheControlClient")
+        self.logger = Logger(label: "CacheControlClient")
         
         do {
             self.grpcChannel = try GRPCChannelPool.with(

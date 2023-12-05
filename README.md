@@ -43,6 +43,11 @@ General documentation on Momento and the Momento SDKs is available on the [Momen
 
 Check out full working code in the [topics example](./Examples/topics/README.md) directory of this repository!
 
+## Logging
+
+We are using [swift-log](https://github.com/apple/swift-log) to create Loggers that use the default logging backend, which simply prints to stdout.
+To change the logging backend and set your preferred logging level, call [`LoggingSystem.bootstrap(...)`](https://github.com/apple/swift-log/#default-logger-behavior) once at the beginning of your program ([example](https://github.com/sushichop/Puppy#use-with-appleswift-log)).
+
 ## Developing
 
 If you are interested in contributing to the SDK, please see the [CONTRIBUTING](./CONTRIBUTING.md) docs.

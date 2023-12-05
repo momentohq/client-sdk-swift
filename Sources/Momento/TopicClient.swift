@@ -22,7 +22,6 @@ public class TopicClient: TopicClientProtocol {
         configuration: TopicClientConfigurationProtocol,
         credentialProvider: CredentialProviderProtocol
     ) {
-        LogProvider.setLogLevel(logLevel: configuration.logLevel)
         self.credentialProvider = credentialProvider
         self.pubsubClient = PubsubClient(
             configuration: configuration,
