@@ -17,7 +17,8 @@ let package = Package(
             dependencies: [
                 // .product(name: "Momento", package: "client-sdk-swift")
                 "Momento"
-            ]
+            ],
+            path: "Sources"
         ),
     ]
 )
