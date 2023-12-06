@@ -7,6 +7,10 @@ public enum ScalarType {
 
 typealias CacheClientProtocol = ControlClientProtocol & DataClientProtocol
 
+/**
+ Client to perform operations against Momento Serverless Cache.
+ To learn more, see the [Momento Cache developer documentation](https://docs.momentohq.com/cache)
+ */
 @available(macOS 10.15, iOS 13, *)
 public class CacheClient: CacheClientProtocol {
     private let credentialProvider: CredentialProviderProtocol
@@ -14,6 +18,13 @@ public class CacheClient: CacheClientProtocol {
     private let controlClient: ControlClientProtocol
     private let dataClient: DataClientProtocol
     
+    /**
+     Constructs the client to perform operations against Momento Serverless Cache.
+     - Parameters:
+        - configuration: CacheClient configuration object specifying grpc transport strategy and other settings
+        - credentialProvider: provides the Momento API key, which you can create in the [Momento Web Console](https://console.gomomento.com/api-keys)
+        - defaultTtlSeconds: default time to live for the item in cache
+     */
     public init(
         configuration: CacheClientConfigurationProtocol,
         credentialProvider: CredentialProviderProtocol,
