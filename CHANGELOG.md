@@ -1,5 +1,31 @@
 # Changelog
 
+## [0.3.0](https://github.com/momentohq/client-sdk-swift/compare/v0.2.1...v0.3.0) (2023-12-06)
+
+
+### Features
+
+* add list collection type ([#66](https://github.com/momentohq/client-sdk-swift/issues/66)) ([1f382c6](https://github.com/momentohq/client-sdk-swift/commit/1f382c641ee1af0db3f5f126cbc0c021917e5825))
+* implement CacheClient ([#58](https://github.com/momentohq/client-sdk-swift/issues/58)) ([36d1db1](https://github.com/momentohq/client-sdk-swift/commit/36d1db12523c28c1ed7e751474a3c29535525022))
+
+
+### Bug Fixes
+
+* add missing error handling for JWT token and tests ([#68](https://github.com/momentohq/client-sdk-swift/issues/68)) ([0599fa0](https://github.com/momentohq/client-sdk-swift/commit/0599fa0586be083e0513dd6ed479ed0d23f4d020))
+* exclude protos from target to quiet compiler warning ([#69](https://github.com/momentohq/client-sdk-swift/issues/69)) ([b0ee9e2](https://github.com/momentohq/client-sdk-swift/commit/b0ee9e23a7c5d81ee22ff33b0fe410c2aeaf4732))
+* logging for momento clients ([#72](https://github.com/momentohq/client-sdk-swift/issues/72)) ([5ffea92](https://github.com/momentohq/client-sdk-swift/commit/5ffea92c6f1f2efbfe1480a161b104a807c79bb0))
+
+
+### Miscellaneous
+
+* add dependabot yml ([#74](https://github.com/momentohq/client-sdk-swift/issues/74)) ([f816073](https://github.com/momentohq/client-sdk-swift/commit/f8160736c05e54bb1692f3c1737f1251d69c5d12))
+* add example ios chat app using Momento Topics ([#63](https://github.com/momentohq/client-sdk-swift/issues/63)) ([4f58e2a](https://github.com/momentohq/client-sdk-swift/commit/4f58e2af659f1a292d13b202ba3fb4abf7ae02eb))
+* add extension for ttl-less set call ([#67](https://github.com/momentohq/client-sdk-swift/issues/67)) ([821d098](https://github.com/momentohq/client-sdk-swift/commit/821d098891817d7a90a28a28e1d6ec262b2f5c1d))
+* capitalize module name ([#73](https://github.com/momentohq/client-sdk-swift/issues/73)) ([463e739](https://github.com/momentohq/client-sdk-swift/commit/463e739f037166ff45c95c2e2f19cc4a8e85dec1))
+* remove unnecessary imports and namespacing prefixes ([#70](https://github.com/momentohq/client-sdk-swift/issues/70)) ([4872d94](https://github.com/momentohq/client-sdk-swift/commit/4872d945843de56c67dfc7fce07086e1498e4130))
+* remove validation disallowing empty and blank cache values ([#71](https://github.com/momentohq/client-sdk-swift/issues/71)) ([4e81fbe](https://github.com/momentohq/client-sdk-swift/commit/4e81fbee82c0a1e63ac1392b01b3ea0bea3e1601))
+* topics example should consume package from url and github actions should build example in ci ([#64](https://github.com/momentohq/client-sdk-swift/issues/64)) ([06e598b](https://github.com/momentohq/client-sdk-swift/commit/06e598bb57941fd5fcf5de50543a78a287c83db3))
+
 ## [0.2.1](https://github.com/momentohq/client-sdk-swift/compare/v0.2.0...v0.2.1) (2023-11-22)
 
 
