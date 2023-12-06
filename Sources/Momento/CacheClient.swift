@@ -14,14 +14,11 @@ public class CacheClient: CacheClientProtocol {
     private let controlClient: ControlClientProtocol
     private let dataClient: DataClientProtocol
     
-    init(
+    public init(
         configuration: CacheClientConfigurationProtocol,
         credentialProvider: CredentialProviderProtocol,
         defaultTtlSeconds: TimeInterval
     ) {
-        // TODO: determine how to handle static logger class
-        // LogProvider.setLogger(loggerFactory: configuration.loggerFactory)
-        
         self.configuration = configuration
         self.credentialProvider = credentialProvider
         self.controlClient = ControlClient(

@@ -1,4 +1,5 @@
 import GRPC
+import Logging
 
 public protocol TopicSubscribeResponse {}
 
@@ -12,17 +13,17 @@ public class TopicSubscribeSuccess: TopicSubscribeResponse {
 }
 
 internal func processResult(item: CacheClient_Pubsub__SubscriptionItem) -> TopicSubscriptionItemResponse? {
-    let logger = LogProvider.getLogger(name: "TopicSubscribeResponse")
+    let logger = Logger(label: "TopicSubscribeResponse")
     let messageType = item.kind
     switch messageType {
     case .item:
         return createTopicItemResponse(item: item.item)
     case .heartbeat:
-        logger.debug(msg: "topic client received a heartbeat")
+        logger.debug("topic client received a heartbeat")
     case .discontinuity:
-        logger.debug(msg: "topic client received a discontinuity")
+        logger.debug("topic client received a discontinuity")
     default:
-        logger.error(msg: "topic client received unknown subscription item: \(item)")
+        logger.error("topic client received unknown subscription item: \(item)")
     }
     return nil
 }

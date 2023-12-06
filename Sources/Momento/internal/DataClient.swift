@@ -2,6 +2,7 @@ import Foundation
 import GRPC
 import NIO
 import NIOHPACK
+import Logging
 
 protocol DataClientProtocol {
     func get(cacheName: String, key: ScalarType) async -> CacheGetResponse
@@ -184,7 +185,7 @@ extension DataClientProtocol {
 
 @available(macOS 10.15, iOS 13, *)
 class DataClient: DataClientProtocol {
-    internal let logger: MomentoLoggerProtocol
+    internal let logger: Logger
     private let credentialProvider: CredentialProviderProtocol
     private let configuration: CacheClientConfigurationProtocol
     private let grpcChannel: GRPCChannel
@@ -200,7 +201,7 @@ class DataClient: DataClientProtocol {
     ) {
         self.configuration = configuration
         self.credentialProvider = credentialProvider
-        self.logger = LogProvider.getLogger(name: "CacheDataClient")
+        self.logger = Logger(label: "CacheDataClient")
         self.defaultTtlSeconds = defaultTtlSeconds
         
         do {

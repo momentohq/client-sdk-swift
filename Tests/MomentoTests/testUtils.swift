@@ -19,7 +19,7 @@ func setUpIntegrationTests() async -> TestSetup {
         )
         
         let cacheClient = CacheClient(
-            configuration: CacheConfigurations.Default.latest(),
+            configuration: CacheConfigurations.Default.latest().withClientTimeout(timeout: 30),
             credentialProvider: creds,
             defaultTtlSeconds: 10
         )
@@ -28,7 +28,7 @@ func setUpIntegrationTests() async -> TestSetup {
         let result = await cacheClient.createCache(cacheName: cacheName)
         switch result {
         case let error as CacheCreateError:
-            fatalError("Unable to create integration test cache: \(error)")
+            fatalError("Unable to create integration test cache: \(error.description)")
         default: 
             break
         }

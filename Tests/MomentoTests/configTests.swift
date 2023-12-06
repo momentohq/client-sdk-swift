@@ -35,7 +35,9 @@ final class configTests: XCTestCase {
         let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: apiKeyEnvVarName)
         XCTAssertNotNil(creds)
         
-        let config = TopicClientConfiguration(loggerFactory: DefaultMomentoLoggerFactory(), transportStrategy: StaticTransportStrategy(grpcConfig: StaticGrpcConfiguration(deadline: 60)))
+        let config = TopicClientConfiguration(
+            transportStrategy: StaticTransportStrategy(grpcConfig: StaticGrpcConfiguration(deadline: 60))
+        )
         let client = TopicClient(configuration: config, credentialProvider: creds)
         XCTAssertNotNil(client)
     }

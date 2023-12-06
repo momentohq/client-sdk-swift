@@ -43,6 +43,22 @@ General documentation on Momento and the Momento SDKs is available on the [Momen
 
 Check out full working code in the [topics example](./Examples/topics/README.md) directory of this repository!
 
+## Logging
+
+We are using [swift-log](https://github.com/apple/swift-log) to create internal Loggers for producing Momento-related logs. 
+The default logging backend provided by swift-log ([`StreamLogHandler`](https://github.com/apple/swift-log/#default-logger-behavior)) simply prints to stdout at a default logging level of `.info`.
+
+To change the logging level and/or redirect logs to stderr, you would call  [`LoggingSystem.bootstrap(...)`](https://github.com/apple/swift-log/#default-logger-behavior) once at the beginning of your program like so:
+```
+LoggingSystem.bootstrap {
+    var handler = StreamLogHandler.standardError(label: "momento-logger")
+    handler.logLevel = .debug
+    return handler
+}
+```
+
+You can also use the `LoggingSystem.bootstrap` call to configure your preferred [swift-log compatible logging backend](https://github.com/apple/swift-log/#available-logging-backends-for-applications) or to use your [custom logging backend implementation](https://github.com/apple/swift-log/#on-the-implementation-of-a-logging-backend-a-loghandler).
+
 ## Developing
 
 If you are interested in contributing to the SDK, please see the [CONTRIBUTING](./CONTRIBUTING.md) docs.

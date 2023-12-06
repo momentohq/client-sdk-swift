@@ -25,7 +25,7 @@ public class CollectionTtl {
      - Parameter refreshTtl: If true, the collection's TTL will be refreshed (to prolong the life of the collection) on every update.
      If false, the collection's TTL will only be set when the collection is initially created.
      */
-    init(ttlSeconds: TimeInterval? = nil, refreshTtl: Bool = true) {
+    public init(ttlSeconds: TimeInterval? = nil, refreshTtl: Bool = true) {
         self._ttlSeconds = ttlSeconds
         self._refreshTtl = refreshTtl
     }
