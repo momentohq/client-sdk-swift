@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/momentohq/client-sdk-swift/compare/v0.3.0...v0.3.1) (2023-12-06)
+
+
+### Miscellaneous
+
+* add docstrings to cache and topic clients ([#76](https://github.com/momentohq/client-sdk-swift/issues/76)) ([73f6a5f](https://github.com/momentohq/client-sdk-swift/commit/73f6a5f9dd2cf2355c0f315022f0ab396a37e484))
+
 ## [0.3.0](https://github.com/momentohq/client-sdk-swift/compare/v0.2.1...v0.3.0) (2023-12-06)
 
 
