@@ -61,8 +61,7 @@ class PubsubClient: PubsubClientProtocol {
         self.client = CacheClient_Pubsub_PubsubAsyncClient(
             channel: self.sharedChannel,
             defaultCallOptions: .init(
-                customMetadata: .init(headers.map { ($0, $1) }),
-                timeLimit: .timeout(.seconds(Int64(self.configuration.transportStrategy.getClientTimeout())))
+                customMetadata: .init(headers.map { ($0, $1) })
             ),
             interceptors: PubsubClientInterceptorFactory(apiKey: credentialProvider.apiKey)
         )
@@ -85,7 +84,10 @@ class PubsubClient: PubsubClientProtocol {
         }
         
         do {
-            let result = try await self.client.publish(request)
+            let result = try await self.client.publish(request, callOptions: .init(
+                timeLimit: .timeout(.seconds(Int64(self.configuration.transportStrategy.getClientTimeout())))
+                )
+            )
             // Successful publish returns client_sdk_swift.CacheClient_Pubsub__Empty
             self.logger.debug("Publish response: \(result)")
             // TODO: I'm just resetting customMetadata after it's sent once to prevent the agent
