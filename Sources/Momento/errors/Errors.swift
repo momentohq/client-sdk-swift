@@ -1,20 +1,35 @@
 import GRPC
 
 public enum MomentoErrorCode: String {
+    /// Invalid argument passed to Momento client
     case INVALID_ARGUMENT_ERROR = "INVALID_ARGUMENT_ERROR"
+    /// Service returned an unknown response
     case UNKNOWN_SERVICE_ERROR = "UNKNOWN_SERVICE_ERROR"
+    /// Resource with specified name already exists
     case ALREADY_EXISTS_ERROR = "ALREADY_EXISTS_ERROR"
+    /// Cache with specified name doesn't exist
     case NOT_FOUND_ERROR = "NOT_FOUND_ERROR"
+    /// An unexpected error occurred while trying to fulfill the request
     case INTERNAL_SERVER_ERROR = "INTERNAL_SERVER_ERROR"
+    /// Insufficient permissions to perform operation
     case PERMISSION_ERROR = "PERMISSION_ERROR"
+    /// Invalid authentication credentials to connect to service
     case AUTHENTICATION_ERROR = "AUTHENTICATION_ERROR"
+    /// Request was cancelled by the server
     case CANCELLED_ERROR = "CANCELLED_ERROR"
+    /// Request rate, bandwidth, or object size exceeded the limits for the account
     case LIMIT_EXCEEDED_ERROR = "LIMIT_EXCEEDED_ERROR"
+    /// Request was invalid
     case BAD_REQUEST_ERROR = "BAD_REQUEST_ERROR"
+    /// Client's configured timeout was exceeded
     case TIMEOUT_ERROR = "TIMEOUT_ERROR"
+    /// Server was unable to handle the request
     case SERVER_UNAVAILABLE = "SERVER_UNAVAILABLE"
+    /// A client resource (most likely memory) was exhausted
     case CLIENT_RESOURCE_EXHAUSTED = "CLIENT_RESOURCE_EXHAUSTED"
+    /// System is not in a state required for the operation's execution
     case FAILED_PRECONDITION_ERROR = "FAILED_PRECONDITION_ERROR"
+    /// Unknown error has occurred
     case UNKNOWN_ERROR = "UNKNOWN_ERROR"
 }
 
@@ -29,8 +44,11 @@ struct MomentoErrorTransportDetails {
 }
 
 public protocol ErrorResponseBaseProtocol {
+    /// Detailed information about the error
     var message: String { get }
+    /// Error code corresponding to one of the values of `MomentoErrorCode`
     var errorCode: MomentoErrorCode { get }
+    /// Original `Error`, if any, from which the `SdkError` was created
     var innerException: Error? { get }
 }
 
@@ -42,9 +60,15 @@ public class SdkError: Error, ErrorResponseBaseProtocol {
     let messageWrapper: String
     
     var description: String {
-        return "\(self.errorCode): \(self.message)"
+        return "\(self.errorCode) - \(self.messageWrapper): \(self.message)"
     }
     
+    /**
+    - Parameters:
+        message: detailed information about the error
+        errorCode: error code corresponding to one of the values of `MomentoErrorCode`
+        innerExecption: optional `Error` causing the `SdkError` to be returned
+     */
     init(
         message: String,
         errorCode: MomentoErrorCode,
@@ -60,6 +84,7 @@ public class SdkError: Error, ErrorResponseBaseProtocol {
     }
 }
 
+///
 public class AlreadyExistsError: SdkError {
     init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
         super.init(

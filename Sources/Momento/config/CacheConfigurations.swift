@@ -3,6 +3,7 @@ public enum CacheConfigurations {
 
     public enum Default {
 
+        /// Provides the latest recommended configuration for the `CacheClient`
         public static func latest() -> CacheClientConfiguration {
             return CacheClientConfiguration(
                 transportStrategy: StaticTransportStrategy(
@@ -11,6 +12,7 @@ public enum CacheConfigurations {
             )
         }
 
+        /// Provides v1 recommended configuration for the `CacheClient`
         public static func v1()  -> CacheClientConfiguration {
             return latest()
         }

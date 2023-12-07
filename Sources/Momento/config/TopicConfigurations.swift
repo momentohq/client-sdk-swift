@@ -3,6 +3,7 @@ public enum TopicConfigurations {
 
     public enum Default {
 
+        /// Provides the latest recommended configuration for the `TopicClient`
         public static func latest() -> TopicClientConfiguration {
             return TopicClientConfiguration(
                 transportStrategy: StaticTransportStrategy(
@@ -10,7 +11,8 @@ public enum TopicConfigurations {
                 )
             )
         }
-
+        
+        /// Provides the v1 recommended configuration for the `TopicClient`
         public static func v1()  -> TopicClientConfiguration {
             return latest()
         }
