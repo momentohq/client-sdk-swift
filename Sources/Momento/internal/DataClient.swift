@@ -171,24 +171,24 @@ class DataClient: DataClientProtocol {
         do {
             let result = try await call.response.get()
             if result.result == .hit {
-                return CacheGetHit(value: result.cacheBody)
+                return CacheGetResponse.hit(CacheGetHit(value: result.cacheBody))
             } else if result.result == .miss {
-                return CacheGetMiss()
+                return CacheGetResponse.miss(CacheGetMiss())
             } else {
-                return CacheGetError(
+                return CacheGetResponse.error(CacheGetError(
                     error: UnknownError(message: "unknown cache get error \(result)")
-                )
+                ))
             }
         } catch let err as GRPCStatus {
-            return CacheGetError(error: grpcStatusToSdkError(grpcStatus: err))
+            return CacheGetResponse.error(CacheGetError(error: grpcStatusToSdkError(grpcStatus: err)))
         } catch let err as GRPCConnectionPoolError {
-            return CacheGetError(
+            return CacheGetResponse.error(CacheGetError(
                 error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
-            )
+            ))
         } catch {
-            return CacheGetError(
+            return CacheGetResponse.error(CacheGetError(
                 error: UnknownError(message: "unknown cache get error \(error)")
-            )
+            ))
         }
     }
     

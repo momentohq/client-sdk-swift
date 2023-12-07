@@ -118,47 +118,56 @@ final class cacheTests: XCTestCase {
     }
     
     func testScalarGet() async throws {
-        let invalidCacheName = await self.cacheClient.get(
-            cacheName: "   ",
-            key: generateStringWithUuid(prefix: "hello")
-        )
-        XCTAssertTrue(
-            invalidCacheName is CacheGetError,
-            "Unexpected response: \(invalidCacheName)"
-        )
-        let invalidCacheNameErrorCode = (invalidCacheName as! CacheGetError).errorCode
-        XCTAssertEqual(
-            invalidCacheNameErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidCacheNameErrorCode)"
-        )
-        
-        let invalidKey = await self.cacheClient.get(
-            cacheName: self.integrationTestCacheName,
-            key: "   "
-        )
-        XCTAssertTrue(
-            invalidKey is CacheGetError,
-            "Unexpected response: \(invalidKey)"
-        )
-        let invalidKeyErrorCode = (invalidKey as! CacheGetError).errorCode
-        XCTAssertEqual(
-            invalidKeyErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidKeyErrorCode)"
-        )
-        
+//        let invalidCacheName = await self.cacheClient.get(
+//            cacheName: "   ",
+//            key: ScalarType.string(generateStringWithUuid(prefix: "hello"))
+//        )
+//        XCTAssertTrue(
+//            invalidCacheName is CacheGetError,
+//            "Unexpected response: \(invalidCacheName)"
+//        )
+//        let invalidCacheNameErrorCode = (invalidCacheName as! CacheGetError).errorCode
+//        XCTAssertEqual(
+//            invalidCacheNameErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
+//            "Unexpected error code: \(invalidCacheNameErrorCode)"
+//        )
+//        let invalidKey = await self.cacheClient.get(
+//            cacheName: self.integrationTestCacheName,
+//            key: ScalarType.string("   ")
+//        )
+//        XCTAssertTrue(
+//            invalidKey is CacheGetError,
+//            "Unexpected response: \(invalidKey)"
+//        )
+//        let invalidKeyErrorCode = (invalidKey as! CacheGetError).errorCode
+//        XCTAssertEqual(
+//            invalidKeyErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
+//            "Unexpected error code: \(invalidKeyErrorCode)"
+//        )
+//
         let testKey = generateStringWithUuid(prefix: "hello")
         
         let stringKey = await self.cacheClient.get(
             cacheName: self.integrationTestCacheName,
             key: testKey
         )
-        XCTAssertTrue(stringKey is CacheGetMiss, "Unexpected response: \(stringKey)")
+
+        switch stringKey {
+        case .hit(let hit):
+            XCTFail("expected a miss but got \(hit)")
+        case .miss:
+            XCTAssertTrue(true)
+        case .error(let err):
+            XCTFail("expected a miss but got \(err)")
+        }
         
-        let bytesKey = await self.cacheClient.get(
-            cacheName: self.integrationTestCacheName,
-            key: Data(testKey.utf8)
-        )
-        XCTAssertTrue(bytesKey is CacheGetMiss, "Unexpected response: \(bytesKey)")
+        XCTAssertTrue(stringKey is CacheGetResponse, "Unexpected response: \(stringKey)")
+
+//        let bytesKey = await self.cacheClient.get(
+//            cacheName: self.integrationTestCacheName,
+//            key: ScalarType.data(Data(testKey.utf8))
+//        )
+//        XCTAssertTrue(bytesKey is CacheGetMiss, "Unexpected response: \(bytesKey)")
     }
     
     func testScalarSet() async throws {

@@ -408,11 +408,11 @@ public class CacheClient: CacheClientProtocol {
             try validateCacheName(cacheName: cacheName)
             try validateCacheKey(key: key)
         } catch let err as SdkError {
-            return CacheGetError(error: err)
+            return CacheGetResponse.error(CacheGetError(error: err))
         } catch {
-            return CacheGetError(error: UnknownError(
+            return CacheGetResponse.error(CacheGetError(error: UnknownError(
                 message: "unexpected error: \(error)")
-            )
+            ))
         }
         return await self.dataClient.get(cacheName: cacheName, key: key)
     }
