@@ -195,7 +195,8 @@ class DataClient: DataClientProtocol {
         ttl: TimeInterval? = nil
     ) async -> SetResponse {
         var request = CacheClient__SetRequest()
-        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
+        let ttlSeconds = ttl ?? self.defaultTtlSeconds
+        request.ttlMilliseconds = UInt64(ttlSeconds*1000)
         request.cacheKey = self.convertScalarTypeToData(element: key)
         request.cacheBody = self.convertScalarTypeToData(element: value)
 
