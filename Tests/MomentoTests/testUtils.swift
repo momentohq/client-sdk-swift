@@ -45,7 +45,7 @@ func setUpIntegrationTests() async -> TestSetup {
 
 func cleanUpIntegrationTests(cacheName: String, cacheClient: CacheClientProtocol) async {
     let result = await cacheClient.deleteCache(cacheName: cacheName)
-    if result is CacheDeleteError {
+    if result is DeleteCacheError {
         fatalError("Unable to tear down integration test setup: \(result)")
     }
 }

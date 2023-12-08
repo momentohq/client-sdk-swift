@@ -1,5 +1,5 @@
 public protocol DeleteCacheResponse {}
 
-public class CacheDeleteSuccess: DeleteCacheResponse {}
+public class DeleteCacheSuccess: DeleteCacheResponse {}
 
-public class CacheDeleteError: ErrorResponseBase, DeleteCacheResponse {}
+public class DeleteCacheError: ErrorResponseBase, DeleteCacheResponse {}

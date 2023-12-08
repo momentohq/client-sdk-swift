@@ -32,10 +32,10 @@ final class cacheTests: XCTestCase {
         
         let deleteInvalidName = await self.cacheClient.deleteCache(cacheName: "   ")
         XCTAssertTrue(
-            deleteInvalidName is CacheDeleteError,
+            deleteInvalidName is DeleteCacheError,
             "Unexpected response: \(deleteInvalidName)"
         )
-        let deleteErrorCode = (deleteInvalidName as! CacheDeleteError).errorCode
+        let deleteErrorCode = (deleteInvalidName as! DeleteCacheError).errorCode
         XCTAssertEqual(
             deleteErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
             "Unexpected error code: \(deleteErrorCode)"
@@ -52,7 +52,7 @@ final class cacheTests: XCTestCase {
         
         let deleteResult = await self.cacheClient.deleteCache(cacheName: cacheName)
         XCTAssertTrue(
-            deleteResult is CacheDeleteSuccess,
+            deleteResult is DeleteCacheSuccess,
             "Unexpected response: \(deleteResult)"
         )
     }
@@ -112,7 +112,7 @@ final class cacheTests: XCTestCase {
         // Clean up additional created cache
         let deleteResult = await self.cacheClient.deleteCache(cacheName: newCacheName)
         XCTAssertTrue(
-            deleteResult is CacheDeleteSuccess,
+            deleteResult is DeleteCacheSuccess,
             "Unexpected response: \(deleteResult)"
         )
     }

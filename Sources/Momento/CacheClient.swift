@@ -321,9 +321,9 @@ public class CacheClient: CacheClientProtocol {
      Pattern matching can be used to operate on the appropriate subtype.
     ```
      switch response {
-     case let responseError as CacheDeleteError:
+     case let responseError as DeleteCacheError:
         // handle error
-     case let responseSuccess as CacheDeleteSuccess:
+     case let responseSuccess as DeleteCacheSuccess:
         // handle success
      }
     ```
@@ -332,9 +332,9 @@ public class CacheClient: CacheClientProtocol {
         do {
             try validateCacheName(cacheName: cacheName)
         } catch let err as SdkError {
-            return CacheDeleteError(error: err)
+            return DeleteCacheError(error: err)
         } catch {
-            return CacheDeleteError(error: UnknownError(
+            return DeleteCacheError(error: UnknownError(
                 message: "unexpected error: \(error)")
             )
         }

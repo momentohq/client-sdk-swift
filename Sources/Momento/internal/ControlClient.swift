@@ -86,13 +86,13 @@ class ControlClient: ControlClientProtocol {
         do {
             _ = try await call.response.get()
             // Successful creation returns ControlClient__DeleteCacheResponse
-            return CacheDeleteSuccess()
+            return DeleteCacheSuccess()
         } catch let err as GRPCStatus {
-            return CacheDeleteError(error: grpcStatusToSdkError(grpcStatus: err))
+            return DeleteCacheError(error: grpcStatusToSdkError(grpcStatus: err))
         } catch let err as GRPCConnectionPoolError {
-            return CacheDeleteError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
+            return DeleteCacheError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
         } catch {
-            return CacheDeleteError(error: UnknownError(message: "unknown cache create error \(error)"))
+            return DeleteCacheError(error: UnknownError(message: "unknown cache create error \(error)"))
         }
     }
     
