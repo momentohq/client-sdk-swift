@@ -310,6 +310,7 @@ public class CacheClient {
             try validateListName(listName: listName)
             try validateTruncateSize(size: truncateFrontToSize)
             try validateTtl(ttl: ttl?.ttlSeconds())
+            try validateListSize(list: values)
         } catch let err as SdkError {
             return CacheListConcatenateBackError(error: err)
         } catch {
@@ -385,6 +386,7 @@ public class CacheClient {
             try validateListName(listName: listName)
             try validateTruncateSize(size: truncateBackToSize)
             try validateTtl(ttl: ttl?.ttlSeconds())
+            try validateListSize(list: values)
         } catch let err as SdkError {
             return CacheListConcatenateFrontError(error: err)
         } catch {

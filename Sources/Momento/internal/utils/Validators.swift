@@ -64,3 +64,9 @@ internal func validateListSliceStartEnd(startIndex: Int?, endIndex: Int?) throws
         throw InvalidArgumentError(message: "endIndex (exclusive) must be larger than startIndex (inclusive)")
     }
 }
+
+internal func validateListSize(list: [ScalarType]) throws {
+    if (list.isEmpty) {
+        throw InvalidArgumentError(message: "must provide a list with at least one element")
+    }
+}
