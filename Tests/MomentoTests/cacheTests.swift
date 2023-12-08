@@ -160,7 +160,7 @@ final class cacheTests: XCTestCase {
         )
         XCTAssertTrue(bytesKey is CacheGetMiss, "Unexpected response: \(bytesKey)")
     }
-    
+
     func testScalarSet() async throws {
         let invalidCacheName = await self.cacheClient.set(
             cacheName: "   ", 
