@@ -152,14 +152,8 @@ class DataClient: DataClientProtocol {
     
     func get(cacheName: String, key: ScalarType) async -> CacheGetResponse {
         var request = CacheClient__GetRequest()
-        
-        switch key {
-        case .string(let s):
-            request.cacheKey = Data(s.utf8)
-        case .data(let d):
-            request.cacheKey = d
-        }
-        
+        request.cacheKey = self.convertScalarTypeToData(element: key)
+
         let headers = self.makeHeaders(cacheName: cacheName)
         let call = self.client.get(
             request,
@@ -202,20 +196,8 @@ class DataClient: DataClientProtocol {
     ) async -> CacheSetResponse {
         var request = CacheClient__SetRequest()
         request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
-        
-        switch key {
-        case .string(let s):
-            request.cacheKey = Data(s.utf8)
-        case .data(let b):
-            request.cacheKey = b
-        }
-        
-        switch value {
-        case .string(let s):
-            request.cacheBody = Data(s.utf8)
-        case .data(let d):
-            request.cacheBody = d
-        }
+        request.cacheKey = self.convertScalarTypeToData(element: key)
+        request.cacheBody = self.convertScalarTypeToData(element: value)
 
         let headers = self.makeHeaders(cacheName: cacheName)
         let call = self.client.set(
@@ -245,12 +227,7 @@ class DataClient: DataClientProtocol {
     
     func delete(cacheName: String, key: ScalarType) async -> DeleteResponse {
         var request = CacheClient__DeleteRequest()
-        switch key {
-        case .data(let b):
-            request.cacheKey = b
-        case .string(let s):
-            request.cacheKey = Data(s.utf8)
-        }
+        request.cacheKey = self.convertScalarTypeToData(element: key)
         let headers = self.makeHeaders(cacheName: cacheName)
         let call = self.client.delete(
             request,
