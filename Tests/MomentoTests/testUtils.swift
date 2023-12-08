@@ -5,7 +5,7 @@ let apiKeyEnvVarName = "TEST_API_KEY"
 
 struct TestSetup {
     var cacheName: String
-    var cacheClient: CacheClientProtocol
+    var cacheClient: CacheClient
     var topicClient: TopicClientProtocol
 }
 
@@ -43,7 +43,7 @@ func setUpIntegrationTests() async -> TestSetup {
     }
 }
 
-func cleanUpIntegrationTests(cacheName: String, cacheClient: CacheClientProtocol) async {
+func cleanUpIntegrationTests(cacheName: String, cacheClient: CacheClient) async {
     let result = await cacheClient.deleteCache(cacheName: cacheName)
     if result is CacheDeleteError {
         fatalError("Unable to tear down integration test setup: \(result)")

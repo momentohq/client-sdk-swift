@@ -5,14 +5,16 @@ public enum ScalarType {
     case data(Data)
 }
 
-typealias CacheClientProtocol = ControlClientProtocol & DataClientProtocol
+// The CacheClient interface provides user-friendly, public-facing methods
+// with default values for non-required parameters and overloaded functions
+// that accept String and Data values directly rather than ScalarTypes
 
 /**
  Client to perform operations against Momento Serverless Cache.
  To learn more, see the [Momento Cache developer documentation](https://docs.momentohq.com/cache)
  */
 @available(macOS 10.15, iOS 13, *)
-public class CacheClient: CacheClientProtocol {
+public class CacheClient {
     private let credentialProvider: CredentialProviderProtocol
     private let configuration: CacheClientConfigurationProtocol
     private let controlClient: ControlClientProtocol
@@ -133,10 +135,10 @@ public class CacheClient: CacheClientProtocol {
      }
     ```
      */
-    public func get(cacheName: String, key: ScalarType) async -> CacheGetResponse {
+    public func get(cacheName: String, key: String) async -> CacheGetResponse {
         do {
             try validateCacheName(cacheName: cacheName)
-            try validateCacheKey(key: key)
+            try validateCacheKey(key: ScalarType.string(key))
         } catch let err as SdkError {
             return CacheGetError(error: err)
         } catch {
@@ -144,7 +146,39 @@ public class CacheClient: CacheClientProtocol {
                 message: "unexpected error: \(error)")
             )
         }
-        return await self.dataClient.get(cacheName: cacheName, key: key)
+        return await self.dataClient.get(cacheName: cacheName, key: ScalarType.string(key))
+    }
+    
+    /**
+     Gets the value stored for the given key.
+     - Parameters:
+        - cacheName: the name of the cache to perform the lookup in
+        - key: the key to look up
+     - Returns: CacheGetResponse representing the result of the get operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheGetError:
+        // handle error
+     case let responseMiss as CacheGetMiss:
+        // handle miss
+     case let responseHit as CacheGetHit:
+        // handle hit
+     }
+    ```
+     */
+    public func get(cacheName: String, key: Data) async -> CacheGetResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateCacheKey(key: ScalarType.data(key))
+        } catch let err as SdkError {
+            return CacheGetError(error: err)
+        } catch {
+            return CacheGetError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.get(cacheName: cacheName, key: ScalarType.data(key))
     }
     
     /**
@@ -165,15 +199,10 @@ public class CacheClient: CacheClientProtocol {
      }
     ```
      */
-    public func set(
-        cacheName: String,
-        key: ScalarType,
-        value: ScalarType,
-        ttl: TimeInterval? = nil
-    ) async -> CacheSetResponse {
+    public func set(cacheName: String, key: String, value: String, ttl: TimeInterval? = nil) async -> CacheSetResponse {
         do {
             try validateCacheName(cacheName: cacheName)
-            try validateCacheKey(key: key)
+            try validateCacheKey(key: ScalarType.string(key))
             try validateTtl(ttl: ttl)
         } catch let err as SdkError {
             return CacheSetError(error: err)
@@ -182,7 +211,72 @@ public class CacheClient: CacheClientProtocol {
                 message: "unexpected error: \(error)")
             )
         }
-        return await self.dataClient.set(cacheName: cacheName, key: key, value: value, ttl: ttl)
+        return await self.dataClient.set(
+            cacheName: cacheName,
+            key: ScalarType.string(key),
+            value: ScalarType.string(value),
+            ttl: ttl
+        )
+    }
+    
+    public func set(cacheName: String, key: String, value: Data, ttl: TimeInterval? = nil) async -> CacheSetResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateCacheKey(key: ScalarType.string(key))
+            try validateTtl(ttl: ttl)
+        } catch let err as SdkError {
+            return CacheSetError(error: err)
+        } catch {
+            return CacheSetError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.set(
+            cacheName: cacheName,
+            key: ScalarType.string(key),
+            value: ScalarType.data(value),
+            ttl: ttl
+        )
+    }
+    
+    public func set(cacheName: String, key: Data, value: String, ttl: TimeInterval? = nil) async -> CacheSetResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateCacheKey(key: ScalarType.data(key))
+            try validateTtl(ttl: ttl)
+        } catch let err as SdkError {
+            return CacheSetError(error: err)
+        } catch {
+            return CacheSetError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.set(
+            cacheName: cacheName,
+            key: ScalarType.data(key),
+            value: ScalarType.string(value),
+            ttl: ttl
+        )
+    }
+    
+    public func set(cacheName: String, key: Data, value: Data, ttl: TimeInterval? = nil) async -> CacheSetResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateCacheKey(key: ScalarType.data(key))
+            try validateTtl(ttl: ttl)
+        } catch let err as SdkError {
+            return CacheSetError(error: err)
+        } catch {
+            return CacheSetError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.set(
+            cacheName: cacheName,
+            key: ScalarType.data(key),
+            value: ScalarType.data(value),
+            ttl: ttl
+        )
     }
     
     /**
@@ -207,9 +301,9 @@ public class CacheClient: CacheClientProtocol {
     public func listConcatenateBack(
         cacheName: String,
         listName: String,
-        values: [ScalarType],
+        values: [String],
         truncateFrontToSize: Int? = nil,
-        ttl: CollectionTtl? = nil
+        ttl: CollectionTtl? =  nil
     ) async -> CacheListConcatenateBackResponse {
         do {
             try validateCacheName(cacheName: cacheName)
@@ -226,7 +320,35 @@ public class CacheClient: CacheClientProtocol {
         return await self.dataClient.listConcatenateBack(
             cacheName: cacheName,
             listName: listName,
-            values: values,
+            values: values.map { ScalarType.string($0) },
+            truncateFrontToSize: truncateFrontToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listConcatenateBack(
+        cacheName: String,
+        listName: String,
+        values: [Data],
+        truncateFrontToSize: Int? = nil,
+        ttl: CollectionTtl? =  nil
+    ) async -> CacheListConcatenateBackResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+            try validateTruncateSize(size: truncateFrontToSize)
+            try validateTtl(ttl: ttl?.ttlSeconds())
+        } catch let err as SdkError {
+            return CacheListConcatenateBackError(error: err)
+        } catch {
+            return CacheListConcatenateBackError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listConcatenateBack(
+            cacheName: cacheName,
+            listName: listName,
+            values: values.map { ScalarType.data($0) },
             truncateFrontToSize: truncateFrontToSize,
             ttl: ttl
         )
@@ -254,7 +376,7 @@ public class CacheClient: CacheClientProtocol {
     public func listConcatenateFront(
         cacheName: String,
         listName: String,
-        values: [ScalarType],
+        values: [String],
         truncateBackToSize: Int? = nil,
         ttl: CollectionTtl? = nil
     ) async -> CacheListConcatenateFrontResponse {
@@ -273,7 +395,35 @@ public class CacheClient: CacheClientProtocol {
         return await self.dataClient.listConcatenateFront(
             cacheName: cacheName,
             listName: listName,
-            values: values,
+            values: values.map { ScalarType.string($0) },
+            truncateBackToSize: truncateBackToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listConcatenateFront(
+        cacheName: String,
+        listName: String,
+        values: [Data],
+        truncateBackToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListConcatenateFrontResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+            try validateTruncateSize(size: truncateBackToSize)
+            try validateTtl(ttl: ttl?.ttlSeconds())
+        } catch let err as SdkError {
+            return CacheListConcatenateFrontError(error: err)
+        } catch {
+            return CacheListConcatenateFrontError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listConcatenateFront(
+            cacheName: cacheName,
+            listName: listName,
+            values: values.map { ScalarType.data($0) },
             truncateBackToSize: truncateBackToSize,
             ttl: ttl
         )
@@ -451,7 +601,7 @@ public class CacheClient: CacheClientProtocol {
     public func listPushBack(
         cacheName: String,
         listName: String,
-        value: ScalarType,
+        value: String,
         truncateFrontToSize: Int? = nil,
         ttl: CollectionTtl? = nil
     ) async -> CacheListPushBackResponse {
@@ -470,7 +620,35 @@ public class CacheClient: CacheClientProtocol {
         return await self.dataClient.listPushBack(
             cacheName: cacheName,
             listName: listName,
-            value: value,
+            value: ScalarType.string(value),
+            truncateFrontToSize: truncateFrontToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listPushBack(
+        cacheName: String,
+        listName: String,
+        value: Data,
+        truncateFrontToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListPushBackResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+            try validateTruncateSize(size: truncateFrontToSize)
+            try validateTtl(ttl: ttl?.ttlSeconds())
+        } catch let err as SdkError {
+            return CacheListPushBackError(error: err)
+        } catch {
+            return CacheListPushBackError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listPushBack(
+            cacheName: cacheName,
+            listName: listName,
+            value: ScalarType.data(value),
             truncateFrontToSize: truncateFrontToSize,
             ttl: ttl
         )
@@ -498,7 +676,7 @@ public class CacheClient: CacheClientProtocol {
     public func listPushFront(
         cacheName: String,
         listName: String,
-        value: ScalarType,
+        value: String,
         truncateBackToSize: Int? = nil,
         ttl: CollectionTtl? = nil
     ) async -> CacheListPushFrontResponse {
@@ -517,7 +695,35 @@ public class CacheClient: CacheClientProtocol {
         return await self.dataClient.listPushFront(
             cacheName: cacheName,
             listName: listName,
-            value: value,
+            value: ScalarType.string(value),
+            truncateBackToSize: truncateBackToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listPushFront(
+        cacheName: String,
+        listName: String,
+        value: Data,
+        truncateBackToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListPushFrontResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+            try validateTruncateSize(size: truncateBackToSize)
+            try validateTtl(ttl: ttl?.ttlSeconds())
+        } catch let err as SdkError {
+            return CacheListPushFrontError(error: err)
+        } catch {
+            return CacheListPushFrontError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listPushFront(
+            cacheName: cacheName,
+            listName: listName,
+            value: ScalarType.data(value),
             truncateBackToSize: truncateBackToSize,
             ttl: ttl
         )
@@ -543,7 +749,7 @@ public class CacheClient: CacheClientProtocol {
     public func listRemoveValue(
         cacheName: String,
         listName: String,
-        value: ScalarType
+        value: String
     ) async -> CacheListRemoveValueResponse {
         do {
             try validateCacheName(cacheName: cacheName)
@@ -558,7 +764,29 @@ public class CacheClient: CacheClientProtocol {
         return await self.dataClient.listRemoveValue(
             cacheName: cacheName,
             listName: listName,
-            value: value
+            value: ScalarType.string(value)
+        )
+    }
+    
+    public func listRemoveValue(
+        cacheName: String,
+        listName: String,
+        value: Data
+    ) async -> CacheListRemoveValueResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateListName(listName: listName)
+        } catch let err as SdkError {
+            return CacheListRemoveValueError(error: err)
+        } catch {
+            return CacheListRemoveValueError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            )
+        }
+        return await self.dataClient.listRemoveValue(
+            cacheName: cacheName,
+            listName: listName,
+            value: ScalarType.data(value)
         )
     }
     

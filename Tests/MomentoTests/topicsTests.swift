@@ -4,7 +4,7 @@ import XCTest
 final class topicsTests: XCTestCase {
     private var integrationTestCacheName: String!
     private var topicClient: TopicClientProtocol!
-    private var cacheClient: CacheClientProtocol!
+    private var cacheClient: CacheClient!
     
     override func setUp() async throws {
         let testSetup = await setUpIntegrationTests()
