@@ -1,20 +1,22 @@
 import Foundation
 
-public enum ScalarType {
+enum ScalarType {
     case string(String)
     case data(Data)
 }
 
-// The CacheClient interface provides user-friendly, public-facing methods
+// The CacheClient class provides user-friendly, public-facing methods
 // with default values for non-required parameters and overloaded functions
 // that accept String and Data values directly rather than ScalarTypes
+
+protocol CacheClientProtocol: ControlClientProtocol & DataClientProtocol {}
 
 /**
  Client to perform operations against Momento Serverless Cache.
  To learn more, see the [Momento Cache developer documentation](https://docs.momentohq.com/cache)
  */
 @available(macOS 10.15, iOS 13, *)
-public class CacheClient {
+public class CacheClient: CacheClientProtocol {
     private let credentialProvider: CredentialProviderProtocol
     private let configuration: CacheClientConfigurationProtocol
     private let controlClient: ControlClientProtocol
@@ -121,7 +123,7 @@ public class CacheClient {
      Gets the value stored for the given key.
      - Parameters:
         - cacheName: the name of the cache to perform the lookup in
-        - key: the key to look up
+        - key: the key to look up as type String
      - Returns: CacheGetResponse representing the result of the get operation.
      Pattern matching can be used to operate on the appropriate subtype.
     ```
@@ -136,24 +138,14 @@ public class CacheClient {
     ```
      */
     public func get(cacheName: String, key: String) async -> CacheGetResponse {
-        do {
-            try validateCacheName(cacheName: cacheName)
-            try validateCacheKey(key: ScalarType.string(key))
-        } catch let err as SdkError {
-            return CacheGetError(error: err)
-        } catch {
-            return CacheGetError(error: UnknownError(
-                message: "unexpected error: \(error)")
-            )
-        }
-        return await self.dataClient.get(cacheName: cacheName, key: ScalarType.string(key))
+        return await self.get(cacheName: cacheName, key: ScalarType.string(key))
     }
     
     /**
      Gets the value stored for the given key.
      - Parameters:
         - cacheName: the name of the cache to perform the lookup in
-        - key: the key to look up
+        - key: the key to look up as type Data
      - Returns: CacheGetResponse representing the result of the get operation.
      Pattern matching can be used to operate on the appropriate subtype.
     ```
@@ -168,9 +160,13 @@ public class CacheClient {
     ```
      */
     public func get(cacheName: String, key: Data) async -> CacheGetResponse {
+        return await self.get(cacheName: cacheName, key: ScalarType.data(key))
+    }
+    
+    internal func get(cacheName: String, key: ScalarType) async -> CacheGetResponse {
         do {
             try validateCacheName(cacheName: cacheName)
-            try validateCacheKey(key: ScalarType.data(key))
+            try validateCacheKey(key: key)
         } catch let err as SdkError {
             return CacheGetError(error: err)
         } catch {
@@ -178,7 +174,7 @@ public class CacheClient {
                 message: "unexpected error: \(error)")
             )
         }
-        return await self.dataClient.get(cacheName: cacheName, key: ScalarType.data(key))
+        return await self.dataClient.get(cacheName: cacheName, key: key)
     }
     
     /**
@@ -199,19 +195,13 @@ public class CacheClient {
      }
     ```
      */
-    public func set(cacheName: String, key: String, value: String, ttl: TimeInterval? = nil) async -> CacheSetResponse {
-        do {
-            try validateCacheName(cacheName: cacheName)
-            try validateCacheKey(key: ScalarType.string(key))
-            try validateTtl(ttl: ttl)
-        } catch let err as SdkError {
-            return CacheSetError(error: err)
-        } catch {
-            return CacheSetError(error: UnknownError(
-                message: "unexpected error: \(error)")
-            )
-        }
-        return await self.dataClient.set(
+    public func set(
+        cacheName: String,
+        key: String,
+        value: String,
+        ttl: TimeInterval? = nil
+    ) async -> CacheSetResponse {
+        return await set(
             cacheName: cacheName,
             key: ScalarType.string(key),
             value: ScalarType.string(value),
@@ -219,19 +209,31 @@ public class CacheClient {
         )
     }
     
-    public func set(cacheName: String, key: String, value: Data, ttl: TimeInterval? = nil) async -> CacheSetResponse {
-        do {
-            try validateCacheName(cacheName: cacheName)
-            try validateCacheKey(key: ScalarType.string(key))
-            try validateTtl(ttl: ttl)
-        } catch let err as SdkError {
-            return CacheSetError(error: err)
-        } catch {
-            return CacheSetError(error: UnknownError(
-                message: "unexpected error: \(error)")
-            )
-        }
-        return await self.dataClient.set(
+    /**
+     Associates the given key with the given value. If a value for the key is already present it is replaced with the new value.
+     - Parameters:
+        - cacheName: the name of the cache to store the value in
+        - key: the key to set the value for
+        - value: the value to associate with the key
+        - ttl: the time to live for the item in the cache. Uses the client's default TTL if this is not supplied.
+     - Returns: CacheSetResponse representing the result of the set operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheSetError:
+        // handle error
+     case let responseSuccess as CacheSetSuccess:
+        // handle success
+     }
+    ```
+     */
+    public func set(
+        cacheName: String,
+        key: String,
+        value: Data,
+        ttl: TimeInterval? = nil
+    ) async -> CacheSetResponse {
+        return await set(
             cacheName: cacheName,
             key: ScalarType.string(key),
             value: ScalarType.data(value),
@@ -239,19 +241,31 @@ public class CacheClient {
         )
     }
     
-    public func set(cacheName: String, key: Data, value: String, ttl: TimeInterval? = nil) async -> CacheSetResponse {
-        do {
-            try validateCacheName(cacheName: cacheName)
-            try validateCacheKey(key: ScalarType.data(key))
-            try validateTtl(ttl: ttl)
-        } catch let err as SdkError {
-            return CacheSetError(error: err)
-        } catch {
-            return CacheSetError(error: UnknownError(
-                message: "unexpected error: \(error)")
-            )
-        }
-        return await self.dataClient.set(
+    /**
+     Associates the given key with the given value. If a value for the key is already present it is replaced with the new value.
+     - Parameters:
+        - cacheName: the name of the cache to store the value in
+        - key: the key to set the value for
+        - value: the value to associate with the key
+        - ttl: the time to live for the item in the cache. Uses the client's default TTL if this is not supplied.
+     - Returns: CacheSetResponse representing the result of the set operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheSetError:
+        // handle error
+     case let responseSuccess as CacheSetSuccess:
+        // handle success
+     }
+    ```
+     */
+    public func set(
+        cacheName: String,
+        key: Data,
+        value: String,
+        ttl: TimeInterval? = nil
+    ) async -> CacheSetResponse {
+        return await set(
             cacheName: cacheName,
             key: ScalarType.data(key),
             value: ScalarType.string(value),
@@ -259,10 +273,47 @@ public class CacheClient {
         )
     }
     
-    public func set(cacheName: String, key: Data, value: Data, ttl: TimeInterval? = nil) async -> CacheSetResponse {
+    /**
+     Associates the given key with the given value. If a value for the key is already present it is replaced with the new value.
+     - Parameters:
+        - cacheName: the name of the cache to store the value in
+        - key: the key to set the value for
+        - value: the value to associate with the key
+        - ttl: the time to live for the item in the cache. Uses the client's default TTL if this is not supplied.
+     - Returns: CacheSetResponse representing the result of the set operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheSetError:
+        // handle error
+     case let responseSuccess as CacheSetSuccess:
+        // handle success
+     }
+    ```
+     */
+    public func set(
+        cacheName: String,
+        key: Data,
+        value: Data,
+        ttl: TimeInterval? = nil
+    ) async -> CacheSetResponse {
+        return await set(
+            cacheName: cacheName,
+            key: ScalarType.data(key),
+            value: ScalarType.data(value),
+            ttl: ttl
+        )
+    }
+    
+    internal func set(
+        cacheName: String,
+        key: ScalarType,
+        value: ScalarType,
+        ttl: TimeInterval? = nil
+    ) async -> CacheSetResponse {
         do {
             try validateCacheName(cacheName: cacheName)
-            try validateCacheKey(key: ScalarType.data(key))
+            try validateCacheKey(key: key)
             try validateTtl(ttl: ttl)
         } catch let err as SdkError {
             return CacheSetError(error: err)
@@ -273,8 +324,8 @@ public class CacheClient {
         }
         return await self.dataClient.set(
             cacheName: cacheName,
-            key: ScalarType.data(key),
-            value: ScalarType.data(value),
+            key: key,
+            value: value,
             ttl: ttl
         )
     }
@@ -305,20 +356,7 @@ public class CacheClient {
         truncateFrontToSize: Int? = nil,
         ttl: CollectionTtl? =  nil
     ) async -> CacheListConcatenateBackResponse {
-        do {
-            try validateCacheName(cacheName: cacheName)
-            try validateListName(listName: listName)
-            try validateTruncateSize(size: truncateFrontToSize)
-            try validateTtl(ttl: ttl?.ttlSeconds())
-            try validateListSize(list: values.map { ScalarType.string($0) })
-        } catch let err as SdkError {
-            return CacheListConcatenateBackError(error: err)
-        } catch {
-            return CacheListConcatenateBackError(error: UnknownError(
-                message: "unexpected error: \(error)")
-            )
-        }
-        return await self.dataClient.listConcatenateBack(
+        return await listConcatenateBack(
             cacheName: cacheName,
             listName: listName,
             values: values.map { ScalarType.string($0) },
@@ -327,10 +365,45 @@ public class CacheClient {
         )
     }
     
+    /**
+     Adds multiple elements to the back of the given list. Creates the list if it does not already exist.
+     - Parameters:
+        - cacheName: the name of the cache to store the list in
+        - listName: the list to add to
+        - values: the elements to add to the list
+        - truncateFrontToSize: If the list exceeds this length, remove excess from the front of the list. Must be positive.
+        - ttl: refreshes the list's TTL using the client's default if this is not supplied.
+     - Returns: CacheListConcatenateBackResponse representing the result of the operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheListConcatenateBackError:
+        // handle error
+     case let responseSuccess as CacheListConcatenateBackSuccess:
+        // handle success
+     }
+    ```
+     */
     public func listConcatenateBack(
         cacheName: String,
         listName: String,
         values: [Data],
+        truncateFrontToSize: Int? = nil,
+        ttl: CollectionTtl? =  nil
+    ) async -> CacheListConcatenateBackResponse {
+        return await listConcatenateBack(
+            cacheName: cacheName,
+            listName: listName,
+            values: values.map { ScalarType.data($0) },
+            truncateFrontToSize: truncateFrontToSize,
+            ttl: ttl
+        )
+    }
+    
+    internal func listConcatenateBack(
+        cacheName: String,
+        listName: String,
+        values: [ScalarType],
         truncateFrontToSize: Int? = nil,
         ttl: CollectionTtl? =  nil
     ) async -> CacheListConcatenateBackResponse {
@@ -339,7 +412,7 @@ public class CacheClient {
             try validateListName(listName: listName)
             try validateTruncateSize(size: truncateFrontToSize)
             try validateTtl(ttl: ttl?.ttlSeconds())
-            try validateListSize(list: values.map { ScalarType.data($0) })
+            try validateListSize(list: values)
         } catch let err as SdkError {
             return CacheListConcatenateBackError(error: err)
         } catch {
@@ -350,7 +423,7 @@ public class CacheClient {
         return await self.dataClient.listConcatenateBack(
             cacheName: cacheName,
             listName: listName,
-            values: values.map { ScalarType.data($0) },
+            values: values,
             truncateFrontToSize: truncateFrontToSize,
             ttl: ttl
         )
@@ -382,20 +455,7 @@ public class CacheClient {
         truncateBackToSize: Int? = nil,
         ttl: CollectionTtl? = nil
     ) async -> CacheListConcatenateFrontResponse {
-        do {
-            try validateCacheName(cacheName: cacheName)
-            try validateListName(listName: listName)
-            try validateTruncateSize(size: truncateBackToSize)
-            try validateTtl(ttl: ttl?.ttlSeconds())
-            try validateListSize(list: values.map { ScalarType.string($0) })
-        } catch let err as SdkError {
-            return CacheListConcatenateFrontError(error: err)
-        } catch {
-            return CacheListConcatenateFrontError(error: UnknownError(
-                message: "unexpected error: \(error)")
-            )
-        }
-        return await self.dataClient.listConcatenateFront(
+        return await listConcatenateFront(
             cacheName: cacheName,
             listName: listName,
             values: values.map { ScalarType.string($0) },
@@ -404,10 +464,45 @@ public class CacheClient {
         )
     }
     
+    /**
+     Adds multiple elements to the front of the given list. Creates the list if it does not already exist.
+     - Parameters:
+        - cacheName: the name of the cache to store the list in
+        - listName: the list to add to
+        - values: the elements to add to the list
+        - truncateBackToSize: If the list exceeds this length, remove excess from the back of the list. Must be positive.
+        - ttl: refreshes the list's TTL using the client's default if this is not supplied.
+     - Returns: CacheListConcatenateFrontResponse representing the result of the operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheListConcatenateFrontError:
+        // handle error
+     case let responseSuccess as CacheListConcatenateFrontSuccess:
+        // handle success
+     }
+    ```
+     */
     public func listConcatenateFront(
         cacheName: String,
         listName: String,
         values: [Data],
+        truncateBackToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListConcatenateFrontResponse {
+        return await listConcatenateFront(
+            cacheName: cacheName,
+            listName: listName,
+            values: values.map { ScalarType.data($0) },
+            truncateBackToSize: truncateBackToSize,
+            ttl: ttl
+        )
+    }
+    
+    internal func listConcatenateFront(
+        cacheName: String,
+        listName: String,
+        values: [ScalarType],
         truncateBackToSize: Int? = nil,
         ttl: CollectionTtl? = nil
     ) async -> CacheListConcatenateFrontResponse {
@@ -416,7 +511,7 @@ public class CacheClient {
             try validateListName(listName: listName)
             try validateTruncateSize(size: truncateBackToSize)
             try validateTtl(ttl: ttl?.ttlSeconds())
-            try validateListSize(list: values.map { ScalarType.data($0) })
+            try validateListSize(list: values)
         } catch let err as SdkError {
             return CacheListConcatenateFrontError(error: err)
         } catch {
@@ -427,7 +522,7 @@ public class CacheClient {
         return await self.dataClient.listConcatenateFront(
             cacheName: cacheName,
             listName: listName,
-            values: values.map { ScalarType.data($0) },
+            values: values,
             truncateBackToSize: truncateBackToSize,
             ttl: ttl
         )
@@ -609,19 +704,7 @@ public class CacheClient {
         truncateFrontToSize: Int? = nil,
         ttl: CollectionTtl? = nil
     ) async -> CacheListPushBackResponse {
-        do {
-            try validateCacheName(cacheName: cacheName)
-            try validateListName(listName: listName)
-            try validateTruncateSize(size: truncateFrontToSize)
-            try validateTtl(ttl: ttl?.ttlSeconds())
-        } catch let err as SdkError {
-            return CacheListPushBackError(error: err)
-        } catch {
-            return CacheListPushBackError(error: UnknownError(
-                message: "unexpected error: \(error)")
-            )
-        }
-        return await self.dataClient.listPushBack(
+        return await listPushBack(
             cacheName: cacheName,
             listName: listName,
             value: ScalarType.string(value),
@@ -630,10 +713,45 @@ public class CacheClient {
         )
     }
     
+    /**
+     Adds an element to the back of the given list. Creates the list if it does not already exist.
+     - Parameters:
+        - cacheName: the name of the cache to store the list in
+        - listName: the list to add to
+        - value: the element to add to the list
+        - truncateFrontToSize: If the list exceeds this length, remove excess from the front of the list. Must be positive.
+        - ttl: refreshes the list's TTL using the client's default if this is not supplied.
+     - Returns: CacheListPushBackResponse representing the result of the operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheListPushBackError:
+        // handle error
+     case let responseSuccess as CacheListPushBackSuccess:
+        // handle success
+     }
+    ```
+     */
     public func listPushBack(
         cacheName: String,
         listName: String,
         value: Data,
+        truncateFrontToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListPushBackResponse {
+        return await listPushBack(
+            cacheName: cacheName,
+            listName: listName,
+            value: ScalarType.data(value),
+            truncateFrontToSize: truncateFrontToSize,
+            ttl: ttl
+        )
+    }
+    
+    internal func listPushBack(
+        cacheName: String,
+        listName: String,
+        value: ScalarType,
         truncateFrontToSize: Int? = nil,
         ttl: CollectionTtl? = nil
     ) async -> CacheListPushBackResponse {
@@ -652,7 +770,7 @@ public class CacheClient {
         return await self.dataClient.listPushBack(
             cacheName: cacheName,
             listName: listName,
-            value: ScalarType.data(value),
+            value: value,
             truncateFrontToSize: truncateFrontToSize,
             ttl: ttl
         )
@@ -684,19 +802,7 @@ public class CacheClient {
         truncateBackToSize: Int? = nil,
         ttl: CollectionTtl? = nil
     ) async -> CacheListPushFrontResponse {
-        do {
-            try validateCacheName(cacheName: cacheName)
-            try validateListName(listName: listName)
-            try validateTruncateSize(size: truncateBackToSize)
-            try validateTtl(ttl: ttl?.ttlSeconds())
-        } catch let err as SdkError {
-            return CacheListPushFrontError(error: err)
-        } catch {
-            return CacheListPushFrontError(error: UnknownError(
-                message: "unexpected error: \(error)")
-            )
-        }
-        return await self.dataClient.listPushFront(
+        return await listPushFront(
             cacheName: cacheName,
             listName: listName,
             value: ScalarType.string(value),
@@ -705,10 +811,45 @@ public class CacheClient {
         )
     }
     
+    /**
+     Adds an element to the front of the given list. Creates the list if it does not already exist.
+     - Parameters:
+        - cacheName: the name of the cache to store the list in
+        - listName: the list to add to
+        - value: the element to add to the list
+        - truncateBackToSize: If the list exceeds this length, remove excess from the back of the list. Must be positive.
+        - ttl: refreshes the list's TTL using the client's default if this is not supplied.
+     - Returns: CacheListPushFrontResponse representing the result of the operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheListPushFrontError:
+        // handle error
+     case let responseSuccess as CacheListPushFrontSuccess:
+        // handle success
+     }
+    ```
+     */
     public func listPushFront(
         cacheName: String,
         listName: String,
         value: Data,
+        truncateBackToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListPushFrontResponse {
+        return await listPushFront(
+            cacheName: cacheName,
+            listName: listName,
+            value: ScalarType.data(value),
+            truncateBackToSize: truncateBackToSize,
+            ttl: ttl
+        )
+    }
+    
+    internal func listPushFront(
+        cacheName: String,
+        listName: String,
+        value: ScalarType,
         truncateBackToSize: Int? = nil,
         ttl: CollectionTtl? = nil
     ) async -> CacheListPushFrontResponse {
@@ -727,7 +868,7 @@ public class CacheClient {
         return await self.dataClient.listPushFront(
             cacheName: cacheName,
             listName: listName,
-            value: ScalarType.data(value),
+            value: value,
             truncateBackToSize: truncateBackToSize,
             ttl: ttl
         )
@@ -755,27 +896,38 @@ public class CacheClient {
         listName: String,
         value: String
     ) async -> CacheListRemoveValueResponse {
-        do {
-            try validateCacheName(cacheName: cacheName)
-            try validateListName(listName: listName)
-        } catch let err as SdkError {
-            return CacheListRemoveValueError(error: err)
-        } catch {
-            return CacheListRemoveValueError(error: UnknownError(
-                message: "unexpected error: \(error)")
-            )
-        }
-        return await self.dataClient.listRemoveValue(
-            cacheName: cacheName,
-            listName: listName,
-            value: ScalarType.string(value)
-        )
+        return await listRemoveValue(cacheName: cacheName, listName: listName, value: ScalarType.string(value))
     }
     
+    /**
+     Removes all elements from the given list equal to the given value.
+     - Parameters:
+        - cacheName: the name of the cache containing the list
+        - listName: the list to remove values from
+        - value: the value to remove
+     - Returns: CacheListRemoveValueResponse representing the result of the operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheListRemoveValueError:
+        // handle error
+     case let responseSuccess as CacheListRemoveValueSuccess:
+        // handle success
+     }
+    ```
+     */
     public func listRemoveValue(
         cacheName: String,
         listName: String,
         value: Data
+    ) async -> CacheListRemoveValueResponse {
+        return await listRemoveValue(cacheName: cacheName, listName: listName, value: ScalarType.data(value))
+    }
+    
+    internal func listRemoveValue(
+        cacheName: String,
+        listName: String,
+        value: ScalarType
     ) async -> CacheListRemoveValueResponse {
         do {
             try validateCacheName(cacheName: cacheName)
@@ -790,7 +942,7 @@ public class CacheClient {
         return await self.dataClient.listRemoveValue(
             cacheName: cacheName,
             listName: listName,
-            value: ScalarType.data(value)
+            value: value
         )
     }
     
