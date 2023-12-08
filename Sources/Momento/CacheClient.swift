@@ -364,15 +364,15 @@ public class CacheClient: CacheClientProtocol {
      - Parameters:
         - cacheName: the name of the cache to perform the lookup in
         - key: the key to look up as type String
-     - Returns: CacheGetResponse representing the result of the get operation.
+     - Returns: GetResponse representing the result of the get operation.
      Pattern matching can be used to operate on the appropriate subtype.
     ```
      switch response {
-     case let responseError as CacheGetError:
+     case let responseError as GetError:
         // handle error
-     case let responseMiss as CacheGetMiss:
+     case let responseMiss as GetMiss:
         // handle miss
-     case let responseHit as CacheGetHit:
+     case let responseHit as GetHit:
         // handle hit
      }
     ```
@@ -408,9 +408,9 @@ public class CacheClient: CacheClientProtocol {
             try validateCacheName(cacheName: cacheName)
             try validateCacheKey(key: key)
         } catch let err as SdkError {
-            return CacheGetResponse.error(CacheGetError(error: err))
+            return GetResponse.error(GetError(error: err))
         } catch {
-            return CacheGetResponse.error(CacheGetError(error: UnknownError(
+            return GetResponse.error(GetError(error: UnknownError(
                 message: "unexpected error: \(error)")
             ))
         }
@@ -424,13 +424,13 @@ public class CacheClient: CacheClientProtocol {
         - key: the key to set the value for
         - value: the value to associate with the key
         - ttl: the time to live for the item in the cache. Uses the client's default TTL if this is not supplied.
-     - Returns: CacheSetResponse representing the result of the set operation.
+     - Returns: SetResponse representing the result of the set operation.
      Pattern matching can be used to operate on the appropriate subtype.
     ```
      switch response {
-     case let responseError as CacheSetError:
+     case let responseError as SetError:
         // handle error
-     case let responseSuccess as CacheSetSuccess:
+     case let responseSuccess as SetSuccess:
         // handle success
      }
     ```
@@ -550,15 +550,15 @@ public class CacheClient: CacheClientProtocol {
         key: ScalarType,
         value: ScalarType,
         ttl: TimeInterval? = nil
-    ) async -> CacheSetResponse {
+    ) async -> SetResponse {
         do {
             try validateCacheName(cacheName: cacheName)
             try validateCacheKey(key: key)
             try validateTtl(ttl: ttl)
         } catch let err as SdkError {
-            return CacheSetResponse.error(CacheSetError(error: err))
+            return SetResponse.error(SetError(error: err))
         } catch {
-            return CacheSetResponse.error(CacheSetError(error: UnknownError(
+            return SetResponse.error(SetError(error: UnknownError(
                 message: "unexpected error: \(error)")
             ))
         }

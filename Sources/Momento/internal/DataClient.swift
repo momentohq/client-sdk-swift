@@ -5,14 +5,14 @@ import NIOHPACK
 import Logging
 
 protocol DataClientProtocol {
-    func get(cacheName: String, key: ScalarType) async -> CacheGetResponse
+    func get(cacheName: String, key: ScalarType) async -> GetResponse
 
     func set(
         cacheName: String,
         key: ScalarType,
         value: ScalarType,
         ttl: TimeInterval?
-    ) async -> CacheSetResponse
+    ) async -> SetResponse
 
     func delete(cacheName: String, key: ScalarType) async -> DeleteResponse
 
@@ -150,7 +150,7 @@ class DataClient: DataClientProtocol {
         }
     }
     
-    func get(cacheName: String, key: ScalarType) async -> CacheGetResponse {
+    func get(cacheName: String, key: ScalarType) async -> GetResponse {
         var request = CacheClient__GetRequest()
         request.cacheKey = self.convertScalarTypeToData(element: key)
 
@@ -167,22 +167,22 @@ class DataClient: DataClientProtocol {
         do {
             let result = try await call.response.get()
             if result.result == .hit {
-                return CacheGetResponse.hit(CacheGetHit(value: result.cacheBody))
+                return GetResponse.hit(GetHit(value: result.cacheBody))
             } else if result.result == .miss {
-                return CacheGetResponse.miss(CacheGetMiss())
+                return GetResponse.miss(GetMiss())
             } else {
-                return CacheGetResponse.error(CacheGetError(
+                return GetResponse.error(GetError(
                     error: UnknownError(message: "unknown cache get error \(result)")
                 ))
             }
         } catch let err as GRPCStatus {
-            return CacheGetResponse.error(CacheGetError(error: grpcStatusToSdkError(grpcStatus: err)))
+            return GetResponse.error(GetError(error: grpcStatusToSdkError(grpcStatus: err)))
         } catch let err as GRPCConnectionPoolError {
-            return CacheGetResponse.error(CacheGetError(
+            return GetResponse.error(GetError(
                 error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
             ))
         } catch {
-            return CacheGetResponse.error(CacheGetError(
+            return GetResponse.error(GetError(
                 error: UnknownError(message: "unknown cache get error \(error)")
             ))
         }
@@ -193,7 +193,7 @@ class DataClient: DataClientProtocol {
         key: ScalarType,
         value: ScalarType,
         ttl: TimeInterval? = nil
-    ) async -> CacheSetResponse {
+    ) async -> SetResponse {
         var request = CacheClient__SetRequest()
         request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
         request.cacheKey = self.convertScalarTypeToData(element: key)
@@ -211,15 +211,15 @@ class DataClient: DataClientProtocol {
 
         do {
             _ = try await call.response.get()
-            return CacheSetResponse.success(CacheSetSuccess())
+            return SetResponse.success(SetSuccess())
         } catch let err as GRPCStatus {
-            return CacheSetResponse.error(CacheSetError(error: grpcStatusToSdkError(grpcStatus: err)))
+            return SetResponse.error(SetError(error: grpcStatusToSdkError(grpcStatus: err)))
         } catch let err as GRPCConnectionPoolError {
-            return CacheSetResponse.error(CacheSetError(
+            return SetResponse.error(SetError(
                 error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
             ))
         } catch {
-            return CacheSetResponse.error(CacheSetError(
+            return SetResponse.error(SetError(
                 error: UnknownError(message: "unknown cache set error \(error)")
             ))
         }
