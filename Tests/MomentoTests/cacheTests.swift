@@ -21,10 +21,10 @@ final class cacheTests: XCTestCase {
     func testCacheClientValidatesCacheName() async throws {
         let createInvalidName = await self.cacheClient.createCache(cacheName: "   ")
         XCTAssertTrue(
-            createInvalidName is CacheCreateError,
+            createInvalidName is CreateCacheError,
             "Unexpected response: \(createInvalidName)"
         )
-        let createErrorCode = (createInvalidName as! CacheCreateError).errorCode
+        let createErrorCode = (createInvalidName as! CreateCacheError).errorCode
         XCTAssertEqual(
             createErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
             "Unexpected error code: \(createErrorCode)"
@@ -46,7 +46,7 @@ final class cacheTests: XCTestCase {
         let cacheName = generateStringWithUuid(prefix: "a-totally-new-cache")
         let createResult = await self.cacheClient.createCache(cacheName: cacheName)
         XCTAssertTrue(
-            createResult is CacheCreateSuccess,
+            createResult is CreateCacheSuccess,
             "Unexpected response: \(createResult)"
         )
         
@@ -62,7 +62,7 @@ final class cacheTests: XCTestCase {
         
         // Expect list to include integration test cache
         switch listResult {
-        case let listResult as CacheListSuccess:
+        case let listResult as ListCachesSuccess:
             let caches = listResult.caches
             XCTAssertTrue(
                 caches.contains(where: {item in
@@ -72,7 +72,7 @@ final class cacheTests: XCTestCase {
             )
         default:
             XCTAssertTrue(
-                listResult is CacheListSuccess,
+                listResult is ListCachesSuccess,
                 "Unexpected response: \(listResult)"
             )
         }
@@ -81,14 +81,14 @@ final class cacheTests: XCTestCase {
         let newCacheName = generateStringWithUuid(prefix: "a-totally-different-cache")
         let createResult = await self.cacheClient.createCache(cacheName: newCacheName)
         XCTAssertTrue(
-            createResult is CacheCreateSuccess,
+            createResult is CreateCacheSuccess,
             "Unexpected response: \(createResult)"
         )
         
         // Expect list to include both new cache and integration test cache
         let listResult2 = await self.cacheClient.listCaches()
         switch listResult2 {
-        case let listResult2 as CacheListSuccess:
+        case let listResult2 as ListCachesSuccess:
             let caches = listResult2.caches
             XCTAssertTrue(
                 caches.contains(where: {item in
@@ -104,7 +104,7 @@ final class cacheTests: XCTestCase {
             )
         default:
             XCTAssertTrue(
-                listResult is CacheListSuccess,
+                listResult is ListCachesSuccess,
                 "Unexpected response: \(listResult)"
             )
         }
@@ -118,35 +118,41 @@ final class cacheTests: XCTestCase {
     }
     
     func testScalarGet() async throws {
-//        let invalidCacheName = await self.cacheClient.get(
-//            cacheName: "   ",
-//            key: ScalarType.string(generateStringWithUuid(prefix: "hello"))
-//        )
-//        XCTAssertTrue(
-//            invalidCacheName is CacheGetError,
-//            "Unexpected response: \(invalidCacheName)"
-//        )
-//        let invalidCacheNameErrorCode = (invalidCacheName as! CacheGetError).errorCode
-//        XCTAssertEqual(
-//            invalidCacheNameErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-//            "Unexpected error code: \(invalidCacheNameErrorCode)"
-//        )
-//        let invalidKey = await self.cacheClient.get(
-//            cacheName: self.integrationTestCacheName,
-//            key: ScalarType.string("   ")
-//        )
-//        XCTAssertTrue(
-//            invalidKey is CacheGetError,
-//            "Unexpected response: \(invalidKey)"
-//        )
-//        let invalidKeyErrorCode = (invalidKey as! CacheGetError).errorCode
-//        XCTAssertEqual(
-//            invalidKeyErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-//            "Unexpected error code: \(invalidKeyErrorCode)"
-//        )
-//
+        let invalidCacheName = await self.cacheClient.get(
+            cacheName: "   ",
+            key: ScalarType.string(generateStringWithUuid(prefix: "hello"))
+        )
+        switch invalidCacheName {
+        case .hit(let hit):
+            XCTFail("expected error but got \(hit)")
+        case .miss(let miss):
+            XCTFail("expected error but got \(miss)")
+        case .error(let err):
+            XCTAssertEqual(
+                err.errorCode,
+                MomentoErrorCode.INVALID_ARGUMENT_ERROR,
+                "Unexpected error code: \(err.errorCode)"
+            )
+        }
+
+        let invalidKey = await self.cacheClient.get(
+            cacheName: self.integrationTestCacheName,
+            key: ScalarType.string("   ")
+        )
+        switch invalidKey {
+        case .hit(let hit):
+            XCTFail("expected error but got \(hit)")
+        case .miss(let miss):
+            XCTFail("expected error but got \(miss)")
+        case .error(let err):
+            XCTAssertEqual(
+                err.errorCode,
+                MomentoErrorCode.INVALID_ARGUMENT_ERROR,
+                "Unexpected error code: \(err.errorCode)"
+            )
+        }
+
         let testKey = generateStringWithUuid(prefix: "hello")
-        
         let stringKey = await self.cacheClient.get(
             cacheName: self.integrationTestCacheName,
             key: testKey
@@ -160,16 +166,72 @@ final class cacheTests: XCTestCase {
         case .error(let err):
             XCTFail("expected a miss but got \(err)")
         }
-        
-        XCTAssertTrue(stringKey is CacheGetResponse, "Unexpected response: \(stringKey)")
 
-//        let bytesKey = await self.cacheClient.get(
-//            cacheName: self.integrationTestCacheName,
-//            key: ScalarType.data(Data(testKey.utf8))
-//        )
-//        XCTAssertTrue(bytesKey is CacheGetMiss, "Unexpected response: \(bytesKey)")
+        let bytesKey = await self.cacheClient.get(
+            cacheName: self.integrationTestCacheName,
+            key: ScalarType.data(Data(testKey.utf8))
+        )
+        switch bytesKey {
+        case .hit(let hit):
+            XCTFail("expected a miss but got \(hit)")
+        case .miss:
+            XCTAssertTrue(true)
+        case .error(let err):
+            XCTFail("expected a miss but got \(err)")
+        }
     }
     
+    func testScalarDelete() async throws {
+        let key = "foo"
+        let value = "fooaswell"
+        let setResponse = await self.cacheClient.set(
+            cacheName: self.integrationTestCacheName,
+            key: ScalarType.string(key),
+            value: ScalarType.string(value),
+            ttl: TimeInterval(30)
+        )
+        switch setResponse {
+        case .error(let err):
+            XCTFail("expected success but got \(err))")
+        case .success(_):
+            XCTAssertTrue(true)
+        }
+
+        var getResponse = await self.cacheClient.get(
+            cacheName: self.integrationTestCacheName, key: ScalarType.string(key)
+        )
+        switch getResponse {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(value, hit.valueString)
+        }
+
+        let deleteResponse = await self.cacheClient.delete(
+            cacheName: self.integrationTestCacheName, key: ScalarType.string(key)
+        )
+        switch deleteResponse {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        case .success(_):
+            XCTAssertTrue(true)
+        }
+
+        getResponse = await self.cacheClient.get(
+            cacheName: self.integrationTestCacheName, key: ScalarType.string(key)
+        )
+        switch getResponse {
+        case .error(let err):
+            XCTFail("expected miss but got \(err)")
+        case .miss(_):
+            XCTAssertTrue(true)
+        case .hit(let hit):
+            XCTFail("expected miss but got \(hit)")
+        }
+    }
+
     func testScalarSet() async throws {
         let invalidCacheName = await self.cacheClient.set(
             cacheName: "   ", 
@@ -177,48 +239,51 @@ final class cacheTests: XCTestCase {
             value: "world",
             ttl: nil
         )
-        XCTAssertTrue(
-            invalidCacheName is CacheSetError,
-            "Unexpected response: \(invalidCacheName)"
-        )
-        let invalidCacheNameErrorCode = (invalidCacheName as! CacheSetError).errorCode
-        XCTAssertEqual(
-            invalidCacheNameErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidCacheNameErrorCode)"
-        )
-        
+        switch invalidCacheName {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(
+                err.errorCode,
+                MomentoErrorCode.INVALID_ARGUMENT_ERROR,
+                "Unexpected error code: \(err.errorCode)"
+            )
+        }
+
         let invalidKey = await self.cacheClient.set(
             cacheName: self.integrationTestCacheName,
             key: "   ",
             value: "world",
             ttl: nil
         )
-        XCTAssertTrue(
-            invalidKey is CacheSetError,
-            "Unexpected response: \(invalidKey)"
-        )
-        let invalidKeyErrorCode = (invalidKey as! CacheSetError).errorCode
-        XCTAssertEqual(
-            invalidKeyErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidKeyErrorCode)"
-        )
-        
+        switch invalidKey {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(
+                err.errorCode,
+                MomentoErrorCode.INVALID_ARGUMENT_ERROR,
+                "Unexpected error code: \(err.errorCode)"
+            )
+        }
+
         let invalidTtl = await self.cacheClient.set(
             cacheName: self.integrationTestCacheName,
             key: "hello",
             value: "world",
             ttl: -5
         )
-        XCTAssertTrue(
-            invalidTtl is CacheSetError,
-            "Unexpected response: \(invalidTtl)"
-        )
-        let invalidTtlErrorCode = (invalidTtl as! CacheSetError).errorCode
-        XCTAssertEqual(
-            invalidTtlErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidTtlErrorCode)"
-        )
-        
+        switch invalidTtl {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(
+                err.errorCode,
+                MomentoErrorCode.INVALID_ARGUMENT_ERROR,
+                "Unexpected error code: \(err.errorCode)"
+            )
+        }
+
         let testKey1 = generateStringWithUuid(prefix: "hello")
         let testValue1 = "world"
         let stringKeyStringValue = await self.cacheClient.set(
@@ -227,19 +292,23 @@ final class cacheTests: XCTestCase {
             value: testValue1,
             ttl: nil
         )
-        XCTAssertTrue(
-            stringKeyStringValue is CacheSetSuccess,
-            "Unexpected response: \(stringKeyStringValue)"
-        )
+        switch stringKeyStringValue {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        case .success(_):
+            XCTAssertTrue(true)
+        }
         let getStringKeyStringValue = await self.cacheClient.get(
             cacheName: self.integrationTestCacheName, key: testKey1
         )
-        XCTAssertTrue(
-            getStringKeyStringValue is CacheGetHit,
-            "Unexpected response: \(getStringKeyStringValue)"
-        )
-        let value1 = (getStringKeyStringValue as! CacheGetHit).valueString
-        XCTAssertTrue(value1 == testValue1)
+        switch getStringKeyStringValue {
+        case .hit(let hit):
+            XCTAssertEqual(hit.valueString, testValue1)
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        }
         
         let testKey2 = generateStringWithUuid(prefix: "foo")
         let testValue2 = Data("bar".utf8)
@@ -249,20 +318,24 @@ final class cacheTests: XCTestCase {
             value: testValue2,
             ttl: nil
         )
-        XCTAssertTrue(
-            stringKeyBytesValue is CacheSetSuccess,
-            "Unexpected response: \(stringKeyBytesValue)"
-        )
+        switch stringKeyBytesValue {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        case .success(_):
+            XCTAssertTrue(true)
+        }
         let getStringKeyBytesValue = await self.cacheClient.get(
             cacheName: self.integrationTestCacheName, key: testKey2
         )
-        XCTAssertTrue(
-            getStringKeyBytesValue is CacheGetHit,
-            "Unexpected response: \(getStringKeyBytesValue)"
-        )
-        let value2 = (getStringKeyBytesValue as! CacheGetHit).valueData
-        XCTAssertTrue(value2 == testValue2)
-        
+        switch getStringKeyBytesValue {
+        case .hit(let hit):
+            XCTAssertEqual(hit.valueData, testValue2)
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        }
+
         let testKey3 = Data(generateStringWithUuid(prefix: "abc").utf8)
         let testValue3 = "123"
         let bytesKeyStringValue = await self.cacheClient.set(
@@ -271,20 +344,24 @@ final class cacheTests: XCTestCase {
             value: testValue3,
             ttl: nil
         )
-        XCTAssertTrue(
-            bytesKeyStringValue is CacheSetSuccess,
-            "Unexpected response: \(bytesKeyStringValue)"
-        )
+        switch bytesKeyStringValue {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        case .success(_):
+            XCTAssertTrue(true)
+        }
         let getBytesKeyStringValue = await self.cacheClient.get(
             cacheName: self.integrationTestCacheName, key: testKey3
         )
-        XCTAssertTrue(
-            getBytesKeyStringValue is CacheGetHit,
-            "Unexpected response: \(getBytesKeyStringValue)"
-        )
-        let value3 = (getBytesKeyStringValue as! CacheGetHit).valueString
-        XCTAssertTrue(value3 == testValue3)
-        
+        switch getBytesKeyStringValue {
+        case .hit(let hit):
+            XCTAssertEqual(hit.valueString, testValue3)
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        }
+
         let testKey4 = Data(generateStringWithUuid(prefix: "321").utf8)
         let testValue4 = Data("xyz".utf8)
         let bytesKeyBytesValue = await self.cacheClient.set(
@@ -293,20 +370,24 @@ final class cacheTests: XCTestCase {
             value: testValue4,
             ttl: nil
         )
-        XCTAssertTrue(
-            bytesKeyBytesValue is CacheSetSuccess,
-            "Unexpected response: \(bytesKeyBytesValue)"
-        )
+        switch bytesKeyBytesValue {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        case .success(_):
+            XCTAssertTrue(true)
+        }
         let getBytesKeyBytesValue = await self.cacheClient.get(
             cacheName: self.integrationTestCacheName, key: testKey4
         )
-        XCTAssertTrue(
-            getBytesKeyBytesValue is CacheGetHit,
-            "Unexpected response: \(getBytesKeyBytesValue)"
-        )
-        let value4 = (getBytesKeyBytesValue as! CacheGetHit).valueData
-        XCTAssertTrue(value4 == testValue4)
-        
+        switch getBytesKeyBytesValue {
+        case .hit(let hit):
+            XCTAssertEqual(hit.valueData, testValue4)
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        }
+
         let testKey5 = generateStringWithUuid(prefix: "apple")
         let testValue5 = "pie"
         let shortTtl = await self.cacheClient.set(
@@ -315,10 +396,12 @@ final class cacheTests: XCTestCase {
             value: testValue5,
             ttl: 1 // ttl = 1 second
         )
-        XCTAssertTrue(
-            shortTtl is CacheSetSuccess,
-            "Unexpected response: \(shortTtl)"
-        )
+        switch shortTtl {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        case .success(_):
+            XCTAssertTrue(true)
+        }
         
         // sleep for 5 seconds
         try await Task.sleep(nanoseconds: 5_000_000_000)
@@ -326,10 +409,14 @@ final class cacheTests: XCTestCase {
         let getShortTtl = await self.cacheClient.get(
             cacheName: self.integrationTestCacheName, key: testKey5
         )
-        XCTAssertTrue(
-            getShortTtl is CacheGetMiss,
-            "Unexpected response: \(getShortTtl)"
-        )
+        switch getShortTtl {
+        case .error(let err):
+            XCTFail("expected miss but got \(err)")
+        case .hit(let hit):
+            XCTFail("expected miss but got \(hit)")
+        case .miss:
+            XCTAssertTrue(true)
+        }
 
         let testKey6 = generateStringWithUuid(prefix: "hello")
         let testValue6 = "world"
@@ -338,18 +425,22 @@ final class cacheTests: XCTestCase {
             key: testKey6,
             value: testValue6
         )
-        XCTAssertTrue(
-            noTtlSetValue is CacheSetSuccess,
-            "Unexpected response: \(stringKeyStringValue)"
-        )
+        switch noTtlSetValue {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        case .success(_):
+            XCTAssertTrue(true)
+        }
         let getNoTtlValue = await self.cacheClient.get(
             cacheName: self.integrationTestCacheName, key: testKey6
         )
-        XCTAssertTrue(
-            getNoTtlValue is CacheGetHit,
-            "Unexpected response: \(getNoTtlValue)"
-        )
-        let value6 = (getNoTtlValue as! CacheGetHit).valueString
-        XCTAssertTrue(value6 == testValue6)
+        switch getNoTtlValue {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(hit.valueString, testValue6)
+        }
     }
 }

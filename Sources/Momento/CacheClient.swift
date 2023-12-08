@@ -301,13 +301,13 @@ public class CacheClient: CacheClientProtocol {
      }
     ```
      */
-    public func createCache(cacheName: String) async -> CacheCreateResponse {
+    public func createCache(cacheName: String) async -> CreateCacheResponse {
         do {
             try validateCacheName(cacheName: cacheName)
         } catch let err as SdkError {
-            return CacheCreateError(error: err)
+            return CreateCacheError(error: err)
         } catch {
-            return CacheCreateError(error: UnknownError(
+            return CreateCacheError(error: UnknownError(
                 message: "unexpected error: \(error)")
             )
         }
@@ -317,7 +317,7 @@ public class CacheClient: CacheClientProtocol {
     /**
      Deletes a cache and all items in it.
      - Parameter cacheName: name of the cache to be deleted
-     - Returns: CacheDeleteResponse representing the result of the delete cache operation.
+     - Returns: DeleteCacheResponse representing the result of the delete cache operation.
      Pattern matching can be used to operate on the appropriate subtype.
     ```
      switch response {
@@ -328,7 +328,7 @@ public class CacheClient: CacheClientProtocol {
      }
     ```
      */
-    public func deleteCache(cacheName: String) async -> CacheDeleteResponse {
+    public func deleteCache(cacheName: String) async -> DeleteCacheResponse {
         do {
             try validateCacheName(cacheName: cacheName)
         } catch let err as SdkError {
@@ -343,19 +343,19 @@ public class CacheClient: CacheClientProtocol {
     
     /**
      Lists all caches.
-     - Returns: CacheListResponse representing the result of the list caches operation.
+     - Returns: ListCachesResponse representing the result of the list caches operation.
      Pattern matching can be used to operate on the appropriate subtype.
     ```
      switch response {
-     case let responseError as CacheListError:
+     case let responseError as ListCachesError:
         // handle error
-     case let responseSuccess as CacheListSuccess:
+     case let responseSuccess as ListCachesSuccess:
         // handle success
         print(responseSuccess.caches)
      }
     ```
      */
-    public func listCaches() async -> CacheListResponse {
+    public func listCaches() async -> ListCachesResponse {
         return await self.controlClient.listCaches()
     }
     
@@ -556,11 +556,11 @@ public class CacheClient: CacheClientProtocol {
             try validateCacheKey(key: key)
             try validateTtl(ttl: ttl)
         } catch let err as SdkError {
-            return CacheSetError(error: err)
+            return CacheSetResponse.error(CacheSetError(error: err))
         } catch {
-            return CacheSetError(error: UnknownError(
+            return CacheSetResponse.error(CacheSetError(error: UnknownError(
                 message: "unexpected error: \(error)")
-            )
+            ))
         }
         return await self.dataClient.set(
             cacheName: cacheName,
@@ -570,6 +570,19 @@ public class CacheClient: CacheClientProtocol {
         )
     }
     
+    public func delete(cacheName: String, key: ScalarType) async -> DeleteResponse {
+        do {
+            try validateCacheName(cacheName: cacheName)
+            try validateCacheKey(key: key)
+        } catch let err as SdkError {
+            return DeleteResponse.error(DeleteError(error: err))
+        } catch {
+            return DeleteResponse.error(DeleteError(error: UnknownError(
+                message: "unexpected error: \(error)")
+            ))
+        }
+        return await self.dataClient.delete(cacheName: cacheName, key: key)
+    }
     /**
      Adds multiple elements to the back of the given list. Creates the list if it does not already exist.
      - Parameters:

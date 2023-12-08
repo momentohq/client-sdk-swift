@@ -1,5 +1,8 @@
-public protocol CacheSetResponse {}
+public enum CacheSetResponse {
+    case success(CacheSetSuccess)
+    case error(CacheSetError)
+}
 
-public class CacheSetSuccess: CacheSetResponse {}
+public class CacheSetSuccess {}
 
-public class CacheSetError: ErrorResponseBase, CacheSetResponse {}
+public class CacheSetError: ErrorResponseBase {}

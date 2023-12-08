@@ -13,7 +13,9 @@ protocol DataClientProtocol {
         value: ScalarType,
         ttl: TimeInterval?
     ) async -> CacheSetResponse
-    
+
+    func delete(cacheName: String, key: ScalarType) async -> DeleteResponse
+
     func listConcatenateBack(
         cacheName: String,
         listName: String,
@@ -21,7 +23,7 @@ protocol DataClientProtocol {
         truncateFrontToSize: Int?,
         ttl: CollectionTtl?
     ) async -> CacheListConcatenateBackResponse
-    
+
     func listConcatenateFront(
         cacheName: String,
         listName: String,
@@ -29,14 +31,14 @@ protocol DataClientProtocol {
         truncateBackToSize: Int?,
         ttl: CollectionTtl?
     ) async -> CacheListConcatenateFrontResponse
-    
+
     func listFetch(
         cacheName: String,
         listName: String,
         startIndex: Int?,
         endIndex: Int?
     ) async -> CacheListFetchResponse
-    
+
     func listLength(
         cacheName: String,
         listName: String
@@ -214,7 +216,7 @@ class DataClient: DataClientProtocol {
         case .data(let d):
             request.cacheBody = d
         }
-        
+
         let headers = self.makeHeaders(cacheName: cacheName)
         let call = self.client.set(
             request,
@@ -224,23 +226,57 @@ class DataClient: DataClientProtocol {
                 )
             )
         )
-        
+
         do {
             _ = try await call.response.get()
-            return CacheSetSuccess()
+            return CacheSetResponse.success(CacheSetSuccess())
         } catch let err as GRPCStatus {
-            return CacheSetError(error: grpcStatusToSdkError(grpcStatus: err))
+            return CacheSetResponse.error(CacheSetError(error: grpcStatusToSdkError(grpcStatus: err)))
         } catch let err as GRPCConnectionPoolError {
-            return CacheSetError(
+            return CacheSetResponse.error(CacheSetError(
                 error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
-            )
+            ))
         } catch {
-            return CacheSetError(
+            return CacheSetResponse.error(CacheSetError(
                 error: UnknownError(message: "unknown cache set error \(error)")
-            )
+            ))
         }
     }
     
+    func delete(cacheName: String, key: ScalarType) async -> DeleteResponse {
+        var request = CacheClient__DeleteRequest()
+        switch key {
+        case .data(let b):
+            request.cacheKey = b
+        case .string(let s):
+            request.cacheKey = Data(s.utf8)
+        }
+        let headers = self.makeHeaders(cacheName: cacheName)
+        let call = self.client.delete(
+            request,
+            callOptions: CallOptions(
+                customMetadata: .init(
+                    headers.map { ($0, $1) }
+                )
+            )
+        )
+
+        do {
+            _ = try await call.response.get()
+            return DeleteResponse.success(DeleteSuccess())
+        } catch let err as GRPCStatus {
+            return DeleteResponse.error(DeleteError(error: grpcStatusToSdkError(grpcStatus: err)))
+        } catch let err as GRPCConnectionPoolError {
+            return DeleteResponse.error(DeleteError(
+                error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
+            ))
+        } catch {
+            return DeleteResponse.error(DeleteError(
+                error: UnknownError(message: "unknown cache set error \(error)")
+            ))
+        }
+    }
+
     func listConcatenateBack(
         cacheName: String,
         listName: String,

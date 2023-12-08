@@ -4,11 +4,11 @@ import NIOHPACK
 import Logging
 
 protocol ControlClientProtocol {
-    func createCache(cacheName: String) async -> CacheCreateResponse
+    func createCache(cacheName: String) async -> CreateCacheResponse
     
-    func deleteCache(cacheName: String) async -> CacheDeleteResponse
+    func deleteCache(cacheName: String) async -> DeleteCacheResponse
     
-    func listCaches() async -> CacheListResponse
+    func listCaches() async -> ListCachesResponse
 }
 
 @available(macOS 10.15, iOS 13, *)
@@ -59,27 +59,27 @@ class ControlClient: ControlClientProtocol {
         )
     }
     
-    func createCache(cacheName: String) async -> CacheCreateResponse {
+    func createCache(cacheName: String) async -> CreateCacheResponse {
         var request = ControlClient__CreateCacheRequest()
         request.cacheName = cacheName
         let call = self.client.createCache(request)
         do {
             _ = try await call.response.get()
             // Successful creation returns ControlClient__CreateCacheResponse
-            return CacheCreateSuccess()
+            return CreateCacheSuccess()
         } catch let err as GRPCStatus {
             if err.code == GRPCStatus.Code.alreadyExists {
-                return CacheCreateCacheAlreadyExists()
+                return CreateCacheAlreadyExists()
             }
-            return CacheCreateError(error: grpcStatusToSdkError(grpcStatus: err))
+            return CreateCacheError(error: grpcStatusToSdkError(grpcStatus: err))
         } catch let err as GRPCConnectionPoolError {
-            return CacheCreateError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
+            return CreateCacheError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
         } catch {
-            return CacheCreateError(error: UnknownError(message: "unknown cache create error \(error)"))
+            return CreateCacheError(error: UnknownError(message: "unknown cache create error \(error)"))
         }
     }
     
-    func deleteCache(cacheName: String) async -> CacheDeleteResponse {
+    func deleteCache(cacheName: String) async -> DeleteCacheResponse {
         var request = ControlClient__DeleteCacheRequest()
         request.cacheName = cacheName
         let call = self.client.deleteCache(request)
@@ -96,19 +96,19 @@ class ControlClient: ControlClientProtocol {
         }
     }
     
-    func listCaches() async -> CacheListResponse {
+    func listCaches() async -> ListCachesResponse {
         let call = self.client.listCaches(ControlClient__ListCachesRequest())
         do {
             let result = try await call.response.get()
             // Successful creation returns ControlClient__ListCachesResponse
             self.logger.debug("list caches received: \(result.cache)")
-            return CacheListSuccess(caches: result.cache)
+            return ListCachesSuccess(caches: result.cache)
         } catch let err as GRPCStatus {
-            return CacheListError(error: grpcStatusToSdkError(grpcStatus: err))
+            return ListCachesError(error: grpcStatusToSdkError(grpcStatus: err))
         } catch let err as GRPCConnectionPoolError {
-            return CacheListError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
+            return ListCachesError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
         } catch {
-            return CacheListError(error: UnknownError(message: "unknown cache create error \(error)"))
+            return ListCachesError(error: UnknownError(message: "unknown cache create error \(error)"))
         }
     }
 }

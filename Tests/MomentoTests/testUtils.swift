@@ -27,7 +27,7 @@ func setUpIntegrationTests() async -> TestSetup {
         let cacheName = generateStringWithUuid(prefix: "swift-test")
         let result = await cacheClient.createCache(cacheName: cacheName)
         switch result {
-        case let error as CacheCreateError:
+        case let error as CreateCacheError:
             fatalError("Unable to create integration test cache: \(error.description)")
         default: 
             break
