@@ -12,11 +12,11 @@ enum ScalarType {
 protocol CacheClientProtocol: ControlClientProtocol & DataClientProtocol {}
 
 extension CacheClientProtocol {
-    public func get(cacheName: String, key: String) async -> CacheGetResponse {
+    public func get(cacheName: String, key: String) async -> GetResponse {
         return await self.get(cacheName: cacheName, key: ScalarType.string(key))
     }
     
-    public func get(cacheName: String, key: Data) async -> CacheGetResponse {
+    public func get(cacheName: String, key: Data) async -> GetResponse {
         return await self.get(cacheName: cacheName, key: ScalarType.data(key))
     }
     
@@ -25,7 +25,7 @@ extension CacheClientProtocol {
         key: String,
         value: String,
         ttl: TimeInterval? = nil
-    ) async -> CacheSetResponse {
+    ) async -> SetResponse {
         return await set(
             cacheName: cacheName,
             key: ScalarType.string(key),
@@ -39,7 +39,7 @@ extension CacheClientProtocol {
         key: String,
         value: Data,
         ttl: TimeInterval? = nil
-    ) async -> CacheSetResponse {
+    ) async -> SetResponse {
         return await set(
             cacheName: cacheName,
             key: ScalarType.string(key),
@@ -53,7 +53,7 @@ extension CacheClientProtocol {
         key: Data,
         value: String,
         ttl: TimeInterval? = nil
-    ) async -> CacheSetResponse {
+    ) async -> SetResponse {
         return await set(
             cacheName: cacheName,
             key: ScalarType.data(key),
@@ -67,7 +67,7 @@ extension CacheClientProtocol {
         key: Data,
         value: Data,
         ttl: TimeInterval? = nil
-    ) async -> CacheSetResponse {
+    ) async -> SetResponse {
         return await set(
             cacheName: cacheName,
             key: ScalarType.data(key),
@@ -76,6 +76,14 @@ extension CacheClientProtocol {
         )
     }
     
+    public func delete(cacheName: String, key: String) async -> DeleteResponse {
+        return await delete(cacheName: cacheName, key: ScalarType.string(key))
+    }
+
+    public func delete(cacheName: String, key: Data) async -> DeleteResponse {
+        return await delete(cacheName: cacheName, key: ScalarType.data(key))
+    }
+
     public func listConcatenateBack(
         cacheName: String,
         listName: String,
@@ -377,7 +385,7 @@ public class CacheClient: CacheClientProtocol {
      }
     ```
      */
-    public func get(cacheName: String, key: String) async -> CacheGetResponse {
+    public func get(cacheName: String, key: String) async -> GetResponse {
         return await self.get(cacheName: cacheName, key: ScalarType.string(key))
     }
     
@@ -386,7 +394,7 @@ public class CacheClient: CacheClientProtocol {
      - Parameters:
         - cacheName: the name of the cache to perform the lookup in
         - key: the key to look up as type Data
-     - Returns: CacheGetResponse representing the result of the get operation.
+     - Returns: GetResponse representing the result of the get operation.
      Pattern matching can be used to operate on the appropriate subtype.
     ```
      switch response {
@@ -399,11 +407,11 @@ public class CacheClient: CacheClientProtocol {
      }
     ```
      */
-    public func get(cacheName: String, key: Data) async -> CacheGetResponse {
+    public func get(cacheName: String, key: Data) async -> GetResponse {
         return await self.get(cacheName: cacheName, key: ScalarType.data(key))
     }
     
-    internal func get(cacheName: String, key: ScalarType) async -> CacheGetResponse {
+    internal func get(cacheName: String, key: ScalarType) async -> GetResponse {
         do {
             try validateCacheName(cacheName: cacheName)
             try validateCacheKey(key: key)
@@ -440,7 +448,7 @@ public class CacheClient: CacheClientProtocol {
         key: String,
         value: String,
         ttl: TimeInterval? = nil
-    ) async -> CacheSetResponse {
+    ) async -> SetResponse {
         return await set(
             cacheName: cacheName,
             key: ScalarType.string(key),
@@ -456,7 +464,7 @@ public class CacheClient: CacheClientProtocol {
         - key: the key to set the value for
         - value: the value to associate with the key
         - ttl: the time to live for the item in the cache. Uses the client's default TTL if this is not supplied.
-     - Returns: CacheSetResponse representing the result of the set operation.
+     - Returns: SetResponse representing the result of the set operation.
      Pattern matching can be used to operate on the appropriate subtype.
     ```
      switch response {
@@ -472,7 +480,7 @@ public class CacheClient: CacheClientProtocol {
         key: String,
         value: Data,
         ttl: TimeInterval? = nil
-    ) async -> CacheSetResponse {
+    ) async -> SetResponse {
         return await set(
             cacheName: cacheName,
             key: ScalarType.string(key),
@@ -488,7 +496,7 @@ public class CacheClient: CacheClientProtocol {
         - key: the key to set the value for
         - value: the value to associate with the key
         - ttl: the time to live for the item in the cache. Uses the client's default TTL if this is not supplied.
-     - Returns: CacheSetResponse representing the result of the set operation.
+     - Returns: SetResponse representing the result of the set operation.
      Pattern matching can be used to operate on the appropriate subtype.
     ```
      switch response {
@@ -504,7 +512,7 @@ public class CacheClient: CacheClientProtocol {
         key: Data,
         value: String,
         ttl: TimeInterval? = nil
-    ) async -> CacheSetResponse {
+    ) async -> SetResponse {
         return await set(
             cacheName: cacheName,
             key: ScalarType.data(key),
@@ -520,7 +528,7 @@ public class CacheClient: CacheClientProtocol {
         - key: the key to set the value for
         - value: the value to associate with the key
         - ttl: the time to live for the item in the cache. Uses the client's default TTL if this is not supplied.
-     - Returns: CacheSetResponse representing the result of the set operation.
+     - Returns: SetResponse representing the result of the set operation.
      Pattern matching can be used to operate on the appropriate subtype.
     ```
      switch response {
@@ -536,7 +544,7 @@ public class CacheClient: CacheClientProtocol {
         key: Data,
         value: Data,
         ttl: TimeInterval? = nil
-    ) async -> CacheSetResponse {
+    ) async -> SetResponse {
         return await set(
             cacheName: cacheName,
             key: ScalarType.data(key),
@@ -570,7 +578,7 @@ public class CacheClient: CacheClientProtocol {
         )
     }
     
-    public func delete(cacheName: String, key: ScalarType) async -> DeleteResponse {
+    internal func delete(cacheName: String, key: ScalarType) async -> DeleteResponse {
         do {
             try validateCacheName(cacheName: cacheName)
             try validateCacheKey(key: key)
