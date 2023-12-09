@@ -11,6 +11,246 @@ enum ScalarType {
 
 protocol CacheClientProtocol: ControlClientProtocol & DataClientProtocol {}
 
+extension CacheClientProtocol {
+    public func get(cacheName: String, key: String) async -> CacheGetResponse {
+        return await self.get(cacheName: cacheName, key: ScalarType.string(key))
+    }
+    
+    public func get(cacheName: String, key: Data) async -> CacheGetResponse {
+        return await self.get(cacheName: cacheName, key: ScalarType.data(key))
+    }
+    
+    public func set(
+        cacheName: String,
+        key: String,
+        value: String,
+        ttl: TimeInterval? = nil
+    ) async -> CacheSetResponse {
+        return await set(
+            cacheName: cacheName,
+            key: ScalarType.string(key),
+            value: ScalarType.string(value),
+            ttl: ttl
+        )
+    }
+    
+    public func set(
+        cacheName: String,
+        key: String,
+        value: Data,
+        ttl: TimeInterval? = nil
+    ) async -> CacheSetResponse {
+        return await set(
+            cacheName: cacheName,
+            key: ScalarType.string(key),
+            value: ScalarType.data(value),
+            ttl: ttl
+        )
+    }
+    
+    public func set(
+        cacheName: String,
+        key: Data,
+        value: String,
+        ttl: TimeInterval? = nil
+    ) async -> CacheSetResponse {
+        return await set(
+            cacheName: cacheName,
+            key: ScalarType.data(key),
+            value: ScalarType.string(value),
+            ttl: ttl
+        )
+    }
+    
+    public func set(
+        cacheName: String,
+        key: Data,
+        value: Data,
+        ttl: TimeInterval? = nil
+    ) async -> CacheSetResponse {
+        return await set(
+            cacheName: cacheName,
+            key: ScalarType.data(key),
+            value: ScalarType.data(value),
+            ttl: ttl
+        )
+    }
+    
+    public func listConcatenateBack(
+        cacheName: String,
+        listName: String,
+        values: [String],
+        truncateFrontToSize: Int? = nil,
+        ttl: CollectionTtl? =  nil
+    ) async -> CacheListConcatenateBackResponse {
+        return await listConcatenateBack(
+            cacheName: cacheName,
+            listName: listName,
+            values: values.map { ScalarType.string($0) },
+            truncateFrontToSize: truncateFrontToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listConcatenateBack(
+        cacheName: String,
+        listName: String,
+        values: [Data],
+        truncateFrontToSize: Int? = nil,
+        ttl: CollectionTtl? =  nil
+    ) async -> CacheListConcatenateBackResponse {
+        return await listConcatenateBack(
+            cacheName: cacheName,
+            listName: listName,
+            values: values.map { ScalarType.data($0) },
+            truncateFrontToSize: truncateFrontToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listConcatenateFront(
+        cacheName: String,
+        listName: String,
+        values: [String],
+        truncateBackToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListConcatenateFrontResponse {
+        return await listConcatenateFront(
+            cacheName: cacheName,
+            listName: listName,
+            values: values.map { ScalarType.string($0) },
+            truncateBackToSize: truncateBackToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listConcatenateFront(
+        cacheName: String,
+        listName: String,
+        values: [Data],
+        truncateBackToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListConcatenateFrontResponse {
+        return await listConcatenateFront(
+            cacheName: cacheName,
+            listName: listName,
+            values: values.map { ScalarType.data($0) },
+            truncateBackToSize: truncateBackToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listFetch(
+        cacheName: String,
+        listName: String,
+        startIndex: Int? = nil,
+        endIndex: Int? = nil
+    ) async -> CacheListFetchResponse {
+        return await listFetch(
+            cacheName: cacheName,
+            listName: listName,
+            startIndex: startIndex,
+            endIndex: endIndex
+        )
+    }
+    
+    public func listPushBack(
+        cacheName: String,
+        listName: String,
+        value: String,
+        truncateFrontToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListPushBackResponse {
+        return await listPushBack(
+            cacheName: cacheName,
+            listName: listName,
+            value: ScalarType.string(value),
+            truncateFrontToSize: truncateFrontToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listPushBack(
+        cacheName: String,
+        listName: String,
+        value: Data,
+        truncateFrontToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListPushBackResponse {
+        return await listPushBack(
+            cacheName: cacheName,
+            listName: listName,
+            value: ScalarType.data(value),
+            truncateFrontToSize: truncateFrontToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listPushFront(
+        cacheName: String,
+        listName: String,
+        value: String,
+        truncateBackToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListPushFrontResponse {
+        return await listPushFront(
+            cacheName: cacheName,
+            listName: listName,
+            value: ScalarType.string(value),
+            truncateBackToSize: truncateBackToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listPushFront(
+        cacheName: String,
+        listName: String,
+        value: Data,
+        truncateBackToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListPushFrontResponse {
+        return await listPushFront(
+            cacheName: cacheName,
+            listName: listName,
+            value: ScalarType.data(value),
+            truncateBackToSize: truncateBackToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listRemoveValue(
+        cacheName: String,
+        listName: String,
+        value: String
+    ) async -> CacheListRemoveValueResponse {
+        return await listRemoveValue(cacheName: cacheName, listName: listName, value: ScalarType.string(value))
+    }
+    
+    public func listRemoveValue(
+        cacheName: String,
+        listName: String,
+        value: Data
+    ) async -> CacheListRemoveValueResponse {
+        return await listRemoveValue(cacheName: cacheName, listName: listName, value: ScalarType.data(value))
+    }
+    
+    public func listRetain(
+        cacheName: String,
+        listName: String,
+        startIndex: Int? = nil,
+        endIndex: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListRetainResponse {
+        return await listRetain(
+            cacheName: cacheName,
+            listName: listName,
+            startIndex: startIndex,
+            endIndex: endIndex,
+            ttl: ttl
+        )
+    }
+}
+
 /**
  Client to perform operations against Momento Serverless Cache.
  To learn more, see the [Momento Cache developer documentation](https://docs.momentohq.com/cache)
