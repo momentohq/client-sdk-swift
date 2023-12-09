@@ -25,7 +25,7 @@ final class listTests: XCTestCase {
         let invalidCacheName = await self.cacheClient.listConcatenateBack(
             cacheName: "   ",
             listName: listName,
-            values: [ScalarType.string("abc"), ScalarType.string("xyz")]
+            values: ["abc", "xyz"]
         )
         XCTAssertTrue(
             invalidCacheName is CacheListConcatenateBackError,
@@ -41,7 +41,7 @@ final class listTests: XCTestCase {
         let invalidListName = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: "   ",
-            values: [ScalarType.string("abc"), ScalarType.string("xyz")]
+            values: ["abc", "xyz"]
         )
         XCTAssertTrue(
             invalidListName is CacheListConcatenateBackError,
@@ -57,7 +57,7 @@ final class listTests: XCTestCase {
         let invalidTruncateSize = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: listName,
-            values: [ScalarType.string("abc"), ScalarType.string("xyz")],
+            values: ["abc", "xyz"],
             truncateFrontToSize: -5
         )
         XCTAssertTrue(
@@ -74,7 +74,7 @@ final class listTests: XCTestCase {
         let invalidTtl = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: listName,
-            values: [ScalarType.string("abc"), ScalarType.string("xyz")],
+            values: ["abc", "xyz"],
             ttl: CollectionTtl(ttlSeconds: -5)
         )
         XCTAssertTrue(
@@ -95,7 +95,7 @@ final class listTests: XCTestCase {
         let concatStrings = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: stringListName,
-            values: stringValues.map { ScalarType.string($0) }
+            values: stringValues
         )
         XCTAssertTrue(
             concatStrings is CacheListConcatenateBackSuccess,
@@ -119,7 +119,7 @@ final class listTests: XCTestCase {
         let concatData = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: dataListName,
-            values: dataValues.map { ScalarType.data($0) }
+            values: dataValues
         )
         XCTAssertTrue(
             concatData is CacheListConcatenateBackSuccess,
@@ -138,10 +138,11 @@ final class listTests: XCTestCase {
         XCTAssertEqual(fetchedDataList, dataValues)
         
         // Does not concatenate empty list to the back
+        let emptyStringList: [String] = []
         let emptyList = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: stringListName,
-            values: []
+            values: emptyStringList
         )
         XCTAssertTrue(
             emptyList is CacheListConcatenateBackError,
@@ -161,7 +162,7 @@ final class listTests: XCTestCase {
         let invalidCacheName = await self.cacheClient.listConcatenateFront(
             cacheName: "   ",
             listName: listName,
-            values: [ScalarType.string("abc"), ScalarType.string("xyz")]
+            values: ["abc", "xyz"]
         )
         XCTAssertTrue(
             invalidCacheName is CacheListConcatenateFrontError,
@@ -177,7 +178,7 @@ final class listTests: XCTestCase {
         let invalidListName = await self.cacheClient.listConcatenateFront(
             cacheName: self.integrationTestCacheName,
             listName: "   ",
-            values: [ScalarType.string("abc"), ScalarType.string("xyz")]
+            values: ["abc", "xyz"]
         )
         XCTAssertTrue(
             invalidListName is CacheListConcatenateFrontError,
@@ -193,7 +194,7 @@ final class listTests: XCTestCase {
         let invalidTruncateSize = await self.cacheClient.listConcatenateFront(
             cacheName: self.integrationTestCacheName,
             listName: listName,
-            values: [ScalarType.string("abc"), ScalarType.string("xyz")],
+            values: ["abc", "xyz"],
             truncateBackToSize: -5
         )
         XCTAssertTrue(
@@ -210,7 +211,7 @@ final class listTests: XCTestCase {
         let invalidTtl = await self.cacheClient.listConcatenateFront(
             cacheName: self.integrationTestCacheName,
             listName: listName,
-            values: [ScalarType.string("abc"), ScalarType.string("xyz")],
+            values: ["abc", "xyz"],
             ttl: CollectionTtl(ttlSeconds: -5)
         )
         XCTAssertTrue(
@@ -231,7 +232,7 @@ final class listTests: XCTestCase {
         let concatStrings = await self.cacheClient.listConcatenateFront(
             cacheName: self.integrationTestCacheName,
             listName: stringListName,
-            values: stringValues.map { ScalarType.string($0) }
+            values: stringValues
         )
         XCTAssertTrue(
             concatStrings is CacheListConcatenateFrontSuccess,
@@ -255,7 +256,7 @@ final class listTests: XCTestCase {
         let concatData = await self.cacheClient.listConcatenateFront(
             cacheName: self.integrationTestCacheName,
             listName: dataListName,
-            values: dataValues.map { ScalarType.data($0) }
+            values: dataValues
         )
         XCTAssertTrue(
             concatData is CacheListConcatenateFrontSuccess,
@@ -274,10 +275,11 @@ final class listTests: XCTestCase {
         XCTAssertEqual(fetchedDataList, dataValues)
         
         // Does not concatenate empty list to the back
+        let emptyStringList: [String] = []
         let emptyList = await self.cacheClient.listConcatenateFront(
             cacheName: self.integrationTestCacheName,
             listName: stringListName,
-            values: []
+            values: emptyStringList
         )
         XCTAssertTrue(
             emptyList is CacheListConcatenateFrontError,
@@ -348,7 +350,7 @@ final class listTests: XCTestCase {
         let concatStrings = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: listName,
-            values: stringValues.map { ScalarType.string($0) }
+            values: stringValues
         )
         XCTAssertTrue(
             concatStrings is CacheListConcatenateBackSuccess,
@@ -465,7 +467,7 @@ final class listTests: XCTestCase {
         let insert1 = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: listName,
-            values: stringValues[0...3].map { ScalarType.string($0) }
+            values: Array(stringValues[0...3])
         )
         XCTAssertTrue(
             insert1 is CacheListConcatenateBackSuccess,
@@ -487,7 +489,7 @@ final class listTests: XCTestCase {
         let insert2 = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: listName,
-            values: stringValues[4...].map { ScalarType.string($0) }
+            values: Array(stringValues[4...])
         )
         XCTAssertTrue(
             insert2 is CacheListConcatenateBackSuccess,
@@ -547,7 +549,7 @@ final class listTests: XCTestCase {
         let concatStrings = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: listName,
-            values: stringValues.map { ScalarType.string($0) }
+            values: stringValues
         )
         XCTAssertTrue(
             concatStrings is CacheListConcatenateBackSuccess,
@@ -629,7 +631,7 @@ final class listTests: XCTestCase {
         let concatStrings = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: listName,
-            values: stringValues.map { ScalarType.string($0) }
+            values: stringValues
         )
         XCTAssertTrue(
             concatStrings is CacheListConcatenateBackSuccess,
@@ -677,7 +679,7 @@ final class listTests: XCTestCase {
         let invalidCacheName = await self.cacheClient.listPushBack(
             cacheName: "   ",
             listName: listName,
-            value: ScalarType.string("abc")
+            value: "abc"
         )
         XCTAssertTrue(
             invalidCacheName is CacheListPushBackError,
@@ -693,7 +695,7 @@ final class listTests: XCTestCase {
         let invalidListName = await self.cacheClient.listPushBack(
             cacheName: self.integrationTestCacheName,
             listName: "   ",
-            value: ScalarType.string("abc")
+            value: "abc"
         )
         XCTAssertTrue(
             invalidListName is CacheListPushBackError,
@@ -709,7 +711,7 @@ final class listTests: XCTestCase {
         let invalidTruncateSize = await self.cacheClient.listPushBack(
             cacheName: self.integrationTestCacheName,
             listName: listName,
-            value: ScalarType.string("abc"),
+            value: "abc",
             truncateFrontToSize: -5
         )
         XCTAssertTrue(
@@ -726,7 +728,7 @@ final class listTests: XCTestCase {
         let invalidTtl = await self.cacheClient.listPushBack(
             cacheName: self.integrationTestCacheName,
             listName: listName,
-            value: ScalarType.string("abc"),
+            value: "abc",
             ttl: CollectionTtl(ttlSeconds: -5)
         )
         XCTAssertTrue(
@@ -748,7 +750,7 @@ final class listTests: XCTestCase {
             let pushBack = await self.cacheClient.listPushBack(
                 cacheName: self.integrationTestCacheName,
                 listName: stringListName,
-                value: ScalarType.string(value),
+                value: value,
                 truncateFrontToSize: 2
             )
             XCTAssertTrue(
@@ -774,7 +776,7 @@ final class listTests: XCTestCase {
             let pushBack = await self.cacheClient.listPushBack(
                 cacheName: self.integrationTestCacheName,
                 listName: dataListName,
-                value: ScalarType.data(value),
+                value: value,
                 truncateFrontToSize: 2
             )
             XCTAssertTrue(
@@ -801,7 +803,7 @@ final class listTests: XCTestCase {
         let invalidCacheName = await self.cacheClient.listPushFront(
             cacheName: "   ",
             listName: listName,
-            value: ScalarType.string("abc")
+            value: "abc"
         )
         XCTAssertTrue(
             invalidCacheName is CacheListPushFrontError,
@@ -817,7 +819,7 @@ final class listTests: XCTestCase {
         let invalidListName = await self.cacheClient.listPushFront(
             cacheName: self.integrationTestCacheName,
             listName: "   ",
-            value: ScalarType.string("abc")
+            value: "abc"
         )
         XCTAssertTrue(
             invalidListName is CacheListPushFrontError,
@@ -833,7 +835,7 @@ final class listTests: XCTestCase {
         let invalidTruncateSize = await self.cacheClient.listPushFront(
             cacheName: self.integrationTestCacheName,
             listName: listName,
-            value: ScalarType.string("abc"),
+            value: "abc",
             truncateBackToSize: -5
         )
         XCTAssertTrue(
@@ -850,7 +852,7 @@ final class listTests: XCTestCase {
         let invalidTtl = await self.cacheClient.listPushFront(
             cacheName: self.integrationTestCacheName,
             listName: listName,
-            value: ScalarType.string("abc"),
+            value: "abc",
             ttl: CollectionTtl(ttlSeconds: -5)
         )
         XCTAssertTrue(
@@ -872,7 +874,7 @@ final class listTests: XCTestCase {
             let pushFront = await self.cacheClient.listPushFront(
                 cacheName: self.integrationTestCacheName,
                 listName: stringListName,
-                value: ScalarType.string(value),
+                value: value,
                 truncateBackToSize: 2
             )
             XCTAssertTrue(
@@ -898,7 +900,7 @@ final class listTests: XCTestCase {
             let pushFront = await self.cacheClient.listPushFront(
                 cacheName: self.integrationTestCacheName,
                 listName: dataListName,
-                value: ScalarType.data(value),
+                value: value,
                 truncateBackToSize: 2
             )
             XCTAssertTrue(
@@ -925,7 +927,7 @@ final class listTests: XCTestCase {
         let invalidCacheName = await self.cacheClient.listRemoveValue(
             cacheName: "   ",
             listName: listName,
-            value: ScalarType.string("abc")
+            value: "abc"
         )
         XCTAssertTrue(
             invalidCacheName is CacheListRemoveValueError,
@@ -941,7 +943,7 @@ final class listTests: XCTestCase {
         let invalidListName = await self.cacheClient.listRemoveValue(
             cacheName: self.integrationTestCacheName,
             listName: "   ",
-            value: ScalarType.string("abc")
+            value: "abc"
         )
         XCTAssertTrue(
             invalidListName is CacheListRemoveValueError,
@@ -961,7 +963,7 @@ final class listTests: XCTestCase {
         let concatStrings = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: stringListName,
-            values: stringValues.map { ScalarType.string($0) }
+            values: stringValues
         )
         XCTAssertTrue(
             concatStrings is CacheListConcatenateBackSuccess,
@@ -972,7 +974,7 @@ final class listTests: XCTestCase {
         let remove1 = await self.cacheClient.listRemoveValue(
             cacheName: self.integrationTestCacheName,
             listName: stringListName,
-            value: ScalarType.string("apple")
+            value: "apple"
         )
         XCTAssertTrue(
             remove1 is CacheListRemoveValueSuccess,
@@ -995,7 +997,7 @@ final class listTests: XCTestCase {
         let remove2 = await self.cacheClient.listRemoveValue(
             cacheName: self.integrationTestCacheName,
             listName: stringListName,
-            value: ScalarType.string("apple")
+            value: "apple"
         )
         XCTAssertTrue(
             remove2 is CacheListRemoveValueSuccess,
@@ -1019,7 +1021,7 @@ final class listTests: XCTestCase {
         let concatData = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: dataListName,
-            values: dataValues.map { ScalarType.data($0) }
+            values: dataValues
         )
         XCTAssertTrue(
             concatData is CacheListConcatenateBackSuccess,
@@ -1030,7 +1032,7 @@ final class listTests: XCTestCase {
         let removeData1 = await self.cacheClient.listRemoveValue(
             cacheName: self.integrationTestCacheName,
             listName: dataListName,
-            value: ScalarType.data(Data("abc".utf8))
+            value: Data("abc".utf8)
         )
         XCTAssertTrue(
             removeData1 is CacheListRemoveValueSuccess,
@@ -1053,7 +1055,7 @@ final class listTests: XCTestCase {
         let removeData2 = await self.cacheClient.listRemoveValue(
             cacheName: self.integrationTestCacheName,
             listName: dataListName,
-            value: ScalarType.data(Data("abc".utf8))
+            value: Data("abc".utf8)
         )
         XCTAssertTrue(
             removeData2 is CacheListRemoveValueSuccess,
@@ -1146,7 +1148,7 @@ final class listTests: XCTestCase {
         let concatStrings = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: listName,
-            values: stringValues.map { ScalarType.string($0) }
+            values: stringValues
         )
         XCTAssertTrue(
             concatStrings is CacheListConcatenateBackSuccess,
@@ -1181,7 +1183,7 @@ final class listTests: XCTestCase {
         let concatStrings = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: listName,
-            values: stringValues.map { ScalarType.string($0) }
+            values: stringValues
         )
         XCTAssertTrue(
             concatStrings is CacheListConcatenateBackSuccess,
@@ -1218,7 +1220,7 @@ final class listTests: XCTestCase {
         let concatStrings = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: listName,
-            values: stringValues.map { ScalarType.string($0) }
+            values: stringValues
         )
         XCTAssertTrue(
             concatStrings is CacheListConcatenateBackSuccess,
@@ -1255,7 +1257,7 @@ final class listTests: XCTestCase {
         let concatStrings = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: listName,
-            values: stringValues.map { ScalarType.string($0) }
+            values: stringValues
         )
         XCTAssertTrue(
             concatStrings is CacheListConcatenateBackSuccess,
@@ -1292,7 +1294,7 @@ final class listTests: XCTestCase {
         let concatStrings = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: listName,
-            values: stringValues.map { ScalarType.string($0) }
+            values: stringValues
         )
         XCTAssertTrue(
             concatStrings is CacheListConcatenateBackSuccess,

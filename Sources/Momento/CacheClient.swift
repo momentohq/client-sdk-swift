@@ -1,11 +1,255 @@
 import Foundation
 
-public enum ScalarType {
+enum ScalarType {
     case string(String)
     case data(Data)
 }
 
-typealias CacheClientProtocol = ControlClientProtocol & DataClientProtocol
+// The CacheClient class provides user-friendly, public-facing methods
+// with default values for non-required parameters and overloaded functions
+// that accept String and Data values directly rather than ScalarTypes
+
+protocol CacheClientProtocol: ControlClientProtocol & DataClientProtocol {}
+
+extension CacheClientProtocol {
+    public func get(cacheName: String, key: String) async -> CacheGetResponse {
+        return await self.get(cacheName: cacheName, key: ScalarType.string(key))
+    }
+    
+    public func get(cacheName: String, key: Data) async -> CacheGetResponse {
+        return await self.get(cacheName: cacheName, key: ScalarType.data(key))
+    }
+    
+    public func set(
+        cacheName: String,
+        key: String,
+        value: String,
+        ttl: TimeInterval? = nil
+    ) async -> CacheSetResponse {
+        return await set(
+            cacheName: cacheName,
+            key: ScalarType.string(key),
+            value: ScalarType.string(value),
+            ttl: ttl
+        )
+    }
+    
+    public func set(
+        cacheName: String,
+        key: String,
+        value: Data,
+        ttl: TimeInterval? = nil
+    ) async -> CacheSetResponse {
+        return await set(
+            cacheName: cacheName,
+            key: ScalarType.string(key),
+            value: ScalarType.data(value),
+            ttl: ttl
+        )
+    }
+    
+    public func set(
+        cacheName: String,
+        key: Data,
+        value: String,
+        ttl: TimeInterval? = nil
+    ) async -> CacheSetResponse {
+        return await set(
+            cacheName: cacheName,
+            key: ScalarType.data(key),
+            value: ScalarType.string(value),
+            ttl: ttl
+        )
+    }
+    
+    public func set(
+        cacheName: String,
+        key: Data,
+        value: Data,
+        ttl: TimeInterval? = nil
+    ) async -> CacheSetResponse {
+        return await set(
+            cacheName: cacheName,
+            key: ScalarType.data(key),
+            value: ScalarType.data(value),
+            ttl: ttl
+        )
+    }
+    
+    public func listConcatenateBack(
+        cacheName: String,
+        listName: String,
+        values: [String],
+        truncateFrontToSize: Int? = nil,
+        ttl: CollectionTtl? =  nil
+    ) async -> CacheListConcatenateBackResponse {
+        return await listConcatenateBack(
+            cacheName: cacheName,
+            listName: listName,
+            values: values.map { ScalarType.string($0) },
+            truncateFrontToSize: truncateFrontToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listConcatenateBack(
+        cacheName: String,
+        listName: String,
+        values: [Data],
+        truncateFrontToSize: Int? = nil,
+        ttl: CollectionTtl? =  nil
+    ) async -> CacheListConcatenateBackResponse {
+        return await listConcatenateBack(
+            cacheName: cacheName,
+            listName: listName,
+            values: values.map { ScalarType.data($0) },
+            truncateFrontToSize: truncateFrontToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listConcatenateFront(
+        cacheName: String,
+        listName: String,
+        values: [String],
+        truncateBackToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListConcatenateFrontResponse {
+        return await listConcatenateFront(
+            cacheName: cacheName,
+            listName: listName,
+            values: values.map { ScalarType.string($0) },
+            truncateBackToSize: truncateBackToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listConcatenateFront(
+        cacheName: String,
+        listName: String,
+        values: [Data],
+        truncateBackToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListConcatenateFrontResponse {
+        return await listConcatenateFront(
+            cacheName: cacheName,
+            listName: listName,
+            values: values.map { ScalarType.data($0) },
+            truncateBackToSize: truncateBackToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listFetch(
+        cacheName: String,
+        listName: String,
+        startIndex: Int? = nil,
+        endIndex: Int? = nil
+    ) async -> CacheListFetchResponse {
+        return await listFetch(
+            cacheName: cacheName,
+            listName: listName,
+            startIndex: startIndex,
+            endIndex: endIndex
+        )
+    }
+    
+    public func listPushBack(
+        cacheName: String,
+        listName: String,
+        value: String,
+        truncateFrontToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListPushBackResponse {
+        return await listPushBack(
+            cacheName: cacheName,
+            listName: listName,
+            value: ScalarType.string(value),
+            truncateFrontToSize: truncateFrontToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listPushBack(
+        cacheName: String,
+        listName: String,
+        value: Data,
+        truncateFrontToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListPushBackResponse {
+        return await listPushBack(
+            cacheName: cacheName,
+            listName: listName,
+            value: ScalarType.data(value),
+            truncateFrontToSize: truncateFrontToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listPushFront(
+        cacheName: String,
+        listName: String,
+        value: String,
+        truncateBackToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListPushFrontResponse {
+        return await listPushFront(
+            cacheName: cacheName,
+            listName: listName,
+            value: ScalarType.string(value),
+            truncateBackToSize: truncateBackToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listPushFront(
+        cacheName: String,
+        listName: String,
+        value: Data,
+        truncateBackToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListPushFrontResponse {
+        return await listPushFront(
+            cacheName: cacheName,
+            listName: listName,
+            value: ScalarType.data(value),
+            truncateBackToSize: truncateBackToSize,
+            ttl: ttl
+        )
+    }
+    
+    public func listRemoveValue(
+        cacheName: String,
+        listName: String,
+        value: String
+    ) async -> CacheListRemoveValueResponse {
+        return await listRemoveValue(cacheName: cacheName, listName: listName, value: ScalarType.string(value))
+    }
+    
+    public func listRemoveValue(
+        cacheName: String,
+        listName: String,
+        value: Data
+    ) async -> CacheListRemoveValueResponse {
+        return await listRemoveValue(cacheName: cacheName, listName: listName, value: ScalarType.data(value))
+    }
+    
+    public func listRetain(
+        cacheName: String,
+        listName: String,
+        startIndex: Int? = nil,
+        endIndex: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListRetainResponse {
+        return await listRetain(
+            cacheName: cacheName,
+            listName: listName,
+            startIndex: startIndex,
+            endIndex: endIndex,
+            ttl: ttl
+        )
+    }
+}
 
 /**
  Client to perform operations against Momento Serverless Cache.
@@ -119,7 +363,7 @@ public class CacheClient: CacheClientProtocol {
      Gets the value stored for the given key.
      - Parameters:
         - cacheName: the name of the cache to perform the lookup in
-        - key: the key to look up
+        - key: the key to look up as type String
      - Returns: CacheGetResponse representing the result of the get operation.
      Pattern matching can be used to operate on the appropriate subtype.
     ```
@@ -133,7 +377,33 @@ public class CacheClient: CacheClientProtocol {
      }
     ```
      */
-    public func get(cacheName: String, key: ScalarType) async -> CacheGetResponse {
+    public func get(cacheName: String, key: String) async -> CacheGetResponse {
+        return await self.get(cacheName: cacheName, key: ScalarType.string(key))
+    }
+    
+    /**
+     Gets the value stored for the given key.
+     - Parameters:
+        - cacheName: the name of the cache to perform the lookup in
+        - key: the key to look up as type Data
+     - Returns: CacheGetResponse representing the result of the get operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheGetError:
+        // handle error
+     case let responseMiss as CacheGetMiss:
+        // handle miss
+     case let responseHit as CacheGetHit:
+        // handle hit
+     }
+    ```
+     */
+    public func get(cacheName: String, key: Data) async -> CacheGetResponse {
+        return await self.get(cacheName: cacheName, key: ScalarType.data(key))
+    }
+    
+    internal func get(cacheName: String, key: ScalarType) async -> CacheGetResponse {
         do {
             try validateCacheName(cacheName: cacheName)
             try validateCacheKey(key: key)
@@ -167,6 +437,116 @@ public class CacheClient: CacheClientProtocol {
      */
     public func set(
         cacheName: String,
+        key: String,
+        value: String,
+        ttl: TimeInterval? = nil
+    ) async -> CacheSetResponse {
+        return await set(
+            cacheName: cacheName,
+            key: ScalarType.string(key),
+            value: ScalarType.string(value),
+            ttl: ttl
+        )
+    }
+    
+    /**
+     Associates the given key with the given value. If a value for the key is already present it is replaced with the new value.
+     - Parameters:
+        - cacheName: the name of the cache to store the value in
+        - key: the key to set the value for
+        - value: the value to associate with the key
+        - ttl: the time to live for the item in the cache. Uses the client's default TTL if this is not supplied.
+     - Returns: CacheSetResponse representing the result of the set operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheSetError:
+        // handle error
+     case let responseSuccess as CacheSetSuccess:
+        // handle success
+     }
+    ```
+     */
+    public func set(
+        cacheName: String,
+        key: String,
+        value: Data,
+        ttl: TimeInterval? = nil
+    ) async -> CacheSetResponse {
+        return await set(
+            cacheName: cacheName,
+            key: ScalarType.string(key),
+            value: ScalarType.data(value),
+            ttl: ttl
+        )
+    }
+    
+    /**
+     Associates the given key with the given value. If a value for the key is already present it is replaced with the new value.
+     - Parameters:
+        - cacheName: the name of the cache to store the value in
+        - key: the key to set the value for
+        - value: the value to associate with the key
+        - ttl: the time to live for the item in the cache. Uses the client's default TTL if this is not supplied.
+     - Returns: CacheSetResponse representing the result of the set operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheSetError:
+        // handle error
+     case let responseSuccess as CacheSetSuccess:
+        // handle success
+     }
+    ```
+     */
+    public func set(
+        cacheName: String,
+        key: Data,
+        value: String,
+        ttl: TimeInterval? = nil
+    ) async -> CacheSetResponse {
+        return await set(
+            cacheName: cacheName,
+            key: ScalarType.data(key),
+            value: ScalarType.string(value),
+            ttl: ttl
+        )
+    }
+    
+    /**
+     Associates the given key with the given value. If a value for the key is already present it is replaced with the new value.
+     - Parameters:
+        - cacheName: the name of the cache to store the value in
+        - key: the key to set the value for
+        - value: the value to associate with the key
+        - ttl: the time to live for the item in the cache. Uses the client's default TTL if this is not supplied.
+     - Returns: CacheSetResponse representing the result of the set operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheSetError:
+        // handle error
+     case let responseSuccess as CacheSetSuccess:
+        // handle success
+     }
+    ```
+     */
+    public func set(
+        cacheName: String,
+        key: Data,
+        value: Data,
+        ttl: TimeInterval? = nil
+    ) async -> CacheSetResponse {
+        return await set(
+            cacheName: cacheName,
+            key: ScalarType.data(key),
+            value: ScalarType.data(value),
+            ttl: ttl
+        )
+    }
+    
+    internal func set(
+        cacheName: String,
         key: ScalarType,
         value: ScalarType,
         ttl: TimeInterval? = nil
@@ -182,7 +562,12 @@ public class CacheClient: CacheClientProtocol {
                 message: "unexpected error: \(error)")
             )
         }
-        return await self.dataClient.set(cacheName: cacheName, key: key, value: value, ttl: ttl)
+        return await self.dataClient.set(
+            cacheName: cacheName,
+            key: key,
+            value: value,
+            ttl: ttl
+        )
     }
     
     /**
@@ -207,9 +592,60 @@ public class CacheClient: CacheClientProtocol {
     public func listConcatenateBack(
         cacheName: String,
         listName: String,
+        values: [String],
+        truncateFrontToSize: Int? = nil,
+        ttl: CollectionTtl? =  nil
+    ) async -> CacheListConcatenateBackResponse {
+        return await listConcatenateBack(
+            cacheName: cacheName,
+            listName: listName,
+            values: values.map { ScalarType.string($0) },
+            truncateFrontToSize: truncateFrontToSize,
+            ttl: ttl
+        )
+    }
+    
+    /**
+     Adds multiple elements to the back of the given list. Creates the list if it does not already exist.
+     - Parameters:
+        - cacheName: the name of the cache to store the list in
+        - listName: the list to add to
+        - values: the elements to add to the list
+        - truncateFrontToSize: If the list exceeds this length, remove excess from the front of the list. Must be positive.
+        - ttl: refreshes the list's TTL using the client's default if this is not supplied.
+     - Returns: CacheListConcatenateBackResponse representing the result of the operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheListConcatenateBackError:
+        // handle error
+     case let responseSuccess as CacheListConcatenateBackSuccess:
+        // handle success
+     }
+    ```
+     */
+    public func listConcatenateBack(
+        cacheName: String,
+        listName: String,
+        values: [Data],
+        truncateFrontToSize: Int? = nil,
+        ttl: CollectionTtl? =  nil
+    ) async -> CacheListConcatenateBackResponse {
+        return await listConcatenateBack(
+            cacheName: cacheName,
+            listName: listName,
+            values: values.map { ScalarType.data($0) },
+            truncateFrontToSize: truncateFrontToSize,
+            ttl: ttl
+        )
+    }
+    
+    internal func listConcatenateBack(
+        cacheName: String,
+        listName: String,
         values: [ScalarType],
         truncateFrontToSize: Int? = nil,
-        ttl: CollectionTtl? = nil
+        ttl: CollectionTtl? =  nil
     ) async -> CacheListConcatenateBackResponse {
         do {
             try validateCacheName(cacheName: cacheName)
@@ -253,6 +689,57 @@ public class CacheClient: CacheClientProtocol {
     ```
      */
     public func listConcatenateFront(
+        cacheName: String,
+        listName: String,
+        values: [String],
+        truncateBackToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListConcatenateFrontResponse {
+        return await listConcatenateFront(
+            cacheName: cacheName,
+            listName: listName,
+            values: values.map { ScalarType.string($0) },
+            truncateBackToSize: truncateBackToSize,
+            ttl: ttl
+        )
+    }
+    
+    /**
+     Adds multiple elements to the front of the given list. Creates the list if it does not already exist.
+     - Parameters:
+        - cacheName: the name of the cache to store the list in
+        - listName: the list to add to
+        - values: the elements to add to the list
+        - truncateBackToSize: If the list exceeds this length, remove excess from the back of the list. Must be positive.
+        - ttl: refreshes the list's TTL using the client's default if this is not supplied.
+     - Returns: CacheListConcatenateFrontResponse representing the result of the operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheListConcatenateFrontError:
+        // handle error
+     case let responseSuccess as CacheListConcatenateFrontSuccess:
+        // handle success
+     }
+    ```
+     */
+    public func listConcatenateFront(
+        cacheName: String,
+        listName: String,
+        values: [Data],
+        truncateBackToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListConcatenateFrontResponse {
+        return await listConcatenateFront(
+            cacheName: cacheName,
+            listName: listName,
+            values: values.map { ScalarType.data($0) },
+            truncateBackToSize: truncateBackToSize,
+            ttl: ttl
+        )
+    }
+    
+    internal func listConcatenateFront(
         cacheName: String,
         listName: String,
         values: [ScalarType],
@@ -453,6 +940,57 @@ public class CacheClient: CacheClientProtocol {
     public func listPushBack(
         cacheName: String,
         listName: String,
+        value: String,
+        truncateFrontToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListPushBackResponse {
+        return await listPushBack(
+            cacheName: cacheName,
+            listName: listName,
+            value: ScalarType.string(value),
+            truncateFrontToSize: truncateFrontToSize,
+            ttl: ttl
+        )
+    }
+    
+    /**
+     Adds an element to the back of the given list. Creates the list if it does not already exist.
+     - Parameters:
+        - cacheName: the name of the cache to store the list in
+        - listName: the list to add to
+        - value: the element to add to the list
+        - truncateFrontToSize: If the list exceeds this length, remove excess from the front of the list. Must be positive.
+        - ttl: refreshes the list's TTL using the client's default if this is not supplied.
+     - Returns: CacheListPushBackResponse representing the result of the operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheListPushBackError:
+        // handle error
+     case let responseSuccess as CacheListPushBackSuccess:
+        // handle success
+     }
+    ```
+     */
+    public func listPushBack(
+        cacheName: String,
+        listName: String,
+        value: Data,
+        truncateFrontToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListPushBackResponse {
+        return await listPushBack(
+            cacheName: cacheName,
+            listName: listName,
+            value: ScalarType.data(value),
+            truncateFrontToSize: truncateFrontToSize,
+            ttl: ttl
+        )
+    }
+    
+    internal func listPushBack(
+        cacheName: String,
+        listName: String,
         value: ScalarType,
         truncateFrontToSize: Int? = nil,
         ttl: CollectionTtl? = nil
@@ -500,6 +1038,57 @@ public class CacheClient: CacheClientProtocol {
     public func listPushFront(
         cacheName: String,
         listName: String,
+        value: String,
+        truncateBackToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListPushFrontResponse {
+        return await listPushFront(
+            cacheName: cacheName,
+            listName: listName,
+            value: ScalarType.string(value),
+            truncateBackToSize: truncateBackToSize,
+            ttl: ttl
+        )
+    }
+    
+    /**
+     Adds an element to the front of the given list. Creates the list if it does not already exist.
+     - Parameters:
+        - cacheName: the name of the cache to store the list in
+        - listName: the list to add to
+        - value: the element to add to the list
+        - truncateBackToSize: If the list exceeds this length, remove excess from the back of the list. Must be positive.
+        - ttl: refreshes the list's TTL using the client's default if this is not supplied.
+     - Returns: CacheListPushFrontResponse representing the result of the operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheListPushFrontError:
+        // handle error
+     case let responseSuccess as CacheListPushFrontSuccess:
+        // handle success
+     }
+    ```
+     */
+    public func listPushFront(
+        cacheName: String,
+        listName: String,
+        value: Data,
+        truncateBackToSize: Int? = nil,
+        ttl: CollectionTtl? = nil
+    ) async -> CacheListPushFrontResponse {
+        return await listPushFront(
+            cacheName: cacheName,
+            listName: listName,
+            value: ScalarType.data(value),
+            truncateBackToSize: truncateBackToSize,
+            ttl: ttl
+        )
+    }
+    
+    internal func listPushFront(
+        cacheName: String,
+        listName: String,
         value: ScalarType,
         truncateBackToSize: Int? = nil,
         ttl: CollectionTtl? = nil
@@ -543,6 +1132,39 @@ public class CacheClient: CacheClientProtocol {
     ```
      */
     public func listRemoveValue(
+        cacheName: String,
+        listName: String,
+        value: String
+    ) async -> CacheListRemoveValueResponse {
+        return await listRemoveValue(cacheName: cacheName, listName: listName, value: ScalarType.string(value))
+    }
+    
+    /**
+     Removes all elements from the given list equal to the given value.
+     - Parameters:
+        - cacheName: the name of the cache containing the list
+        - listName: the list to remove values from
+        - value: the value to remove
+     - Returns: CacheListRemoveValueResponse representing the result of the operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch response {
+     case let responseError as CacheListRemoveValueError:
+        // handle error
+     case let responseSuccess as CacheListRemoveValueSuccess:
+        // handle success
+     }
+    ```
+     */
+    public func listRemoveValue(
+        cacheName: String,
+        listName: String,
+        value: Data
+    ) async -> CacheListRemoveValueResponse {
+        return await listRemoveValue(cacheName: cacheName, listName: listName, value: ScalarType.data(value))
+    }
+    
+    internal func listRemoveValue(
         cacheName: String,
         listName: String,
         value: ScalarType

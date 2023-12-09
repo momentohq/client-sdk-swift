@@ -1,8 +1,16 @@
+import Foundation
+
 public protocol TopicClientProtocol {
     func publish(
         cacheName: String,
         topicName: String,
-        value: ScalarType
+        value: String
+    ) async -> TopicPublishResponse
+    
+    func publish(
+        cacheName: String,
+        topicName: String,
+        value: Data
     ) async -> TopicPublishResponse
 
     func subscribe(
@@ -44,7 +52,7 @@ public class TopicClient: TopicClientProtocol {
      - Parameters:
         - cacheName: name of the cache containing the topic
         - topicName: name of the topic
-        - value: the value to be published
+        - value: the value to be published as String
      - Returns: TopicPublishResponse representing the result of the publish operation.
      Pattern matching can be used to operate on the appropriate subtype.
     ```
@@ -57,6 +65,39 @@ public class TopicClient: TopicClientProtocol {
     ```
      */
     public func publish(
+        cacheName: String,
+        topicName: String,
+        value: String
+    ) async -> TopicPublishResponse {
+        return await self.doPublish(cacheName: cacheName, topicName: topicName, value: ScalarType.string(value))
+    }
+    
+    /**
+    Publishes a value to a topic
+     - Parameters:
+        - cacheName: name of the cache containing the topic
+        - topicName: name of the topic
+        - value: the value to be published as Data
+     - Returns: TopicPublishResponse representing the result of the publish operation.
+     Pattern matching can be used to operate on the appropriate subtype.
+    ```
+     switch publishResponse {
+     case let publishError as TopicPublishError:
+        // handle error
+     case is TopicPublishSuccess:
+        // handle success
+     }
+    ```
+     */
+    public func publish(
+        cacheName: String,
+        topicName: String,
+        value: Data
+    ) async -> TopicPublishResponse {
+        return await self.doPublish(cacheName: cacheName, topicName: topicName, value: ScalarType.data(value))
+    }
+    
+    internal func doPublish(
         cacheName: String,
         topicName: String,
         value: ScalarType
