@@ -100,7 +100,7 @@ final class topicsTests: XCTestCase {
             topicName: topicName
         )
         XCTAssertTrue(
-            subResp is TopicSubscribeSuccess,
+            subResp is TopicSubscription,
             "Unexpected response: \((subResp as! TopicSubscribeError).description)"
         )
     }
@@ -113,7 +113,7 @@ final class topicsTests: XCTestCase {
             topicName: topicName
         )
         XCTAssertTrue(
-            subResp is TopicSubscribeSuccess,
+            subResp is TopicSubscription,
             "Unexpected response: \((subResp as! TopicSubscribeError).description)"
         )
         
@@ -128,7 +128,7 @@ final class topicsTests: XCTestCase {
             "Unexpected response: \((pubResp as! TopicPublishError).description)"
         )
         
-        let subscription = (subResp as! TopicSubscribeSuccess).subscription
+        let subscription = (subResp as! TopicSubscription).stream
         for try await item in subscription {
             XCTAssertTrue(
                 item is TopicSubscriptionItemText,
@@ -149,7 +149,7 @@ final class topicsTests: XCTestCase {
             topicName: topicName
         )
         XCTAssertTrue(
-            subResp is TopicSubscribeSuccess,
+            subResp is TopicSubscription,
             "Unexpected response: \((subResp as! TopicSubscribeError).description)"
         )
 
@@ -165,7 +165,7 @@ final class topicsTests: XCTestCase {
             "Unexpected response: \((pubResp as! TopicPublishError).description)"
         )
 
-        let subscription = (subResp as! TopicSubscribeSuccess).subscription
+        let subscription = (subResp as! TopicSubscription).stream
         for try await item in subscription {
             XCTAssertTrue(
                 item is TopicSubscriptionItemBinary,
