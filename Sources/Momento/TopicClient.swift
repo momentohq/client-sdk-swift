@@ -25,6 +25,7 @@ public protocol TopicClientProtocol {
  Client to perform operations against Momento Topics, a serverless publish/subscribe service.
  To learn more, see the [Momento Topics developer documentation](https://docs.momentohq.com/topics)
  */
+@available(macOS 10.15, iOS 13, *)
 public class TopicClient: TopicClientProtocol {
     private let pubsubClient: PubsubClientProtocol
     private let credentialProvider: CredentialProviderProtocol
@@ -35,7 +36,7 @@ public class TopicClient: TopicClientProtocol {
         - configuration: TopicClient configuration object specifying grpc transport strategy and other settings
         - credentialProvider: provides the Momento API key, which you can create in the [Momento Web Console](https://console.gomomento.com/api-keys)
      */
-    @available(macOS 10.15, iOS 13, *)
+
     public init(
         configuration: TopicClientConfigurationProtocol,
         credentialProvider: CredentialProviderProtocol
