@@ -22,7 +22,7 @@ The Momento Swift SDK is available here on github: [momentohq/client-sdk-swift](
 Edit your `Package.swift` file to include the SDK in your project:
 
 ```swift
-// swift-tools-version: 5.9
+// swift-tools-version: 5.7
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
