@@ -1,5 +1,8 @@
-public protocol DeleteCacheResponse {}
+public enum DeleteCacheResponse {
+    case success(DeleteCacheSuccess)
+    case error(DeleteCacheError)
+}
 
-public class DeleteCacheSuccess: DeleteCacheResponse {}
+public class DeleteCacheSuccess {}
 
-public class DeleteCacheError: ErrorResponseBase, DeleteCacheResponse {}
+public class DeleteCacheError: ErrorResponseBase {}

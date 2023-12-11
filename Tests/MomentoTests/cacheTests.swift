@@ -20,101 +20,93 @@ final class cacheTests: XCTestCase {
     
     func testCacheClientValidatesCacheName() async throws {
         let createInvalidName = await self.cacheClient.createCache(cacheName: "   ")
-        XCTAssertTrue(
-            createInvalidName is CreateCacheError,
-            "Unexpected response: \(createInvalidName)"
-        )
-        let createErrorCode = (createInvalidName as! CreateCacheError).errorCode
-        XCTAssertEqual(
-            createErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(createErrorCode)"
-        )
-        
+        switch createInvalidName {
+        case .alreadyExists(let exists):
+            XCTFail("expected error but got \(exists)")
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         let deleteInvalidName = await self.cacheClient.deleteCache(cacheName: "   ")
-        XCTAssertTrue(
-            deleteInvalidName is DeleteCacheError,
-            "Unexpected response: \(deleteInvalidName)"
-        )
-        let deleteErrorCode = (deleteInvalidName as! DeleteCacheError).errorCode
-        XCTAssertEqual(
-            deleteErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(deleteErrorCode)"
-        )
+        switch deleteInvalidName {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
     }
     
     func testCacheClientCreatesAndDeletesCache() async throws {
         let cacheName = generateStringWithUuid(prefix: "a-totally-new-cache")
         let createResult = await self.cacheClient.createCache(cacheName: cacheName)
-        XCTAssertTrue(
-            createResult is CreateCacheSuccess,
-            "Unexpected response: \(createResult)"
-        )
-        
+        switch createResult {
+        case .alreadyExists(let exists):
+            XCTFail("expected success but got \(exists)")
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        case .success(_):
+            XCTAssertTrue(true)
+        }
+
         let deleteResult = await self.cacheClient.deleteCache(cacheName: cacheName)
-        XCTAssertTrue(
-            deleteResult is DeleteCacheSuccess,
-            "Unexpected response: \(deleteResult)"
-        )
+        switch deleteResult {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        case .success(_):
+            XCTAssertTrue(true)
+        }
     }
     
     func testListCaches() async throws {
         let listResult = await self.cacheClient.listCaches()
-        
-        // Expect list to include integration test cache
+
         switch listResult {
-        case let listResult as ListCachesSuccess:
-            let caches = listResult.caches
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        case .success(let cacheList):
             XCTAssertTrue(
-                caches.contains(where: {item in
+                cacheList.caches.contains(where: {item in
                     item.name == self.integrationTestCacheName
                 }),
-                "Integration test cache not found in list caches result: \(caches)"
-            )
-        default:
-            XCTAssertTrue(
-                listResult is ListCachesSuccess,
-                "Unexpected response: \(listResult)"
+              "Integration test cache not found in list caches result: \(cacheList)"
             )
         }
-        
+
         // Create new cache
         let newCacheName = generateStringWithUuid(prefix: "a-totally-different-cache")
         let createResult = await self.cacheClient.createCache(cacheName: newCacheName)
-        XCTAssertTrue(
-            createResult is CreateCacheSuccess,
-            "Unexpected response: \(createResult)"
-        )
-        
-        // Expect list to include both new cache and integration test cache
+        switch createResult {
+        case .alreadyExists(let exists):
+            XCTFail("expected success but got \(exists)")
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        case .success(_):
+            XCTAssertTrue(true)
+        }
+
+        // Expect list to include newly created cache
         let listResult2 = await self.cacheClient.listCaches()
         switch listResult2 {
-        case let listResult2 as ListCachesSuccess:
-            let caches = listResult2.caches
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        case .success(let cacheList):
             XCTAssertTrue(
-                caches.contains(where: {item in
-                    item.name == self.integrationTestCacheName
-                }),
-                "Integration test cache not found in list caches result: \(caches)"
-            )
-            XCTAssertTrue(
-                caches.contains(where: {item in
+                cacheList.caches.contains(where: {item in
                     item.name == newCacheName
-                }),
-                "Test cache not found in list caches result: \(caches)"
-            )
-        default:
-            XCTAssertTrue(
-                listResult is ListCachesSuccess,
-                "Unexpected response: \(listResult)"
+                })
             )
         }
-        
+
         // Clean up additional created cache
         let deleteResult = await self.cacheClient.deleteCache(cacheName: newCacheName)
-        XCTAssertTrue(
-            deleteResult is DeleteCacheSuccess,
-            "Unexpected response: \(deleteResult)"
-        )
+        switch deleteResult {
+        case .error(let err):
+            XCTFail("error deleting test cache: \(err)")
+        default:
+            XCTAssertTrue(true)
+        }
     }
     
     func testScalarGet() async throws {

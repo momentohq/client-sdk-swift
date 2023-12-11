@@ -66,16 +66,22 @@ class ControlClient: ControlClientProtocol {
         do {
             _ = try await call.response.get()
             // Successful creation returns ControlClient__CreateCacheResponse
-            return CreateCacheSuccess()
+            return CreateCacheResponse.success(CreateCacheSuccess())
         } catch let err as GRPCStatus {
             if err.code == GRPCStatus.Code.alreadyExists {
-                return CreateCacheAlreadyExists()
+                return CreateCacheResponse.alreadyExists(CreateCacheAlreadyExists())
             }
-            return CreateCacheError(error: grpcStatusToSdkError(grpcStatus: err))
+            return CreateCacheResponse.error(
+                CreateCacheError(error: grpcStatusToSdkError(grpcStatus: err))
+            )
         } catch let err as GRPCConnectionPoolError {
-            return CreateCacheError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
+            return CreateCacheResponse.error(
+                CreateCacheError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
+            )
         } catch {
-            return CreateCacheError(error: UnknownError(message: "unknown cache create error \(error)"))
+            return CreateCacheResponse.error(
+                CreateCacheError(error: UnknownError(message: "unknown cache create error \(error)"))
+            )
         }
     }
     
@@ -86,13 +92,19 @@ class ControlClient: ControlClientProtocol {
         do {
             _ = try await call.response.get()
             // Successful creation returns ControlClient__DeleteCacheResponse
-            return DeleteCacheSuccess()
+            return DeleteCacheResponse.success(DeleteCacheSuccess())
         } catch let err as GRPCStatus {
-            return DeleteCacheError(error: grpcStatusToSdkError(grpcStatus: err))
+            return DeleteCacheResponse.error(
+                DeleteCacheError(error: grpcStatusToSdkError(grpcStatus: err))
+            )
         } catch let err as GRPCConnectionPoolError {
-            return DeleteCacheError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
+            return DeleteCacheResponse.error(
+                DeleteCacheError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
+            )
         } catch {
-            return DeleteCacheError(error: UnknownError(message: "unknown cache create error \(error)"))
+            return DeleteCacheResponse.error(
+                DeleteCacheError(error: UnknownError(message: "unknown cache create error \(error)"))
+            )
         }
     }
     
@@ -102,13 +114,19 @@ class ControlClient: ControlClientProtocol {
             let result = try await call.response.get()
             // Successful creation returns ControlClient__ListCachesResponse
             self.logger.debug("list caches received: \(result.cache)")
-            return ListCachesSuccess(caches: result.cache)
+            return ListCachesResponse.success(ListCachesSuccess(caches: result.cache))
         } catch let err as GRPCStatus {
-            return ListCachesError(error: grpcStatusToSdkError(grpcStatus: err))
+            return ListCachesResponse.error(
+                ListCachesError(error: grpcStatusToSdkError(grpcStatus: err))
+            )
         } catch let err as GRPCConnectionPoolError {
-            return ListCachesError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
+            return ListCachesResponse.error(
+                ListCachesError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
+            )
         } catch {
-            return ListCachesError(error: UnknownError(message: "unknown cache create error \(error)"))
+            return ListCachesResponse.error(
+                ListCachesError(error: UnknownError(message: "unknown cache create error \(error)"))
+            )
         }
     }
 }

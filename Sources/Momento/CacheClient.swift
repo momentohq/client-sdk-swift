@@ -313,10 +313,10 @@ public class CacheClient: CacheClientProtocol {
         do {
             try validateCacheName(cacheName: cacheName)
         } catch let err as SdkError {
-            return CreateCacheError(error: err)
+            return CreateCacheResponse.error(CreateCacheError(error: err))
         } catch {
-            return CreateCacheError(error: UnknownError(
-                message: "unexpected error: \(error)")
+            return CreateCacheResponse.error(
+                CreateCacheError(error: UnknownError(message: "unexpected error: \(error)"))
             )
         }
         return await self.controlClient.createCache(cacheName: cacheName)
@@ -340,10 +340,10 @@ public class CacheClient: CacheClientProtocol {
         do {
             try validateCacheName(cacheName: cacheName)
         } catch let err as SdkError {
-            return DeleteCacheError(error: err)
+            return DeleteCacheResponse.error(DeleteCacheError(error: err))
         } catch {
-            return DeleteCacheError(error: UnknownError(
-                message: "unexpected error: \(error)")
+            return DeleteCacheResponse.error(
+                DeleteCacheError(error: UnknownError(message: "unexpected error: \(error)"))
             )
         }
         return await self.controlClient.deleteCache(cacheName: cacheName)

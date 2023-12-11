@@ -1,7 +1,11 @@
-public protocol CreateCacheResponse {}
+public enum CreateCacheResponse {
+    case success(CreateCacheSuccess)
+    case alreadyExists(CreateCacheAlreadyExists)
+    case error(CreateCacheError)
+}
 
-public class CreateCacheSuccess: CreateCacheResponse {}
+public class CreateCacheSuccess {}
 
-public class CreateCacheAlreadyExists: CreateCacheResponse {}
+public class CreateCacheAlreadyExists {}
 
-public class CreateCacheError: ErrorResponseBase, CreateCacheResponse {}
+public class CreateCacheError: ErrorResponseBase {}
