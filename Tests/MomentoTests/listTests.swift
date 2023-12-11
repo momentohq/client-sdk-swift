@@ -27,32 +27,26 @@ final class listTests: XCTestCase {
             listName: listName,
             values: ["abc", "xyz"]
         )
-        XCTAssertTrue(
-            invalidCacheName is CacheListConcatenateBackError,
-            "Unexpected response: \(invalidCacheName)"
-        )
-        let invalidCacheNameCode = (invalidCacheName as! CacheListConcatenateBackError).errorCode
-        XCTAssertEqual(
-            invalidCacheNameCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidCacheNameCode)"
-        )
-        
+        switch invalidCacheName {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         // Checks list name
         let invalidListName = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: "   ",
             values: ["abc", "xyz"]
         )
-        XCTAssertTrue(
-            invalidListName is CacheListConcatenateBackError,
-            "Unexpected response: \(invalidListName)"
-        )
-        let invalidListNameCode = (invalidListName as! CacheListConcatenateBackError).errorCode
-        XCTAssertEqual(
-            invalidListNameCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidListNameCode)"
-        )
-        
+        switch invalidListName {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         // Checks truncateFrontToSize
         let invalidTruncateSize = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
@@ -60,16 +54,13 @@ final class listTests: XCTestCase {
             values: ["abc", "xyz"],
             truncateFrontToSize: -5
         )
-        XCTAssertTrue(
-            invalidTruncateSize is CacheListConcatenateBackError,
-            "Unexpected response: \(invalidTruncateSize)"
-        )
-        let invalidTruncateSizeCode = (invalidTruncateSize as! CacheListConcatenateBackError).errorCode
-        XCTAssertEqual(
-            invalidTruncateSizeCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidTruncateSizeCode)"
-        )
-        
+        switch invalidTruncateSize {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         // Checks ttl
         let invalidTtl = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
@@ -77,15 +68,12 @@ final class listTests: XCTestCase {
             values: ["abc", "xyz"],
             ttl: CollectionTtl(ttlSeconds: -5)
         )
-        XCTAssertTrue(
-            invalidTtl is CacheListConcatenateBackError,
-            "Unexpected response: \(invalidTtl)"
-        )
-        let invalidTtlCode = (invalidTtl as! CacheListConcatenateBackError).errorCode
-        XCTAssertEqual(
-            invalidTtlCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidTtlCode)"
-        )
+        switch invalidTtl {
+        case .success(let success):
+            XCTFail("expected error but gor \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
     }
     
     func testConcatBack() async throws {
@@ -97,22 +85,26 @@ final class listTests: XCTestCase {
             listName: stringListName,
             values: stringValues
         )
-        XCTAssertTrue(
-            concatStrings is CacheListConcatenateBackSuccess,
-            "Unexpected response: \(concatStrings)"
-        )
-        XCTAssertEqual((concatStrings as! CacheListConcatenateBackSuccess).listLength, 3)
+        switch concatStrings {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        case .success(let success):
+            XCTAssertEqual(Int(stringValues.count), Int(success.listLength))
+        }
+
         let fetchStringList = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: stringListName
         )
-        XCTAssertTrue(
-            fetchStringList is CacheListFetchHit,
-            "Unexpected response: \(fetchStringList)"
-        )
-        let fetchedStringList = (fetchStringList as! CacheListFetchHit).valueListString
-        XCTAssertEqual(fetchedStringList, stringValues)
-        
+        switch fetchStringList {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected success but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(stringValues, hit.valueListString)
+        }
+
         // Successfully concatenates data values to the back
         let dataListName = generateStringWithUuid(prefix: "swift-list-concat-back-data")
         let dataValues = [Data("abc".utf8), Data("lmn".utf8), Data("xyz".utf8)]
@@ -121,22 +113,26 @@ final class listTests: XCTestCase {
             listName: dataListName,
             values: dataValues
         )
-        XCTAssertTrue(
-            concatData is CacheListConcatenateBackSuccess,
-            "Unexpected response: \(concatData)"
-        )
-        XCTAssertEqual((concatData as! CacheListConcatenateBackSuccess).listLength, 3)
+        switch concatData {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        case .success(let success):
+            XCTAssertEqual(Int(stringValues.count), Int(success.listLength))
+        }
+
         let fetchDataList = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: dataListName
         )
-        XCTAssertTrue(
-            fetchDataList is CacheListFetchHit,
-            "Unexpected response: \(fetchDataList)"
-        )
-        let fetchedDataList = (fetchDataList as! CacheListFetchHit).valueListData
-        XCTAssertEqual(fetchedDataList, dataValues)
-        
+        switch fetchDataList {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case  .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(dataValues, hit.valueListData)
+        }
+
         // Does not concatenate empty list to the back
         let emptyStringList: [String] = []
         let emptyList = await self.cacheClient.listConcatenateBack(
@@ -144,15 +140,12 @@ final class listTests: XCTestCase {
             listName: stringListName,
             values: emptyStringList
         )
-        XCTAssertTrue(
-            emptyList is CacheListConcatenateBackError,
-            "Unexpected response: \(emptyList)"
-        )
-        let emptyListCode = (emptyList as! CacheListConcatenateBackError).errorCode
-        XCTAssertEqual(
-            emptyListCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(emptyListCode)"
-        )
+        switch emptyList {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
     }
     
     func testConcatFrontValidatesParameters() async throws {
@@ -164,32 +157,26 @@ final class listTests: XCTestCase {
             listName: listName,
             values: ["abc", "xyz"]
         )
-        XCTAssertTrue(
-            invalidCacheName is CacheListConcatenateFrontError,
-            "Unexpected response: \(invalidCacheName)"
-        )
-        let invalidCacheNameCode = (invalidCacheName as! CacheListConcatenateFrontError).errorCode
-        XCTAssertEqual(
-            invalidCacheNameCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidCacheNameCode)"
-        )
-        
+        switch invalidCacheName {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         // Checks list name
         let invalidListName = await self.cacheClient.listConcatenateFront(
             cacheName: self.integrationTestCacheName,
             listName: "   ",
             values: ["abc", "xyz"]
         )
-        XCTAssertTrue(
-            invalidListName is CacheListConcatenateFrontError,
-            "Unexpected response: \(invalidListName)"
-        )
-        let invalidListNameCode = (invalidListName as! CacheListConcatenateFrontError).errorCode
-        XCTAssertEqual(
-            invalidListNameCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidListNameCode)"
-        )
-        
+        switch invalidListName {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         // Checks truncateFrontToSize
         let invalidTruncateSize = await self.cacheClient.listConcatenateFront(
             cacheName: self.integrationTestCacheName,
@@ -197,16 +184,13 @@ final class listTests: XCTestCase {
             values: ["abc", "xyz"],
             truncateBackToSize: -5
         )
-        XCTAssertTrue(
-            invalidTruncateSize is CacheListConcatenateFrontError,
-            "Unexpected response: \(invalidTruncateSize)"
-        )
-        let invalidTruncateSizeCode = (invalidTruncateSize as! CacheListConcatenateFrontError).errorCode
-        XCTAssertEqual(
-            invalidTruncateSizeCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidTruncateSizeCode)"
-        )
-        
+        switch invalidTruncateSize {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         // Checks ttl
         let invalidTtl = await self.cacheClient.listConcatenateFront(
             cacheName: self.integrationTestCacheName,
@@ -214,19 +198,16 @@ final class listTests: XCTestCase {
             values: ["abc", "xyz"],
             ttl: CollectionTtl(ttlSeconds: -5)
         )
-        XCTAssertTrue(
-            invalidTtl is CacheListConcatenateFrontError,
-            "Unexpected response: \(invalidTtl)"
-        )
-        let invalidTtlCode = (invalidTtl as! CacheListConcatenateFrontError).errorCode
-        XCTAssertEqual(
-            invalidTtlCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidTtlCode)"
-        )
+        switch invalidTtl {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
     }
     
     func testConcatFront() async throws {
-        // Successfully concatenates string values to the back
+        // Successfully concatenates string values to the front
         let stringListName = generateStringWithUuid(prefix: "swift-list-concat-front-string")
         let stringValues = ["abc", "lmn", "xyz"]
         let concatStrings = await self.cacheClient.listConcatenateFront(
@@ -234,22 +215,26 @@ final class listTests: XCTestCase {
             listName: stringListName,
             values: stringValues
         )
-        XCTAssertTrue(
-            concatStrings is CacheListConcatenateFrontSuccess,
-            "Unexpected response: \(concatStrings)"
-        )
-        XCTAssertEqual((concatStrings as! CacheListConcatenateFrontSuccess).listLength, 3)
+        switch concatStrings {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        case .success(let success):
+            XCTAssertEqual(Int(stringValues.count), Int(success.listLength))
+        }
+
         let fetchStringList = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: stringListName
         )
-        XCTAssertTrue(
-            fetchStringList is CacheListFetchHit,
-            "Unexpected response: \(fetchStringList)"
-        )
-        let fetchedStringList = (fetchStringList as! CacheListFetchHit).valueListString
-        XCTAssertEqual(fetchedStringList, stringValues)
-        
+        switch fetchStringList {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(stringValues, hit.valueListString)
+        }
+
         // Successfully concatenates data values to the back
         let dataListName = generateStringWithUuid(prefix: "swift-list-concat-back-data")
         let dataValues = [Data("abc".utf8), Data("lmn".utf8), Data("xyz".utf8)]
@@ -258,22 +243,26 @@ final class listTests: XCTestCase {
             listName: dataListName,
             values: dataValues
         )
-        XCTAssertTrue(
-            concatData is CacheListConcatenateFrontSuccess,
-            "Unexpected response: \(concatData)"
-        )
-        XCTAssertEqual((concatData as! CacheListConcatenateFrontSuccess).listLength, 3)
+        switch concatData {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        case .success(let success):
+            XCTAssertEqual(Int(dataValues.count), Int(success.listLength))
+        }
+
         let fetchDataList = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: dataListName
         )
-        XCTAssertTrue(
-            fetchDataList is CacheListFetchHit,
-            "Unexpected response: \(fetchDataList)"
-        )
-        let fetchedDataList = (fetchDataList as! CacheListFetchHit).valueListData
-        XCTAssertEqual(fetchedDataList, dataValues)
-        
+        switch fetchDataList {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(dataValues, hit.valueListData)
+        }
+
         // Does not concatenate empty list to the back
         let emptyStringList: [String] = []
         let emptyList = await self.cacheClient.listConcatenateFront(
@@ -281,15 +270,12 @@ final class listTests: XCTestCase {
             listName: stringListName,
             values: emptyStringList
         )
-        XCTAssertTrue(
-            emptyList is CacheListConcatenateFrontError,
-            "Unexpected response: \(emptyList)"
-        )
-        let emptyListCode = (emptyList as! CacheListConcatenateFrontError).errorCode
-        XCTAssertEqual(
-            emptyListCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(emptyListCode)"
-        )
+        switch emptyList {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
     }
     
     func testFetchValidatesParameters() async throws {
@@ -300,31 +286,29 @@ final class listTests: XCTestCase {
             cacheName: "   ",
             listName: listName
         )
-        XCTAssertTrue(
-            invalidCacheName is CacheListFetchError,
-            "Unexpected response: \(invalidCacheName)"
-        )
-        let invalidCacheNameCode = (invalidCacheName as! CacheListFetchError).errorCode
-        XCTAssertEqual(
-            invalidCacheNameCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidCacheNameCode)"
-        )
-        
+        switch invalidCacheName {
+        case .hit(let hit):
+            XCTFail("expected error but got \(hit)")
+        case .miss(let miss):
+            XCTFail("expected error but got \(miss)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         // Checks list name
         let invalidListName = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: "   "
         )
-        XCTAssertTrue(
-            invalidListName is CacheListFetchError,
-            "Unexpected response: \(invalidListName)"
-        )
-        let invalidListNameCode = (invalidListName as! CacheListFetchError).errorCode
-        XCTAssertEqual(
-            invalidListNameCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidListNameCode)"
-        )
-        
+        switch invalidListName {
+        case .hit(let hit):
+            XCTFail("expected error but got \(hit)")
+        case .miss(let miss):
+            XCTFail("expected error but got \(miss)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         // Checks start and end index range
         let invalidSlice = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
@@ -332,15 +316,14 @@ final class listTests: XCTestCase {
             startIndex: 2,
             endIndex: 1
         )
-        XCTAssertTrue(
-            invalidSlice is CacheListFetchError,
-            "Unexpected response: \(invalidSlice)"
-        )
-        let invalidSliceCode = (invalidSlice as! CacheListFetchError).errorCode
-        XCTAssertEqual(
-            invalidSliceCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidSliceCode)"
-        )
+        switch invalidSlice {
+        case .hit(let hit):
+            XCTFail("expected error but got \(hit)")
+        case .miss(let miss):
+            XCTFail("expected error but got \(miss)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
     }
     
     func testListFetch() async throws {
@@ -352,23 +335,27 @@ final class listTests: XCTestCase {
             listName: listName,
             values: stringValues
         )
-        XCTAssertTrue(
-            concatStrings is CacheListConcatenateBackSuccess,
-            "Unexpected response: \(concatStrings)"
-        )
-        
+        switch concatStrings {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        default:
+            break
+        }
+
         // Fetches full list when no slice specified
         let fullList = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: listName
         )
-        XCTAssertTrue(
-            fullList is CacheListFetchHit,
-            "Unexpected response: \(fullList)"
-        )
-        let fetchedFullList = (fullList as! CacheListFetchHit).valueListString
-        XCTAssertEqual(fetchedFullList, stringValues)
-        
+        switch fullList {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(stringValues, hit.valueListString)
+        }
+
         // Fetches positive slice range
         let positiveSliceList = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
@@ -376,13 +363,15 @@ final class listTests: XCTestCase {
             startIndex: 2,
             endIndex: 5
         )
-        XCTAssertTrue(
-            positiveSliceList is CacheListFetchHit,
-            "Unexpected response: \(positiveSliceList)"
-        )
-        let fetchedPositiveSliceList = (positiveSliceList as! CacheListFetchHit).valueListString
-        XCTAssertEqual(fetchedPositiveSliceList, Array(stringValues[2...4]))
-        
+        switch positiveSliceList {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(Array(stringValues[2...4]), hit.valueListString)
+        }
+
         // Fetches negative slice range
         let negativeSliceList = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
@@ -390,13 +379,15 @@ final class listTests: XCTestCase {
             startIndex: 2,
             endIndex: -2
         )
-        XCTAssertTrue(
-            negativeSliceList is CacheListFetchHit,
-            "Unexpected response: \(negativeSliceList)"
-        )
-        let fetchedNegativeSliceList = (negativeSliceList as! CacheListFetchHit).valueListString
-        XCTAssertEqual(fetchedNegativeSliceList, Array(stringValues[2...4]))
-        
+        switch negativeSliceList {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(Array(stringValues[2...4]), hit.valueListString)
+        }
+
         // Fetches slice with nil start index
         let nilStart = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
@@ -404,13 +395,15 @@ final class listTests: XCTestCase {
             startIndex: nil,
             endIndex: 4
         )
-        XCTAssertTrue(
-            nilStart is CacheListFetchHit,
-            "Unexpected response: \(nilStart)"
-        )
-        let fetchedNilStart = (nilStart as! CacheListFetchHit).valueListString
-        XCTAssertEqual(fetchedNilStart, Array(stringValues[0...3]))
-        
+        switch nilStart {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(Array(stringValues[0...3]), hit.valueListString)
+        }
+
         // Fetches slice with nil end index
         let nilEnd = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
@@ -418,12 +411,14 @@ final class listTests: XCTestCase {
             startIndex: 3,
             endIndex: nil
         )
-        XCTAssertTrue(
-            nilEnd is CacheListFetchHit,
-            "Unexpected response: \(nilEnd)"
-        )
-        let fetchedNilEnd = (nilEnd as! CacheListFetchHit).valueListString
-        XCTAssertEqual(fetchedNilEnd, Array(stringValues[3...]))
+        switch nilEnd {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(Array(stringValues[3...]), hit.valueListString)
+        }
     }
     
     func testLengthValidatesParameters() async throws {
@@ -434,78 +429,85 @@ final class listTests: XCTestCase {
             cacheName: "   ",
             listName: listName
         )
-        XCTAssertTrue(
-            invalidCacheName is CacheListLengthError,
-            "Unexpected response: \(invalidCacheName)"
-        )
-        let invalidCacheNameCode = (invalidCacheName as! CacheListLengthError).errorCode
-        XCTAssertEqual(
-            invalidCacheNameCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidCacheNameCode)"
-        )
-        
+        switch invalidCacheName {
+        case .hit(let hit):
+            XCTFail("expected error but got \(hit)")
+        case .miss(let miss):
+            XCTFail("expected error but got \(miss)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         // Checks list name
         let invalidListName = await self.cacheClient.listLength(
             cacheName: self.integrationTestCacheName,
             listName: "   "
         )
-        XCTAssertTrue(
-            invalidListName is CacheListLengthError,
-            "Unexpected response: \(invalidListName)"
-        )
-        let invalidListNameCode = (invalidListName as! CacheListLengthError).errorCode
-        XCTAssertEqual(
-            invalidListNameCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidListNameCode)"
-        )
+        switch invalidListName {
+        case .hit(let hit):
+            XCTFail("expected error but got \(hit)")
+        case .miss(let miss):
+            XCTFail("expected error but got \(miss)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
     }
     
     func testListLength() async throws {
         let listName = generateStringWithUuid(prefix: "swift-list-length")
         let stringValues = ["apple", "banana", "carrot", "durian", "eggplant", "fig", "guava"]
-        
+        let frontSlice = Array(stringValues[0...3])
+        let backSlice = Array(stringValues[4...])
+
         let insert1 = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: listName,
-            values: Array(stringValues[0...3])
+            values: frontSlice
         )
-        XCTAssertTrue(
-            insert1 is CacheListConcatenateBackSuccess,
-            "Unexpected response: \(insert1)"
-        )
-        
+        switch insert1 {
+        case .error(let err):
+            XCTFail("expected succes but got \(err)")
+        default:
+            break
+        }
+
         let fetchLength1 = await self.cacheClient.listLength(
             cacheName: self.integrationTestCacheName,
             listName: listName
         )
-        XCTAssertTrue(
-            fetchLength1 is CacheListLengthHit,
-            "Unexpected response: \(fetchLength1)"
-        )
-        let length1 = (fetchLength1 as! CacheListLengthHit).length
-        XCTAssertEqual(length1, 4)
-        
+        switch fetchLength1 {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(Int(frontSlice.count), Int(hit.length))
+        }
         
         let insert2 = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: listName,
-            values: Array(stringValues[4...])
+            values: backSlice
         )
-        XCTAssertTrue(
-            insert2 is CacheListConcatenateBackSuccess,
-            "Unexpected response: \(insert2)"
-        )
-        
+        switch insert2 {
+        case .error(let err):
+            XCTFail("expected succes but got \(err)")
+        default:
+            break
+        }
+
         let fetchLength2 = await self.cacheClient.listLength(
             cacheName: self.integrationTestCacheName,
             listName: listName
         )
-        XCTAssertTrue(
-            fetchLength2 is CacheListLengthHit,
-            "Unexpected response: \(fetchLength2)"
-        )
-        let length2 = (fetchLength2 as! CacheListLengthHit).length
-        XCTAssertEqual(length2, 7)
+        switch fetchLength2 {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(Int(stringValues.count), Int(hit.length))
+        }
     }
     
     func testPopBackValidatesParameters() async throws {
@@ -516,30 +518,28 @@ final class listTests: XCTestCase {
             cacheName: "   ",
             listName: listName
         )
-        XCTAssertTrue(
-            invalidCacheName is CacheListPopBackError,
-            "Unexpected response: \(invalidCacheName)"
-        )
-        let invalidCacheNameCode = (invalidCacheName as! CacheListPopBackError).errorCode
-        XCTAssertEqual(
-            invalidCacheNameCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidCacheNameCode)"
-        )
-        
+        switch invalidCacheName {
+        case .hit(let hit):
+            XCTFail("expected error but got \(hit)")
+        case .miss(let miss):
+            XCTFail("expected error but got \(miss)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         // Checks list name
         let invalidListName = await self.cacheClient.listPopBack(
             cacheName: self.integrationTestCacheName,
             listName: "   "
         )
-        XCTAssertTrue(
-            invalidListName is CacheListPopBackError,
-            "Unexpected response: \(invalidListName)"
-        )
-        let invalidListNameCode = (invalidListName as! CacheListPopBackError).errorCode
-        XCTAssertEqual(
-            invalidListNameCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidListNameCode)"
-        )
+        switch invalidListName {
+        case .hit(let hit):
+            XCTFail("expected error but got \(hit)")
+        case .miss(let miss):
+            XCTFail("expected error but got \(miss)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
     }
     
     func testPopBack() async throws {
@@ -551,43 +551,53 @@ final class listTests: XCTestCase {
             listName: listName,
             values: stringValues
         )
-        XCTAssertTrue(
-            concatStrings is CacheListConcatenateBackSuccess,
-            "Unexpected response: \(concatStrings)"
-        )
-        
+        switch concatStrings {
+        case .error(let err):
+            XCTFail("expected succes but got \(err)")
+        default:
+            break
+        }
+
         // Expecting to receive values in back to front order
         let pop1 = await self.cacheClient.listPopBack(
             cacheName: self.integrationTestCacheName,
             listName: listName
         )
-        XCTAssertTrue(
-            pop1 is CacheListPopBackHit,
-            "Unexpected response: \(pop1)"
-        )
-        let popValue1 = (pop1 as! CacheListPopBackHit).valueString
-        XCTAssertEqual(popValue1, "banana")
-        
+        switch pop1 {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(stringValues[1], hit.valueString)
+        }
+
         let pop2 = await self.cacheClient.listPopBack(
             cacheName: self.integrationTestCacheName,
             listName: listName
         )
-        XCTAssertTrue(
-            pop2 is CacheListPopBackHit,
-            "Unexpected response: \(pop2)"
-        )
-        let popValue2 = (pop2 as! CacheListPopBackHit).valueString
-        XCTAssertEqual(popValue2, "apple")
-        
+        switch pop2 {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(stringValues[0], hit.valueString)
+        }
+
         // Miss when popping from empty list
         let pop3 = await self.cacheClient.listPopBack(
             cacheName: self.integrationTestCacheName,
             listName: listName
         )
-        XCTAssertTrue(
-            pop3 is CacheListPopBackMiss,
-            "Unexpected response: \(pop3)"
-        )
+        switch pop3 {
+        case .error(let err):
+            XCTFail("expected miss but got \(err)")
+        case .hit(let hit):
+            XCTFail("expected miss but got \(hit)")
+        case .miss(_):
+            XCTAssertTrue(true)
+        }
     }
     
     func testPopFrontValidatesParameters() async throws {
@@ -598,30 +608,28 @@ final class listTests: XCTestCase {
             cacheName: "   ",
             listName: listName
         )
-        XCTAssertTrue(
-            invalidCacheName is CacheListPopFrontError,
-            "Unexpected response: \(invalidCacheName)"
-        )
-        let invalidCacheNameCode = (invalidCacheName as! CacheListPopFrontError).errorCode
-        XCTAssertEqual(
-            invalidCacheNameCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidCacheNameCode)"
-        )
-        
+        switch invalidCacheName {
+        case .hit(let hit):
+            XCTFail("expected error but got \(hit)")
+        case .miss(let miss):
+            XCTFail("expected error but got \(miss)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         // Checks list name
         let invalidListName = await self.cacheClient.listPopFront(
             cacheName: self.integrationTestCacheName,
             listName: "   "
         )
-        XCTAssertTrue(
-            invalidListName is CacheListPopFrontError,
-            "Unexpected response: \(invalidListName)"
-        )
-        let invalidListNameCode = (invalidListName as! CacheListPopFrontError).errorCode
-        XCTAssertEqual(
-            invalidListNameCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidListNameCode)"
-        )
+        switch invalidListName {
+        case .hit(let hit):
+            XCTFail("expected error but got \(hit)")
+        case .miss(let miss):
+            XCTFail("expected error but got \(miss)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
     }
     
     func testPopFront() async throws {
@@ -633,43 +641,53 @@ final class listTests: XCTestCase {
             listName: listName,
             values: stringValues
         )
-        XCTAssertTrue(
-            concatStrings is CacheListConcatenateBackSuccess,
-            "Unexpected response: \(concatStrings)"
-        )
-        
+        switch concatStrings {
+        case .error(let err):
+            XCTFail("expected succes but got \(err)")
+        default:
+            break
+        }
+
         // Expecting to receive values in front to back order
         let pop1 = await self.cacheClient.listPopFront(
             cacheName: self.integrationTestCacheName,
             listName: listName
         )
-        XCTAssertTrue(
-            pop1 is CacheListPopFrontHit,
-            "Unexpected response: \(pop1)"
-        )
-        let popValue1 = (pop1 as! CacheListPopFrontHit).valueString
-        XCTAssertEqual(popValue1, "apple")
-        
+        switch pop1 {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(stringValues[0], hit.valueString)
+        }
+
         let pop2 = await self.cacheClient.listPopFront(
             cacheName: self.integrationTestCacheName,
             listName: listName
         )
-        XCTAssertTrue(
-            pop2 is CacheListPopFrontHit,
-            "Unexpected response: \(pop2)"
-        )
-        let popValue2 = (pop2 as! CacheListPopFrontHit).valueString
-        XCTAssertEqual(popValue2, "banana")
-        
+        switch pop2 {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(stringValues[1], hit.valueString)
+        }
+
         // Miss when popping from empty list
         let pop3 = await self.cacheClient.listPopFront(
             cacheName: self.integrationTestCacheName,
             listName: listName
         )
-        XCTAssertTrue(
-            pop3 is CacheListPopFrontMiss,
-            "Unexpected response: \(pop3)"
-        )
+        switch pop3 {
+        case .error(let err):
+            XCTFail("expected miss but got \(err)")
+        case .miss(_):
+            XCTAssertTrue(true)
+        case .hit(let hit):
+            XCTFail("expected miss but got \(hit)")
+        }
     }
 
     func testPushBackValidatesParameters() async throws {
@@ -681,32 +699,26 @@ final class listTests: XCTestCase {
             listName: listName,
             value: "abc"
         )
-        XCTAssertTrue(
-            invalidCacheName is CacheListPushBackError,
-            "Unexpected response: \(invalidCacheName)"
-        )
-        let invalidCacheNameCode = (invalidCacheName as! CacheListPushBackError).errorCode
-        XCTAssertEqual(
-            invalidCacheNameCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidCacheNameCode)"
-        )
-        
+        switch invalidCacheName {
+        case .success(let success):
+            XCTFail("expecgted error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         // Checks list name
         let invalidListName = await self.cacheClient.listPushBack(
             cacheName: self.integrationTestCacheName,
             listName: "   ",
             value: "abc"
         )
-        XCTAssertTrue(
-            invalidListName is CacheListPushBackError,
-            "Unexpected response: \(invalidListName)"
-        )
-        let invalidListNameCode = (invalidListName as! CacheListPushBackError).errorCode
-        XCTAssertEqual(
-            invalidListNameCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidListNameCode)"
-        )
-        
+        switch invalidListName {
+        case .success(let success):
+            XCTFail("expecgted error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         // Checks truncateFrontToSize
         let invalidTruncateSize = await self.cacheClient.listPushBack(
             cacheName: self.integrationTestCacheName,
@@ -714,16 +726,13 @@ final class listTests: XCTestCase {
             value: "abc",
             truncateFrontToSize: -5
         )
-        XCTAssertTrue(
-            invalidTruncateSize is CacheListPushBackError,
-            "Unexpected response: \(invalidTruncateSize)"
-        )
-        let invalidTruncateSizeCode = (invalidTruncateSize as! CacheListPushBackError).errorCode
-        XCTAssertEqual(
-            invalidTruncateSizeCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidTruncateSizeCode)"
-        )
-        
+        switch invalidTruncateSize {
+        case .success(let success):
+            XCTFail("expecgted error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         // Checks ttl
         let invalidTtl = await self.cacheClient.listPushBack(
             cacheName: self.integrationTestCacheName,
@@ -731,15 +740,12 @@ final class listTests: XCTestCase {
             value: "abc",
             ttl: CollectionTtl(ttlSeconds: -5)
         )
-        XCTAssertTrue(
-            invalidTtl is CacheListPushBackError,
-            "Unexpected response: \(invalidTtl)"
-        )
-        let invalidTtlCode = (invalidTtl as! CacheListPushBackError).errorCode
-        XCTAssertEqual(
-            invalidTtlCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidTtlCode)"
-        )
+        switch invalidTtl {
+        case .success(let success):
+            XCTFail("expecgted error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
     }
     
     func testPushBack() async throws {
@@ -753,22 +759,27 @@ final class listTests: XCTestCase {
                 value: value,
                 truncateFrontToSize: 2
             )
-            XCTAssertTrue(
-                pushBack is CacheListPushBackSuccess,
-                "Unexpected response: \(pushBack)"
-            )
+            switch pushBack {
+            case .error(let err):
+                XCTFail("expected success but got \(err)")
+            case .success(_):
+                XCTAssertTrue(true)
+            }
         }
+
         let fetchStringList = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: stringListName
         )
-        XCTAssertTrue(
-            fetchStringList is CacheListFetchHit,
-            "Unexpected response: \(fetchStringList)"
-        )
-        let fetchedStringList = (fetchStringList as! CacheListFetchHit).valueListString
-        XCTAssertEqual(fetchedStringList, Array(stringValues[1...2]))
-        
+        switch fetchStringList {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(Array(stringValues[1...2]), hit.valueListString)
+        }
+
         // Pushes data values
         let dataListName = generateStringWithUuid(prefix: "swift-list-push-back-data")
         let dataValues = [Data("abc".utf8), Data("lmn".utf8), Data("xyz".utf8)]
@@ -779,21 +790,25 @@ final class listTests: XCTestCase {
                 value: value,
                 truncateFrontToSize: 2
             )
-            XCTAssertTrue(
-                pushBack is CacheListPushBackSuccess,
-                "Unexpected response: \(pushBack)"
-            )
+            switch pushBack {
+            case .error(let err):
+                XCTFail("expected success but got \(err)")
+            case .success(_):
+                XCTAssertTrue(true)
+            }
         }
         let fetchDataList = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: dataListName
         )
-        XCTAssertTrue(
-            fetchDataList is CacheListFetchHit,
-            "Unexpected response: \(fetchStringList)"
-        )
-        let fetchedDataList = (fetchDataList as! CacheListFetchHit).valueListData
-        XCTAssertEqual(fetchedDataList, Array(dataValues[1...2]))
+        switch fetchDataList {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(Array(dataValues[1...2]), hit.valueListData)
+        }
     }
 
     func testPushFrontValidatesParameters() async throws {
@@ -805,32 +820,26 @@ final class listTests: XCTestCase {
             listName: listName,
             value: "abc"
         )
-        XCTAssertTrue(
-            invalidCacheName is CacheListPushFrontError,
-            "Unexpected response: \(invalidCacheName)"
-        )
-        let invalidCacheNameCode = (invalidCacheName as! CacheListPushFrontError).errorCode
-        XCTAssertEqual(
-            invalidCacheNameCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidCacheNameCode)"
-        )
-        
+        switch invalidCacheName {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         // Checks list name
         let invalidListName = await self.cacheClient.listPushFront(
             cacheName: self.integrationTestCacheName,
             listName: "   ",
             value: "abc"
         )
-        XCTAssertTrue(
-            invalidListName is CacheListPushFrontError,
-            "Unexpected response: \(invalidListName)"
-        )
-        let invalidListNameCode = (invalidListName as! CacheListPushFrontError).errorCode
-        XCTAssertEqual(
-            invalidListNameCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidListNameCode)"
-        )
-        
+        switch invalidListName {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         // Checks truncateFrontToSize
         let invalidTruncateSize = await self.cacheClient.listPushFront(
             cacheName: self.integrationTestCacheName,
@@ -838,16 +847,13 @@ final class listTests: XCTestCase {
             value: "abc",
             truncateBackToSize: -5
         )
-        XCTAssertTrue(
-            invalidTruncateSize is CacheListPushFrontError,
-            "Unexpected response: \(invalidTruncateSize)"
-        )
-        let invalidTruncateSizeCode = (invalidTruncateSize as! CacheListPushFrontError).errorCode
-        XCTAssertEqual(
-            invalidTruncateSizeCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidTruncateSizeCode)"
-        )
-        
+        switch invalidTruncateSize {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         // Checks ttl
         let invalidTtl = await self.cacheClient.listPushFront(
             cacheName: self.integrationTestCacheName,
@@ -855,15 +861,12 @@ final class listTests: XCTestCase {
             value: "abc",
             ttl: CollectionTtl(ttlSeconds: -5)
         )
-        XCTAssertTrue(
-            invalidTtl is CacheListPushFrontError,
-            "Unexpected response: \(invalidTtl)"
-        )
-        let invalidTtlCode = (invalidTtl as! CacheListPushFrontError).errorCode
-        XCTAssertEqual(
-            invalidTtlCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidTtlCode)"
-        )
+        switch invalidTtl {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
     }
     
     func testPushFront() async throws {
@@ -877,22 +880,26 @@ final class listTests: XCTestCase {
                 value: value,
                 truncateBackToSize: 2
             )
-            XCTAssertTrue(
-                pushFront is CacheListPushFrontSuccess,
-                "Unexpected response: \(pushFront)"
-            )
+            switch pushFront {
+            case .success(_):
+                break
+            case .error(let err):
+                XCTFail("expected success but got \(err)")
+            }
         }
         let fetchStringList = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: stringListName
         )
-        XCTAssertTrue(
-            fetchStringList is CacheListFetchHit,
-            "Unexpected response: \(fetchStringList)"
-        )
-        let fetchedStringList = (fetchStringList as! CacheListFetchHit).valueListString
-        XCTAssertEqual(fetchedStringList, Array(stringValues[1...2]).reversed())
-        
+        switch fetchStringList {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(Array(stringValues[1...2]).reversed(), hit.valueListString)
+        }
+
         // Pushes data values
         let dataListName = generateStringWithUuid(prefix: "swift-list-push-front-data")
         let dataValues = [Data("abc".utf8), Data("lmn".utf8), Data("xyz".utf8)]
@@ -903,21 +910,25 @@ final class listTests: XCTestCase {
                 value: value,
                 truncateBackToSize: 2
             )
-            XCTAssertTrue(
-                pushFront is CacheListPushFrontSuccess,
-                "Unexpected response: \(pushFront)"
-            )
+            switch pushFront {
+            case .success(_):
+                break
+            case .error(let err):
+                XCTFail("expected success but got \(err)")
+            }
         }
         let fetchDataList = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: dataListName
         )
-        XCTAssertTrue(
-            fetchDataList is CacheListFetchHit,
-            "Unexpected response: \(fetchStringList)"
-        )
-        let fetchedDataList = (fetchDataList as! CacheListFetchHit).valueListData
-        XCTAssertEqual(fetchedDataList, Array(dataValues[1...2]).reversed())
+        switch fetchDataList {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(Array(dataValues[1...2]).reversed(), hit.valueListData)
+        }
     }
     
     func testRemoveValueValidatesParameters() async throws {
@@ -929,149 +940,163 @@ final class listTests: XCTestCase {
             listName: listName,
             value: "abc"
         )
-        XCTAssertTrue(
-            invalidCacheName is CacheListRemoveValueError,
-            "Unexpected response: \(invalidCacheName)"
-        )
-        let invalidCacheNameCode = (invalidCacheName as! CacheListRemoveValueError).errorCode
-        XCTAssertEqual(
-            invalidCacheNameCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidCacheNameCode)"
-        )
-        
+        switch invalidCacheName {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         // Checks list name
         let invalidListName = await self.cacheClient.listRemoveValue(
             cacheName: self.integrationTestCacheName,
             listName: "   ",
             value: "abc"
         )
-        XCTAssertTrue(
-            invalidListName is CacheListRemoveValueError,
-            "Unexpected response: \(invalidListName)"
-        )
-        let invalidListNameCode = (invalidListName as! CacheListRemoveValueError).errorCode
-        XCTAssertEqual(
-            invalidListNameCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidListNameCode)"
-        )
+        switch invalidListName {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
     }
     
     func testRemoveValue() async throws {
         // Insert some string values
         let stringListName = generateStringWithUuid(prefix: "swift-list-remove-value-string")
         let stringValues = ["apple", "banana", "apple", "apple", "carrot"]
+        let noAppleStrings = stringValues.filter { $0 != "apple"}
         let concatStrings = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: stringListName,
             values: stringValues
         )
-        XCTAssertTrue(
-            concatStrings is CacheListConcatenateBackSuccess,
-            "Unexpected response: \(concatStrings)"
-        )
-        
+        switch concatStrings {
+        case .error(let err):
+            XCTFail("expected succes but got \(err)")
+        default:
+            break
+        }
+
         // Removes all instances of given string
         let remove1 = await self.cacheClient.listRemoveValue(
             cacheName: self.integrationTestCacheName,
             listName: stringListName,
             value: "apple"
         )
-        XCTAssertTrue(
-            remove1 is CacheListRemoveValueSuccess,
-            "Unexpected response: \(remove1)"
-        )
-        
+        switch remove1 {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        default:
+            break
+        }
+
         let fetchStringList = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: stringListName
         )
-        XCTAssertTrue(
-            fetchStringList is CacheListFetchHit,
-            "Unexpected response: \(fetchStringList)"
-        )
-        let fetchedStringList = (fetchStringList as! CacheListFetchHit).valueListString
-        let noAppleStrings = stringValues.filter { $0 != "apple"}
-        XCTAssertEqual(fetchedStringList, noAppleStrings)
-        
+        switch fetchStringList {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(noAppleStrings, hit.valueListString)
+        }
+
         // Removes no elements if given string not found
         let remove2 = await self.cacheClient.listRemoveValue(
             cacheName: self.integrationTestCacheName,
             listName: stringListName,
             value: "apple"
         )
-        XCTAssertTrue(
-            remove2 is CacheListRemoveValueSuccess,
-            "Unexpected response: \(remove2)"
-        )
-        
+        switch remove2 {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        default:
+            break
+        }
+
         let fetchStringList2 = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: stringListName
         )
-        XCTAssertTrue(
-            fetchStringList2 is CacheListFetchHit,
-            "Unexpected response: \(fetchStringList2)"
-        )
-        let fetchedStringList2 = (fetchStringList2 as! CacheListFetchHit).valueListString
-        XCTAssertEqual(fetchedStringList2, noAppleStrings)
-        
+        switch fetchStringList2 {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(noAppleStrings, hit.valueListString)
+        }
+
         // Insert some data values
         let dataListName = generateStringWithUuid(prefix: "swift-list-remove-value-data")
         let dataValues = [Data("abc".utf8), Data("lmn".utf8), Data("xyz".utf8), Data("abc".utf8), Data("abc".utf8)]
+        let noAbcData = dataValues.filter { $0 != Data("abc".utf8)}
         let concatData = await self.cacheClient.listConcatenateBack(
             cacheName: self.integrationTestCacheName,
             listName: dataListName,
             values: dataValues
         )
-        XCTAssertTrue(
-            concatData is CacheListConcatenateBackSuccess,
-            "Unexpected response: \(concatData)"
-        )
-        
+        switch concatData {
+        case .error(let err):
+            XCTFail("expected succes but got \(err)")
+        default:
+            break
+        }
+
         // Removes all instances of given data
         let removeData1 = await self.cacheClient.listRemoveValue(
             cacheName: self.integrationTestCacheName,
             listName: dataListName,
             value: Data("abc".utf8)
         )
-        XCTAssertTrue(
-            removeData1 is CacheListRemoveValueSuccess,
-            "Unexpected response: \(removeData1)"
-        )
-        
+        switch removeData1 {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        default:
+            break
+        }
+
         let fetchDataList = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: dataListName
         )
-        XCTAssertTrue(
-            fetchDataList is CacheListFetchHit,
-            "Unexpected response: \(fetchDataList)"
-        )
-        let fetchedDataList = (fetchDataList as! CacheListFetchHit).valueListData
-        let noAbcData = dataValues.filter { $0 != Data("abc".utf8)}
-        XCTAssertEqual(fetchedDataList, noAbcData)
-        
+        switch fetchDataList {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(noAbcData, hit.valueListData)
+        }
+
         // Removes no elements if given string not found
         let removeData2 = await self.cacheClient.listRemoveValue(
             cacheName: self.integrationTestCacheName,
             listName: dataListName,
             value: Data("abc".utf8)
         )
-        XCTAssertTrue(
-            removeData2 is CacheListRemoveValueSuccess,
-            "Unexpected response: \(removeData2)"
-        )
-        
+        switch removeData2 {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        default:
+            break
+        }
+
         let fetchDataList2 = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: dataListName
         )
-        XCTAssertTrue(
-            fetchDataList2 is CacheListFetchHit,
-            "Unexpected response: \(fetchDataList2)"
-        )
-        let fetchedDataList2 = (fetchDataList2 as! CacheListFetchHit).valueListData
-        XCTAssertEqual(fetchedDataList2, noAbcData)
+        switch fetchDataList2 {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but goit \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(noAbcData, hit.valueListData)
+        }
     }
 
     func testRetainValidatesParameters() async throws {
@@ -1082,31 +1107,25 @@ final class listTests: XCTestCase {
             cacheName: "   ",
             listName: listName
         )
-        XCTAssertTrue(
-            invalidCacheName is CacheListRetainError,
-            "Unexpected response: \(invalidCacheName)"
-        )
-        let invalidCacheNameCode = (invalidCacheName as! CacheListRetainError).errorCode
-        XCTAssertEqual(
-            invalidCacheNameCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidCacheNameCode)"
-        )
-        
+        switch invalidCacheName {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         // Checks list name
         let invalidListName = await self.cacheClient.listRetain(
             cacheName: self.integrationTestCacheName,
             listName: "   "
         )
-        XCTAssertTrue(
-            invalidListName is CacheListRetainError,
-            "Unexpected response: \(invalidListName)"
-        )
-        let invalidListNameCode = (invalidListName as! CacheListRetainError).errorCode
-        XCTAssertEqual(
-            invalidListNameCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidListNameCode)"
-        )
-        
+        switch invalidListName {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         // Checks start and end index range
         let invalidSlice = await self.cacheClient.listRetain(
             cacheName: self.integrationTestCacheName,
@@ -1114,31 +1133,25 @@ final class listTests: XCTestCase {
             startIndex: 2,
             endIndex: 1
         )
-        XCTAssertTrue(
-            invalidSlice is CacheListRetainError,
-            "Unexpected response: \(invalidSlice)"
-        )
-        let invalidSliceCode = (invalidSlice as! CacheListRetainError).errorCode
-        XCTAssertEqual(
-            invalidSliceCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidSliceCode)"
-        )
-        
+        switch invalidSlice {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         // Checks ttl
         let invalidTtl = await self.cacheClient.listRetain(
             cacheName: self.integrationTestCacheName,
             listName: listName,
             ttl: CollectionTtl(ttlSeconds: -5)
         )
-        XCTAssertTrue(
-            invalidTtl is CacheListRetainError,
-            "Unexpected response: \(invalidTtl)"
-        )
-        let invalidTtlCode = (invalidTtl as! CacheListRetainError).errorCode
-        XCTAssertEqual(
-            invalidTtlCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidTtlCode)"
-        )
+        switch invalidTtl {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
     }
     
     func testRetainFullList() async throws {
@@ -1150,30 +1163,36 @@ final class listTests: XCTestCase {
             listName: listName,
             values: stringValues
         )
-        XCTAssertTrue(
-            concatStrings is CacheListConcatenateBackSuccess,
-            "Unexpected response: \(concatStrings)"
-        )
-        
+        switch concatStrings {
+        case .error(let err):
+            XCTFail("expected succes but got \(err)")
+        default:
+            break
+        }
+
         // Retains full list when no slice specified
         let retainFullList = await self.cacheClient.listRetain(
             cacheName: self.integrationTestCacheName,
             listName: listName
         )
-        XCTAssertTrue(
-            retainFullList is CacheListRetainSuccess,
-            "Unexpected response: \(retainFullList)"
-        )
+        switch retainFullList {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        default:
+            break
+        }
         let fetch = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: listName
         )
-        XCTAssertTrue(
-            fetch is CacheListFetchHit,
-            "Unexpected response: \(fetch)"
-        )
-        let fetchedList = (fetch as! CacheListFetchHit).valueListString
-        XCTAssertEqual(fetchedList, stringValues)
+        switch fetch {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(stringValues, hit.valueListString)
+        }
     }
     
     func testRetainPositiveSlice() async throws {
@@ -1185,11 +1204,13 @@ final class listTests: XCTestCase {
             listName: listName,
             values: stringValues
         )
-        XCTAssertTrue(
-            concatStrings is CacheListConcatenateBackSuccess,
-            "Unexpected response: \(concatStrings)"
-        )
-        
+        switch concatStrings {
+        case .error(let err):
+            XCTFail("expected succes but got \(err)")
+        default:
+            break
+        }
+
         // Retains positive slice range
         let retainPositiveSlice = await self.cacheClient.listRetain(
             cacheName: self.integrationTestCacheName,
@@ -1197,20 +1218,24 @@ final class listTests: XCTestCase {
             startIndex: 2,
             endIndex: 5
         )
-        XCTAssertTrue(
-            retainPositiveSlice is CacheListRetainSuccess,
-            "Unexpected response: \(retainPositiveSlice)"
-        )
+        switch retainPositiveSlice {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        default:
+            break
+        }
         let fetch = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: listName
         )
-        XCTAssertTrue(
-            fetch is CacheListFetchHit,
-            "Unexpected response: \(fetch)"
-        )
-        let fetchedList = (fetch as! CacheListFetchHit).valueListString
-        XCTAssertEqual(fetchedList, Array(stringValues[2...4]))
+        switch fetch {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(Array(stringValues[2...4]), hit.valueListString)
+        }
     }
      
     func testRetainNegativeSlice() async throws {
@@ -1222,11 +1247,13 @@ final class listTests: XCTestCase {
             listName: listName,
             values: stringValues
         )
-        XCTAssertTrue(
-            concatStrings is CacheListConcatenateBackSuccess,
-            "Unexpected response: \(concatStrings)"
-        )
-        
+        switch concatStrings {
+        case .error(let err):
+            XCTFail("expected succes but got \(err)")
+        default:
+            break
+        }
+
         // Retains negative slice range
         let retainsNegativeSlice = await self.cacheClient.listRetain(
             cacheName: self.integrationTestCacheName,
@@ -1234,20 +1261,24 @@ final class listTests: XCTestCase {
             startIndex: 2,
             endIndex: -2
         )
-        XCTAssertTrue(
-            retainsNegativeSlice is CacheListRetainSuccess,
-            "Unexpected response: \(retainsNegativeSlice)"
-        )
+        switch retainsNegativeSlice {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        default:
+            break
+        }
         let fetch = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: listName
         )
-        XCTAssertTrue(
-            fetch is CacheListFetchHit,
-            "Unexpected response: \(fetch)"
-        )
-        let fetchedList = (fetch as! CacheListFetchHit).valueListString
-        XCTAssertEqual(fetchedList, Array(stringValues[2...4]))
+        switch fetch {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(Array(stringValues[2...4]), hit.valueListString)
+        }
     }
       
     func testRetainSliceWithNilStart() async throws {
@@ -1259,11 +1290,13 @@ final class listTests: XCTestCase {
             listName: listName,
             values: stringValues
         )
-        XCTAssertTrue(
-            concatStrings is CacheListConcatenateBackSuccess,
-            "Unexpected response: \(concatStrings)"
-        )
-        
+        switch concatStrings {
+        case .error(let err):
+            XCTFail("expected succes but got \(err)")
+        default:
+            break
+        }
+
         // Retains slice with nil start index
         let retainsNilStart = await self.cacheClient.listRetain(
             cacheName: self.integrationTestCacheName,
@@ -1271,20 +1304,24 @@ final class listTests: XCTestCase {
             startIndex: nil,
             endIndex: 4
         )
-        XCTAssertTrue(
-            retainsNilStart is CacheListRetainSuccess,
-            "Unexpected response: \(retainsNilStart)"
-        )
+        switch retainsNilStart {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        default:
+            break
+        }
         let fetch = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: listName
         )
-        XCTAssertTrue(
-            fetch is CacheListFetchHit,
-            "Unexpected response: \(fetch)"
-        )
-        let fetchedList = (fetch as! CacheListFetchHit).valueListString
-        XCTAssertEqual(fetchedList, Array(stringValues[0...3]))
+        switch fetch {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(Array(stringValues[0...3]), hit.valueListString)
+        }
     }
     
     func testRetainSliceWithNilEnd() async throws {
@@ -1296,10 +1333,13 @@ final class listTests: XCTestCase {
             listName: listName,
             values: stringValues
         )
-        XCTAssertTrue(
-            concatStrings is CacheListConcatenateBackSuccess,
-            "Unexpected response: \(concatStrings)"
-        )
+        switch concatStrings {
+        case .error(let err):
+            XCTFail("expected succes but got \(err)")
+        default:
+            break
+        }
+
         // Retains slice with nil end index
         let retainsNilEnd = await self.cacheClient.listRetain(
             cacheName: self.integrationTestCacheName,
@@ -1307,19 +1347,23 @@ final class listTests: XCTestCase {
             startIndex: 3,
             endIndex: nil
         )
-        XCTAssertTrue(
-            retainsNilEnd is CacheListRetainSuccess,
-            "Unexpected response: \(retainsNilEnd)"
-        )
+        switch retainsNilEnd {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        default:
+            break
+        }
         let fetch = await self.cacheClient.listFetch(
             cacheName: self.integrationTestCacheName,
             listName: listName
         )
-        XCTAssertTrue(
-            fetch is CacheListFetchHit,
-            "Unexpected response: \(fetch)"
-        )
-        let fetchedList = (fetch as! CacheListFetchHit).valueListString
-        XCTAssertEqual(fetchedList, Array(stringValues[3...]))
+        switch fetch {
+        case .error(let err):
+            XCTFail("expected hit but got \(err)")
+        case .miss(let miss):
+            XCTFail("expected hit but got \(miss)")
+        case .hit(let hit):
+            XCTAssertEqual(Array(stringValues[3...]), hit.valueListString)
+        }
     }
 }
