@@ -4,11 +4,13 @@ import Logging
 public protocol TopicSubscribeResponse {}
 
 @available(macOS 10.15, iOS 13, *)
-public class TopicSubscribeSuccess: TopicSubscribeResponse {
-    public let subscription: AsyncCompactMapSequence<GRPCAsyncResponseStream<CacheClient_Pubsub__SubscriptionItem>, TopicSubscriptionItemResponse>
+public class TopicSubscription: TopicSubscribeResponse {
+    public typealias SubscriptionItemsMap = AsyncCompactMapSequence<GRPCAsyncResponseStream<CacheClient_Pubsub__SubscriptionItem>, TopicSubscriptionItemResponse>
+    
+    public let stream: SubscriptionItemsMap
     
     init(subscription: GRPCAsyncResponseStream<CacheClient_Pubsub__SubscriptionItem>) {
-        self.subscription = subscription.compactMap(processResult)
+        self.stream = subscription.compactMap(processResult)
     }
 }
 
