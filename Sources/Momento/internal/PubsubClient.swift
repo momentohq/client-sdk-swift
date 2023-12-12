@@ -3,6 +3,7 @@ import NIO
 import NIOHPACK
 import Logging
 
+@available(macOS 10.15, iOS 13, *)
 protocol PubsubClientProtocol {
     var configuration: TopicClientConfigurationProtocol { get }
     
@@ -93,13 +94,15 @@ class PubsubClient: PubsubClientProtocol {
             // TODO: I'm just resetting customMetadata after it's sent once to prevent the agent
             //  header from being sent more than once. Need to repeat this in subscribe().
             self.client.defaultCallOptions.customMetadata = HPACKHeaders()
-            return TopicPublishSuccess()
+            return TopicPublishResponse.success(TopicPublishSuccess())
         } catch let err as GRPCStatus {
-            return TopicPublishError(error: grpcStatusToSdkError(grpcStatus: err))
+            return TopicPublishResponse.error(TopicPublishError(error: grpcStatusToSdkError(grpcStatus: err)))
         } catch let err as GRPCConnectionPoolError {
-            return TopicPublishError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
+            return TopicPublishResponse.error(TopicPublishError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())))
         } catch {
-            return TopicPublishError(error: UnknownError(message: "unknown publish error \(error)"))
+            return TopicPublishResponse.error(
+                TopicPublishError(error: UnknownError(message: "unknown publish error \(error)"))
+            )
         }
     }
     
@@ -109,7 +112,7 @@ class PubsubClient: PubsubClientProtocol {
         request.topic = topicName
         
         let result = self.client.subscribe(request)
-        return TopicSubscription(subscription: result)
+        return TopicSubscribeResponse.subscription(TopicSubscription(subscription: result))
     }
     
     func close() {

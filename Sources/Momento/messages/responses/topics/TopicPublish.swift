@@ -1,5 +1,8 @@
-public protocol TopicPublishResponse {}
+public enum TopicPublishResponse {
+    case success(TopicPublishSuccess)
+    case error(TopicPublishError)
+}
 
-public class TopicPublishSuccess: TopicPublishResponse {}
+public class TopicPublishSuccess {}
 
-public class TopicPublishError: ErrorResponseBase, TopicPublishResponse {}
+public class TopicPublishError: ErrorResponseBase {}

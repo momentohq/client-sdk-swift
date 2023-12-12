@@ -1,10 +1,14 @@
 import GRPC
 import Logging
 
-public protocol TopicSubscribeResponse {}
+@available(macOS 10.15, iOS 13, *)
+public enum TopicSubscribeResponse {
+    case subscription(TopicSubscription)
+    case error(TopicSubscribeError)
+}
 
 @available(macOS 10.15, iOS 13, *)
-public class TopicSubscription: TopicSubscribeResponse {
+public class TopicSubscription {
     public typealias SubscriptionItemsMap = AsyncCompactMapSequence<GRPCAsyncResponseStream<CacheClient_Pubsub__SubscriptionItem>, TopicSubscriptionItemResponse>
     
     public let stream: SubscriptionItemsMap
@@ -30,4 +34,4 @@ internal func processResult(item: CacheClient_Pubsub__SubscriptionItem) -> Topic
     return nil
 }
 
-public class TopicSubscribeError: ErrorResponseBase, TopicSubscribeResponse {}
+public class TopicSubscribeError: ErrorResponseBase {}

@@ -1,5 +1,6 @@
 import Foundation
 
+@available(macOS 10.15, iOS 13, *)
 public protocol TopicClientProtocol {
     func publish(
         cacheName: String,
@@ -107,10 +108,10 @@ public class TopicClient: TopicClientProtocol {
             try validateCacheName(cacheName: cacheName)
             try validateTopicName(topicName: topicName)
         } catch let err as SdkError {
-            return TopicPublishError(error: err)
+            return TopicPublishResponse.error(TopicPublishError(error: err))
         } catch {
-            return TopicPublishError(error: UnknownError(
-                message: "unexpected error: \(error)")
+            return TopicPublishResponse.error(
+                TopicPublishError(error: UnknownError(message: "unexpected error: \(error)"))
             )
         }
         
@@ -122,10 +123,12 @@ public class TopicClient: TopicClientProtocol {
             )
             return result
         } catch {
-            return TopicPublishError(
-                error: UnknownError(
-                    message: "Unknown error from publish",
-                    innerException: error
+            return TopicPublishResponse.error(
+                TopicPublishError(
+                    error: UnknownError(
+                        message: "Unknown error from publish",
+                        innerException: error
+                    )
                 )
             )
         }
@@ -153,10 +156,10 @@ public class TopicClient: TopicClientProtocol {
             try validateCacheName(cacheName: cacheName)
             try validateTopicName(topicName: topicName)
         } catch let err as SdkError {
-            return TopicSubscribeError(error: err)
+            return TopicSubscribeResponse.error(TopicSubscribeError(error: err))
         } catch {
-            return TopicSubscribeError(error: UnknownError(
-                message: "unexpected error: \(error)")
+            return TopicSubscribeResponse.error(
+                TopicSubscribeError(error: UnknownError(message: "unexpected error: \(error)"))
             )
         }
         
@@ -167,12 +170,12 @@ public class TopicClient: TopicClientProtocol {
             )
             return result
         } catch {
-            return TopicSubscribeError(
+            return TopicSubscribeResponse.error(TopicSubscribeError(
                 error: UnknownError(
                     message: "Unknown error from subscribe",
                     innerException: error
                 )
-            )
+            ))
         }
     }
     
