@@ -2,6 +2,10 @@
 public enum TopicClientConfigurations {
 
     public enum iOS {
+        public static func defaultConfig() -> TopicClientConfiguration {
+            return latest()
+        }
+        
         public static func latest() -> TopicClientConfiguration {
             return TopicClientConfiguration(
                 transportStrategy: StaticTransportStrategy(
@@ -12,6 +16,10 @@ public enum TopicClientConfigurations {
     }
     
     public enum macOS {
+        public static func defaultConfig() -> TopicClientConfiguration {
+            return latest()
+        }
+        
         public static func latest() -> TopicClientConfiguration {
             return TopicClientConfiguration(
                 transportStrategy: StaticTransportStrategy(

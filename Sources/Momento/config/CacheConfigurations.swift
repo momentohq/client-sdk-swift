@@ -2,6 +2,10 @@
 public enum CacheClientConfigurations {
 
     public enum iOS {
+        public static func defaultConfig() -> CacheClientConfiguration {
+            return latest()
+        }
+        
         public static func latest() -> CacheClientConfiguration {
             return CacheClientConfiguration(
                 transportStrategy: StaticTransportStrategy(
@@ -12,6 +16,10 @@ public enum CacheClientConfigurations {
     }
     
     public enum macOS {
+        public static func defaultConfig() -> CacheClientConfiguration {
+            return latest()
+        }
+        
         public static func latest() -> CacheClientConfiguration {
             return CacheClientConfiguration(
                 transportStrategy: StaticTransportStrategy(
