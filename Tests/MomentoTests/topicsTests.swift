@@ -99,14 +99,13 @@ final class topicsTests: XCTestCase {
     }
     
     func testTopicClientPublishesAndSubscribes() async throws {
-        throw XCTSkip("skipping-- need to rework")
         let topicName = generateStringWithUuid(prefix: "test-topic")
         let topicValue = "publishing and subscribing!"
         let subResp = await self.topicClient.subscribe(
             cacheName: self.integrationTestCacheName,
             topicName: topicName
         )
-        var subscription: TopicSubscription? = nil
+        var subscription: TopicSubscription! = nil
         switch subResp {
         case .error(let err):
             XCTFail("expected subscription but got \(err)")
@@ -127,7 +126,7 @@ final class topicsTests: XCTestCase {
             XCTAssertTrue(true)
         }
 
-        for try await item in subscription!.stream {
+        for try await item in subscription.stream {
             switch item {
             case .error(let err):
                 XCTFail("expected itemText but got \(err)")
@@ -136,18 +135,17 @@ final class topicsTests: XCTestCase {
             case .itemText(let itemText):
                 XCTAssertEqual(itemText.value, topicValue)
             }
+            break
         }
     }
 
     func testTopicClientPublishesAndSubscribesBinary() async throws {
-        throw XCTSkip("skipping-- need to rework")
         let topicName = generateStringWithUuid(prefix: "test-topic")
-        
         let subResp = await self.topicClient.subscribe(
             cacheName: self.integrationTestCacheName,
             topicName: topicName
         )
-        var subscription: TopicSubscription? = nil
+        var subscription: TopicSubscription! = nil
         switch subResp {
         case .error(let err):
             XCTFail("expected subscription but got \(err)")
@@ -169,7 +167,7 @@ final class topicsTests: XCTestCase {
             XCTAssertTrue(true)
         }
 
-        for try await item in subscription!.stream {
+        for try await item in subscription.stream {
             switch item {
             case .error(let err):
                 XCTFail("expected itemBinary but got \(err)")
@@ -178,6 +176,7 @@ final class topicsTests: XCTestCase {
             case .itemBinary(let itemBinary):
                 XCTAssertEqual(binaryValue, itemBinary.value)
             }
+            break
         }
     }
 }
