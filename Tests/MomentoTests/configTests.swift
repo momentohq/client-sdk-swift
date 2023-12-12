@@ -25,7 +25,7 @@ final class configTests: XCTestCase {
         XCTAssertNotNil(creds)
         
         let client = TopicClient(
-            configuration: TopicConfigurations.Default.latest(),
+            configuration: TopicClientConfigurations.iOS.latest(),
             credentialProvider: creds
         )
         XCTAssertNotNil(client)
@@ -44,7 +44,7 @@ final class configTests: XCTestCase {
 
     func testTimeoutForImpossibleDeadline() async throws {
         let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: apiKeyEnvVarName)
-        let configuration = TopicConfigurations.Default.latest().withClientTimeout(timeout: 0.001)
+        let configuration = TopicClientConfigurations.iOS.latest().withClientTimeout(timeout: 0.001)
         let topicClient = TopicClient(configuration: configuration, credentialProvider: creds)
         
         let pubResp = await topicClient.publish(

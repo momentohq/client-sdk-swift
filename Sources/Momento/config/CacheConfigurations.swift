@@ -1,8 +1,7 @@
 /// Prebuilt configurations for Momento Cache clients
-public enum CacheConfigurations {
+public enum CacheClientConfigurations {
 
-    public enum Default {
-
+    public enum iOS {
         public static func latest() -> CacheClientConfiguration {
             return CacheClientConfiguration(
                 transportStrategy: StaticTransportStrategy(
@@ -10,11 +9,16 @@ public enum CacheConfigurations {
                 )
             )
         }
-
-        public static func v1()  -> CacheClientConfiguration {
-            return latest()
+    }
+    
+    public enum macOS {
+        public static func latest() -> CacheClientConfiguration {
+            return CacheClientConfiguration(
+                transportStrategy: StaticTransportStrategy(
+                    grpcConfig: StaticGrpcConfiguration(deadline: 15.0)
+                )
+            )
         }
-
     }
 
 }

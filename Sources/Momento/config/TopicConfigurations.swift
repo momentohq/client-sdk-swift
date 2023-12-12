@@ -1,8 +1,7 @@
 /// Prebuilt configurations for Momento Topics clients
-public enum TopicConfigurations {
+public enum TopicClientConfigurations {
 
-    public enum Default {
-
+    public enum iOS {
         public static func latest() -> TopicClientConfiguration {
             return TopicClientConfiguration(
                 transportStrategy: StaticTransportStrategy(
@@ -10,11 +9,16 @@ public enum TopicConfigurations {
                 )
             )
         }
-
-        public static func v1()  -> TopicClientConfiguration {
-            return latest()
+    }
+    
+    public enum macOS {
+        public static func latest() -> TopicClientConfiguration {
+            return TopicClientConfiguration(
+                transportStrategy: StaticTransportStrategy(
+                    grpcConfig: StaticGrpcConfiguration(deadline: 15.0)
+                )
+            )
         }
-
     }
 
 }
