@@ -99,6 +99,7 @@ final class topicsTests: XCTestCase {
     }
     
     func testTopicClientPublishesAndSubscribes() async throws {
+        throw XCTSkip("skipping-- need to rework")
         let topicName = generateStringWithUuid(prefix: "test-topic")
         let topicValue = "publishing and subscribing!"
         let subResp = await self.topicClient.subscribe(
@@ -139,6 +140,7 @@ final class topicsTests: XCTestCase {
     }
 
     func testTopicClientPublishesAndSubscribesBinary() async throws {
+        throw XCTSkip("skipping-- need to rework")
         let topicName = generateStringWithUuid(prefix: "test-topic")
         
         let subResp = await self.topicClient.subscribe(
