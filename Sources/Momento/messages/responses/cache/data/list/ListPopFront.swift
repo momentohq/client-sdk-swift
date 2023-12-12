@@ -6,13 +6,17 @@ public enum ListPopFrontResponse {
     case error(ListPopFrontError)
 }
 
-public class ListPopFrontHit {
+public class ListPopFrontHit: CustomStringConvertible {
     public let valueString: String
     public let valueData: Data
     
     init(value: Data) {
         self.valueData = value
         self.valueString = String(decoding: value, as: UTF8.self)
+    }
+    
+    public var description: String {
+        return "[\(type(of: self))] Popped value: \(self.valueString)"
     }
 }
 

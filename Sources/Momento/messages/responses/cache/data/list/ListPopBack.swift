@@ -6,13 +6,17 @@ public enum ListPopBackResponse {
     case error(ListPopBackError)
 }
 
-public class ListPopBackHit {
+public class ListPopBackHit: CustomStringConvertible {
     public let valueString: String
     public let valueData: Data
     
     init(value: Data) {
         self.valueData = value
         self.valueString = String(decoding: value, as: UTF8.self)
+    }
+    
+    public var description: String {
+        return "[\(type(of: self))] Popped value: \(self.valueString)"
     }
 }
 

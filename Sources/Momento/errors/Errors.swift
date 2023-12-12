@@ -41,10 +41,6 @@ public class SdkError: Error, ErrorResponseBaseProtocol {
     let transportDetails: MomentoErrorTransportDetails?
     let messageWrapper: String
     
-    var description: String {
-        return "\(self.errorCode): \(self.message)"
-    }
-    
     init(
         message: String,
         errorCode: MomentoErrorCode,

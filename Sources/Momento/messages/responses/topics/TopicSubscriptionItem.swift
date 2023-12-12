@@ -6,19 +6,27 @@ public enum TopicSubscriptionItemResponse {
     case error(TopicSubscriptionItemError)
 }
 
-public class TopicSubscriptionItemText {
+public class TopicSubscriptionItemText: CustomStringConvertible {
     public let value: String
     
     init(value: String) {
         self.value = value
     }
+    
+    public var description: String {
+        return "[\(type(of: self))] Value: \(self.value)"
+    }
 }
 
-public class TopicSubscriptionItemBinary {
+public class TopicSubscriptionItemBinary: CustomStringConvertible {
     public let value: Data
     
     init(value: Data) {
         self.value = value
+    }
+    
+    public var description: String {
+        return "[\(type(of: self))] Value: \(self.value)"
     }
 }
 

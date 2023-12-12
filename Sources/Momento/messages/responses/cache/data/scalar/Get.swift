@@ -6,7 +6,7 @@ public enum GetResponse {
     case error(GetError)
 }
 
-public class GetHit: Equatable {
+public class GetHit: Equatable, CustomStringConvertible {
     public let valueString: String
     public let valueData: Data
     
@@ -17,6 +17,10 @@ public class GetHit: Equatable {
 
     public static func == (lhs: GetHit, rhs: GetHit) -> Bool {
         return lhs.valueData == rhs.valueData
+    }
+    
+    public var description: String {
+        return "[\(type(of: self))] Value: \(self.valueString)"
     }
 }
 

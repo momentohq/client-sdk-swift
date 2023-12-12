@@ -3,11 +3,15 @@ public enum ListConcatenateFrontResponse {
     case error(ListConcatenateFrontError)
 }
 
-public class ListConcatenateFrontSuccess {
+public class ListConcatenateFrontSuccess: CustomStringConvertible {
     public let listLength: UInt32
     
     init(length: UInt32) {
         self.listLength = length
+    }
+    
+    public var description: String {
+        return "[\(type(of: self))] List length post-concatenation: \(self.listLength)"
     }
 }
 
