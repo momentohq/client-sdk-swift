@@ -2,12 +2,12 @@
 public enum CacheClientConfigurations {
 
     public enum iOS {
-        /// Provides the default configuration for the `TopicClient` on iOS platforms
+        /// Provides the default configuration for the `CacheClient` on iOS platforms
         public static func defaultConfig() -> CacheClientConfiguration {
             return latest()
         }
         
-        /// Provides the latest recommended configuration for the `TopicClient` on iOS platforms
+        /// Provides the latest recommended configuration for the `CacheClient` on iOS platforms
         public static func latest() -> CacheClientConfiguration {
             return CacheClientConfiguration(
                 transportStrategy: StaticTransportStrategy(
@@ -18,12 +18,12 @@ public enum CacheClientConfigurations {
     }
     
     public enum macOS {
-        /// Provides the default configuration for the `TopicClient` on macOS platforms
+        /// Provides the default configuration for the `CacheClient` on macOS platforms
         public static func defaultConfig() -> CacheClientConfiguration {
             return latest()
         }
         
-        /// Provides the latest recommended configuration for the `TopicClient` on macOS platforms
+        /// Provides the latest recommended configuration for the `CacheClient` on macOS platforms
         public static func latest() -> CacheClientConfiguration {
             return CacheClientConfiguration(
                 transportStrategy: StaticTransportStrategy(
