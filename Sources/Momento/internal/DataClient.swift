@@ -5,52 +5,54 @@ import NIOHPACK
 import Logging
 
 protocol DataClientProtocol {
-    func get(cacheName: String, key: ScalarType) async -> CacheGetResponse
+    func get(cacheName: String, key: ScalarType) async -> GetResponse
 
     func set(
         cacheName: String,
         key: ScalarType,
         value: ScalarType,
         ttl: TimeInterval?
-    ) async -> CacheSetResponse
-    
+    ) async -> SetResponse
+
+    func delete(cacheName: String, key: ScalarType) async -> DeleteResponse
+
     func listConcatenateBack(
         cacheName: String,
         listName: String,
         values: [ScalarType],
         truncateFrontToSize: Int?,
         ttl: CollectionTtl?
-    ) async -> CacheListConcatenateBackResponse
-    
+    ) async -> ListConcatenateBackResponse
+
     func listConcatenateFront(
         cacheName: String,
         listName: String,
         values: [ScalarType],
         truncateBackToSize: Int?,
         ttl: CollectionTtl?
-    ) async -> CacheListConcatenateFrontResponse
-    
+    ) async -> ListConcatenateFrontResponse
+
     func listFetch(
         cacheName: String,
         listName: String,
         startIndex: Int?,
         endIndex: Int?
-    ) async -> CacheListFetchResponse
-    
+    ) async -> ListFetchResponse
+
     func listLength(
         cacheName: String,
         listName: String
-    ) async -> CacheListLengthResponse
+    ) async -> ListLengthResponse
     
     func listPopBack(
         cacheName: String,
         listName: String
-    ) async -> CacheListPopBackResponse
+    ) async -> ListPopBackResponse
     
     func listPopFront(
         cacheName: String,
         listName: String
-    ) async -> CacheListPopFrontResponse
+    ) async -> ListPopFrontResponse
     
     func listPushBack(
         cacheName: String,
@@ -58,7 +60,7 @@ protocol DataClientProtocol {
         value: ScalarType,
         truncateFrontToSize: Int?,
         ttl: CollectionTtl?
-    ) async -> CacheListPushBackResponse
+    ) async -> ListPushBackResponse
     
     func listPushFront(
         cacheName: String,
@@ -66,13 +68,13 @@ protocol DataClientProtocol {
         value: ScalarType,
         truncateBackToSize: Int?,
         ttl: CollectionTtl?
-    ) async -> CacheListPushFrontResponse
+    ) async -> ListPushFrontResponse
     
     func listRemoveValue(
         cacheName: String,
         listName: String,
         value: ScalarType
-    ) async -> CacheListRemoveValueResponse
+    ) async -> ListRemoveValueResponse
     
     func listRetain(
         cacheName: String,
@@ -80,7 +82,7 @@ protocol DataClientProtocol {
         startIndex: Int?,
         endIndex: Int?,
         ttl: CollectionTtl?
-    ) async -> CacheListRetainResponse
+    ) async -> ListRetainResponse
 }
 
 @available(macOS 10.15, iOS 13, *)
@@ -148,16 +150,10 @@ class DataClient: DataClientProtocol {
         }
     }
     
-    func get(cacheName: String, key: ScalarType) async -> CacheGetResponse {
+    func get(cacheName: String, key: ScalarType) async -> GetResponse {
         var request = CacheClient__GetRequest()
-        
-        switch key {
-        case .string(let s):
-            request.cacheKey = Data(s.utf8)
-        case .data(let d):
-            request.cacheKey = d
-        }
-        
+        request.cacheKey = self.convertScalarTypeToData(element: key)
+
         let headers = self.makeHeaders(cacheName: cacheName)
         let call = self.client.get(
             request,
@@ -171,24 +167,24 @@ class DataClient: DataClientProtocol {
         do {
             let result = try await call.response.get()
             if result.result == .hit {
-                return CacheGetHit(value: result.cacheBody)
+                return GetResponse.hit(GetHit(value: result.cacheBody))
             } else if result.result == .miss {
-                return CacheGetMiss()
+                return GetResponse.miss(GetMiss())
             } else {
-                return CacheGetError(
+                return GetResponse.error(GetError(
                     error: UnknownError(message: "unknown cache get error \(result)")
-                )
+                ))
             }
         } catch let err as GRPCStatus {
-            return CacheGetError(error: grpcStatusToSdkError(grpcStatus: err))
+            return GetResponse.error(GetError(error: grpcStatusToSdkError(grpcStatus: err)))
         } catch let err as GRPCConnectionPoolError {
-            return CacheGetError(
+            return GetResponse.error(GetError(
                 error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
-            )
+            ))
         } catch {
-            return CacheGetError(
+            return GetResponse.error(GetError(
                 error: UnknownError(message: "unknown cache get error \(error)")
-            )
+            ))
         }
     }
     
@@ -197,24 +193,13 @@ class DataClient: DataClientProtocol {
         key: ScalarType,
         value: ScalarType,
         ttl: TimeInterval? = nil
-    ) async -> CacheSetResponse {
+    ) async -> SetResponse {
         var request = CacheClient__SetRequest()
-        request.ttlMilliseconds = UInt64(ttl ?? self.defaultTtlSeconds*1000)
-        
-        switch key {
-        case .string(let s):
-            request.cacheKey = Data(s.utf8)
-        case .data(let b):
-            request.cacheKey = b
-        }
-        
-        switch value {
-        case .string(let s):
-            request.cacheBody = Data(s.utf8)
-        case .data(let d):
-            request.cacheBody = d
-        }
-        
+        let ttlSeconds = ttl ?? self.defaultTtlSeconds
+        request.ttlMilliseconds = UInt64(ttlSeconds*1000)
+        request.cacheKey = self.convertScalarTypeToData(element: key)
+        request.cacheBody = self.convertScalarTypeToData(element: value)
+
         let headers = self.makeHeaders(cacheName: cacheName)
         let call = self.client.set(
             request,
@@ -224,30 +209,59 @@ class DataClient: DataClientProtocol {
                 )
             )
         )
-        
+
         do {
             _ = try await call.response.get()
-            return CacheSetSuccess()
+            return SetResponse.success(SetSuccess())
         } catch let err as GRPCStatus {
-            return CacheSetError(error: grpcStatusToSdkError(grpcStatus: err))
+            return SetResponse.error(SetError(error: grpcStatusToSdkError(grpcStatus: err)))
         } catch let err as GRPCConnectionPoolError {
-            return CacheSetError(
+            return SetResponse.error(SetError(
                 error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
-            )
+            ))
         } catch {
-            return CacheSetError(
+            return SetResponse.error(SetError(
                 error: UnknownError(message: "unknown cache set error \(error)")
-            )
+            ))
         }
     }
     
+    func delete(cacheName: String, key: ScalarType) async -> DeleteResponse {
+        var request = CacheClient__DeleteRequest()
+        request.cacheKey = self.convertScalarTypeToData(element: key)
+        let headers = self.makeHeaders(cacheName: cacheName)
+        let call = self.client.delete(
+            request,
+            callOptions: CallOptions(
+                customMetadata: .init(
+                    headers.map { ($0, $1) }
+                )
+            )
+        )
+
+        do {
+            _ = try await call.response.get()
+            return DeleteResponse.success(DeleteSuccess())
+        } catch let err as GRPCStatus {
+            return DeleteResponse.error(DeleteError(error: grpcStatusToSdkError(grpcStatus: err)))
+        } catch let err as GRPCConnectionPoolError {
+            return DeleteResponse.error(DeleteError(
+                error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
+            ))
+        } catch {
+            return DeleteResponse.error(DeleteError(
+                error: UnknownError(message: "unknown cache set error \(error)")
+            ))
+        }
+    }
+
     func listConcatenateBack(
         cacheName: String,
         listName: String,
         values: [ScalarType],
         truncateFrontToSize: Int? = nil,
         ttl: CollectionTtl? = nil
-    ) async -> CacheListConcatenateBackResponse {
+    ) async -> ListConcatenateBackResponse {
         var request = CacheClient__ListConcatenateBackRequest()
         request.listName = Data(listName.utf8)
         request.values = values.map(self.convertScalarTypeToData)
@@ -269,16 +283,18 @@ class DataClient: DataClientProtocol {
         
         do {
             let result = try await call.response.get()
-            return CacheListConcatenateBackSuccess(length: result.listLength)
+            return ListConcatenateBackResponse.success(ListConcatenateBackSuccess(length: result.listLength))
         } catch let err as GRPCStatus {
-            return CacheListConcatenateBackError(error: grpcStatusToSdkError(grpcStatus: err))
+            return ListConcatenateBackResponse.error(
+                ListConcatenateBackError(error: grpcStatusToSdkError(grpcStatus: err))
+            )
         } catch let err as GRPCConnectionPoolError {
-            return CacheListConcatenateBackError(
-                error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
+            return ListConcatenateBackResponse.error(
+                ListConcatenateBackError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
             )
         } catch {
-            return CacheListConcatenateBackError(
-                error: UnknownError(message: "unknown list concatenate back error \(error)")
+            return ListConcatenateBackResponse.error(ListConcatenateBackError(
+                error: UnknownError(message: "unknown list concatenate back error \(error)"))
             )
         }
     }
@@ -289,7 +305,7 @@ class DataClient: DataClientProtocol {
         values: [ScalarType],
         truncateBackToSize: Int? = nil,
         ttl: CollectionTtl? = nil
-    ) async -> CacheListConcatenateFrontResponse {
+    ) async -> ListConcatenateFrontResponse {
         var request = CacheClient__ListConcatenateFrontRequest()
         request.listName = Data(listName.utf8)
         request.values = values.map(self.convertScalarTypeToData)
@@ -311,16 +327,16 @@ class DataClient: DataClientProtocol {
         
         do {
             let result = try await call.response.get()
-            return CacheListConcatenateFrontSuccess(length: result.listLength)
+            return ListConcatenateFrontResponse.success(ListConcatenateFrontSuccess(length: result.listLength))
         } catch let err as GRPCStatus {
-            return CacheListConcatenateFrontError(error: grpcStatusToSdkError(grpcStatus: err))
+            return ListConcatenateFrontResponse.error(ListConcatenateFrontError(error: grpcStatusToSdkError(grpcStatus: err)))
         } catch let err as GRPCConnectionPoolError {
-            return CacheListConcatenateFrontError(
-                error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
+            return ListConcatenateFrontResponse.error(
+                ListConcatenateFrontError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
             )
         } catch {
-            return CacheListConcatenateFrontError(
-                error: UnknownError(message: "unknown list concatenate front error \(error)")
+            return ListConcatenateFrontResponse.error(
+                ListConcatenateFrontError(error: UnknownError(message: "unknown list concatenate front error \(error)"))
             )
         }
     }
@@ -330,7 +346,7 @@ class DataClient: DataClientProtocol {
         listName: String,
         startIndex: Int? = nil,
         endIndex: Int? = nil
-    ) async -> CacheListFetchResponse {
+    ) async -> ListFetchResponse {
         var request = CacheClient__ListFetchRequest()
         request.listName = Data(listName.utf8)
         
@@ -360,23 +376,23 @@ class DataClient: DataClientProtocol {
             let result = try await call.response.get()
             switch result.list {
             case .found(let foundList):
-                return CacheListFetchHit(values: foundList.values)
+                return ListFetchResponse.hit(ListFetchHit(values: foundList.values))
             case .missing:
-                return CacheListFetchMiss()
+                return ListFetchResponse.miss(ListFetchMiss())
             default:
-                return CacheListFetchError(
-                    error: UnknownError(message: "unknown list fetch error \(result)")
+                return ListFetchResponse.error(
+                    ListFetchError(error: UnknownError(message: "unknown list fetch error \(result)"))
                 )
             }
         } catch let err as GRPCStatus {
-            return CacheListFetchError(error: grpcStatusToSdkError(grpcStatus: err))
+            return ListFetchResponse.error(ListFetchError(error: grpcStatusToSdkError(grpcStatus: err)))
         } catch let err as GRPCConnectionPoolError {
-            return CacheListFetchError(
-                error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
+            return ListFetchResponse.error(
+                ListFetchError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
             )
         } catch {
-            return CacheListFetchError(
-                error: UnknownError(message: "unknown list fetch error \(error)")
+            return ListFetchResponse.error(
+                ListFetchError(error: UnknownError(message: "unknown list fetch error \(error)"))
             )
         }
     }
@@ -384,7 +400,7 @@ class DataClient: DataClientProtocol {
     func listLength(
         cacheName: String,
         listName: String
-    ) async -> CacheListLengthResponse {
+    ) async -> ListLengthResponse {
         var request = CacheClient__ListLengthRequest()
         request.listName = Data(listName.utf8)
         
@@ -402,23 +418,23 @@ class DataClient: DataClientProtocol {
             let result = try await call.response.get()
             switch result.list {
             case .found(let foundList):
-                return CacheListLengthHit(length: foundList.length)
+                return ListLengthResponse.hit(ListLengthHit(length: foundList.length))
             case .missing:
-                return CacheListLengthMiss()
+                return ListLengthResponse.miss(ListLengthMiss())
             default:
-                return CacheListLengthError(
-                    error: UnknownError(message: "unknown list length error \(result)")
+                return ListLengthResponse.error(
+                    ListLengthError(error: UnknownError(message: "unknown list length error \(result)"))
                 )
             }
         } catch let err as GRPCStatus {
-            return CacheListLengthError(error: grpcStatusToSdkError(grpcStatus: err))
+            return ListLengthResponse.error(ListLengthError(error: grpcStatusToSdkError(grpcStatus: err)))
         } catch let err as GRPCConnectionPoolError {
-            return CacheListLengthError(
-                error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
+            return ListLengthResponse.error(
+                ListLengthError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
             )
         } catch {
-            return CacheListLengthError(
-                error: UnknownError(message: "unknown list length error \(error)")
+            return ListLengthResponse.error(
+                ListLengthError(error: UnknownError(message: "unknown list length error \(error)"))
             )
         }
     }
@@ -426,7 +442,7 @@ class DataClient: DataClientProtocol {
     func listPopBack(
         cacheName: String,
         listName: String
-    ) async -> CacheListPopBackResponse {
+    ) async -> ListPopBackResponse {
         var request = CacheClient__ListPopBackRequest()
         request.listName = Data(listName.utf8)
         
@@ -444,23 +460,23 @@ class DataClient: DataClientProtocol {
             let result = try await call.response.get()
             switch result.list {
             case .found(let foundList):
-                return CacheListPopBackHit(value: foundList.back)
+                return ListPopBackResponse.hit(ListPopBackHit(value: foundList.back))
             case .missing:
-                return CacheListPopBackMiss()
+                return ListPopBackResponse.miss(ListPopBackMiss())
             default:
-                return CacheListPopBackError(
-                    error: UnknownError(message: "unknown list pop back error \(result)")
+                return ListPopBackResponse.error(
+                    ListPopBackError(error: UnknownError(message: "unknown list pop back error \(result)"))
                 )
             }
         } catch let err as GRPCStatus {
-            return CacheListPopBackError(error: grpcStatusToSdkError(grpcStatus: err))
+            return ListPopBackResponse.error(ListPopBackError(error: grpcStatusToSdkError(grpcStatus: err)))
         } catch let err as GRPCConnectionPoolError {
-            return CacheListPopBackError(
-                error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
+            return ListPopBackResponse.error(
+                ListPopBackError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
             )
         } catch {
-            return CacheListPopBackError(
-                error: UnknownError(message: "unknown list pop back error \(error)")
+            return ListPopBackResponse.error(
+                ListPopBackError(error: UnknownError(message: "unknown list pop back error \(error)"))
             )
         }
     }
@@ -468,7 +484,7 @@ class DataClient: DataClientProtocol {
     func listPopFront(
         cacheName: String,
         listName: String
-    ) async -> CacheListPopFrontResponse {
+    ) async -> ListPopFrontResponse {
         var request = CacheClient__ListPopFrontRequest()
         request.listName = Data(listName.utf8)
         
@@ -486,23 +502,23 @@ class DataClient: DataClientProtocol {
             let result = try await call.response.get()
             switch result.list {
             case .found(let foundList):
-                return CacheListPopFrontHit(value: foundList.front)
+                return ListPopFrontResponse.hit(ListPopFrontHit(value: foundList.front))
             case .missing:
-                return CacheListPopFrontMiss()
+                return ListPopFrontResponse.miss(ListPopFrontMiss())
             default:
-                return CacheListPopFrontError(
-                    error: UnknownError(message: "unknown list pop front error \(result)")
+                return ListPopFrontResponse.error(
+                    ListPopFrontError(error: UnknownError(message: "unknown list pop front error \(result)"))
                 )
             }
         } catch let err as GRPCStatus {
-            return CacheListPopFrontError(error: grpcStatusToSdkError(grpcStatus: err))
+            return ListPopFrontResponse.error(ListPopFrontError(error: grpcStatusToSdkError(grpcStatus: err)))
         } catch let err as GRPCConnectionPoolError {
-            return CacheListPopFrontError(
-                error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
+            return ListPopFrontResponse.error(
+                ListPopFrontError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
             )
         } catch {
-            return CacheListPopFrontError(
-                error: UnknownError(message: "unknown list pop front error \(error)")
+            return ListPopFrontResponse.error(
+                ListPopFrontError(error: UnknownError(message: "unknown list pop front error \(error)"))
             )
         }
     }
@@ -513,7 +529,7 @@ class DataClient: DataClientProtocol {
         value: ScalarType,
         truncateFrontToSize: Int? = nil,
         ttl: CollectionTtl? = nil
-    ) async -> CacheListPushBackResponse {
+    ) async -> ListPushBackResponse {
         var request = CacheClient__ListPushBackRequest()
         request.listName = Data(listName.utf8)
         request.value = self.convertScalarTypeToData(element: value)
@@ -535,16 +551,16 @@ class DataClient: DataClientProtocol {
         
         do {
             let result = try await call.response.get()
-            return CacheListPushBackSuccess(length: result.listLength)
+            return ListPushBackResponse.success(ListPushBackSuccess(length: result.listLength))
         } catch let err as GRPCStatus {
-            return CacheListPushBackError(error: grpcStatusToSdkError(grpcStatus: err))
+            return ListPushBackResponse.error(ListPushBackError(error: grpcStatusToSdkError(grpcStatus: err)))
         } catch let err as GRPCConnectionPoolError {
-            return CacheListPushBackError(
-                error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
+            return ListPushBackResponse.error(
+                ListPushBackError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
             )
         } catch {
-            return CacheListPushBackError(
-                error: UnknownError(message: "unknown list push back error \(error)")
+            return ListPushBackResponse.error(
+                ListPushBackError(error: UnknownError(message: "unknown list push back error \(error)"))
             )
         }
     }
@@ -555,7 +571,7 @@ class DataClient: DataClientProtocol {
         value: ScalarType,
         truncateBackToSize: Int? = nil,
         ttl: CollectionTtl? = nil
-    ) async -> CacheListPushFrontResponse {
+    ) async -> ListPushFrontResponse {
         var request = CacheClient__ListPushFrontRequest()
         request.listName = Data(listName.utf8)
         request.value = self.convertScalarTypeToData(element: value)
@@ -577,16 +593,16 @@ class DataClient: DataClientProtocol {
         
         do {
             let result = try await call.response.get()
-            return CacheListPushFrontSuccess(length: result.listLength)
+            return ListPushFrontResponse.success(ListPushFrontSuccess(length: result.listLength))
         } catch let err as GRPCStatus {
-            return CacheListPushFrontError(error: grpcStatusToSdkError(grpcStatus: err))
+            return ListPushFrontResponse.error(ListPushFrontError(error: grpcStatusToSdkError(grpcStatus: err)))
         } catch let err as GRPCConnectionPoolError {
-            return CacheListPushFrontError(
-                error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
+            return ListPushFrontResponse.error(
+                ListPushFrontError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
             )
         } catch {
-            return CacheListPushFrontError(
-                error: UnknownError(message: "unknown list push front error \(error)")
+            return ListPushFrontResponse.error(
+                ListPushFrontError(error: UnknownError(message: "unknown list push front error \(error)"))
             )
         }
     }
@@ -595,7 +611,7 @@ class DataClient: DataClientProtocol {
         cacheName: String,
         listName: String,
         value: ScalarType
-    ) async -> CacheListRemoveValueResponse {
+    ) async -> ListRemoveValueResponse {
         var request = CacheClient__ListRemoveRequest()
         request.listName = Data(listName.utf8)
         request.allElementsWithValue = self.convertScalarTypeToData(element: value)
@@ -612,16 +628,16 @@ class DataClient: DataClientProtocol {
         
         do {
             _ = try await call.response.get()
-            return CacheListRemoveValueSuccess()
+            return ListRemoveValueResponse.success(ListRemoveValueSuccess())
         } catch let err as GRPCStatus {
-            return CacheListRemoveValueError(error: grpcStatusToSdkError(grpcStatus: err))
+            return ListRemoveValueResponse.error(ListRemoveValueError(error: grpcStatusToSdkError(grpcStatus: err)))
         } catch let err as GRPCConnectionPoolError {
-            return CacheListRemoveValueError(
-                error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
+            return ListRemoveValueResponse.error(
+                ListRemoveValueError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
             )
         } catch {
-            return CacheListRemoveValueError(
-                error: UnknownError(message: "unknown list remove value error \(error)")
+            return ListRemoveValueResponse.error(
+                ListRemoveValueError(error: UnknownError(message: "unknown list remove value error \(error)"))
             )
         }
     }
@@ -632,7 +648,7 @@ class DataClient: DataClientProtocol {
         startIndex: Int? = nil,
         endIndex: Int? = nil,
         ttl: CollectionTtl?
-    ) async -> CacheListRetainResponse {
+    ) async -> ListRetainResponse {
         var request = CacheClient__ListRetainRequest()
         request.listName = Data(listName.utf8)
         
@@ -664,16 +680,16 @@ class DataClient: DataClientProtocol {
         
         do {
             _ = try await call.response.get()
-            return CacheListRetainSuccess()
+            return ListRetainResponse.success(ListRetainSuccess())
         } catch let err as GRPCStatus {
-            return CacheListRetainError(error: grpcStatusToSdkError(grpcStatus: err))
+            return ListRetainResponse.error(ListRetainError(error: grpcStatusToSdkError(grpcStatus: err)))
         } catch let err as GRPCConnectionPoolError {
-            return CacheListRetainError(
-                error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
+            return ListRetainResponse.error(
+                ListRetainError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
             )
         } catch {
-            return CacheListRetainError(
-                error: UnknownError(message: "unknown list retain error \(error)")
+            return ListRetainResponse.error(
+                ListRetainError(error: UnknownError(message: "unknown list retain error \(error)"))
             )
         }
     }

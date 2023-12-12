@@ -6,9 +6,12 @@ public class CacheInfo {
     }
 }
 
-public protocol CacheListResponse {}
+public enum ListCachesResponse {
+    case success(ListCachesSuccess)
+    case error(ListCachesError)
+}
 
-public class CacheListSuccess: CacheListResponse {
+public class ListCachesSuccess {
     public let caches: [CacheInfo]
     
     init(caches: [ControlClient__Cache]) {
@@ -18,4 +21,4 @@ public class CacheListSuccess: CacheListResponse {
     }
 }
 
-public class CacheListError: ErrorResponseBase, CacheListResponse {}
+public class ListCachesError: ErrorResponseBase {}

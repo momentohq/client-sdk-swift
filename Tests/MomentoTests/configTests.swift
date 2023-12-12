@@ -52,7 +52,11 @@ final class configTests: XCTestCase {
             topicName: generateStringWithUuid(prefix: "test-topic"),
             value: "test-message"
         )
-        XCTAssertTrue(pubResp is TopicPublishError)
-        XCTAssertEqual(MomentoErrorCode.TIMEOUT_ERROR, (pubResp as! TopicPublishError).errorCode)
+        switch pubResp {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.TIMEOUT_ERROR, err.errorCode)
+        }
     }
 }

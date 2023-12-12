@@ -1,8 +1,12 @@
 import Foundation
 
-public protocol CacheListFetchResponse {}
+public enum ListFetchResponse {
+    case hit(ListFetchHit)
+    case miss(ListFetchMiss)
+    case error(ListFetchError)
+}
 
-public class CacheListFetchHit: CacheListFetchResponse {
+public class ListFetchHit {
     public let valueListString: [String]
     public let valueListData: [Data]
     
@@ -12,6 +16,6 @@ public class CacheListFetchHit: CacheListFetchResponse {
     }
 }
 
-public class CacheListFetchMiss: CacheListFetchResponse {}
+public class ListFetchMiss {}
 
-public class CacheListFetchError: ErrorResponseBase, CacheListFetchResponse {}
+public class ListFetchError: ErrorResponseBase {}

@@ -17,7 +17,7 @@ func setUpIntegrationTests() async -> TestSetup {
             configuration: TopicConfigurations.Default.latest(),
             credentialProvider: creds
         )
-        
+
         let cacheClient = CacheClient(
             configuration: CacheConfigurations.Default.latest().withClientTimeout(timeout: 30),
             credentialProvider: creds,
@@ -27,12 +27,12 @@ func setUpIntegrationTests() async -> TestSetup {
         let cacheName = generateStringWithUuid(prefix: "swift-test")
         let result = await cacheClient.createCache(cacheName: cacheName)
         switch result {
-        case let error as CacheCreateError:
-            fatalError("Unable to create integration test cache: \(error.description)")
-        default: 
+        case .error(let err):
+            fatalError("Unable to create integration test cache: \(err)")
+        default:
             break
         }
-        
+
         return TestSetup(
             cacheName: cacheName,
             cacheClient: cacheClient,
@@ -45,8 +45,11 @@ func setUpIntegrationTests() async -> TestSetup {
 
 func cleanUpIntegrationTests(cacheName: String, cacheClient: CacheClientProtocol) async {
     let result = await cacheClient.deleteCache(cacheName: cacheName)
-    if result is CacheDeleteError {
-        fatalError("Unable to tear down integration test setup: \(result)")
+    switch result {
+    case DeleteCacheResponse.error(let err):
+        fatalError("Unable to tear delete integration test cache \(cacheName): \(err)")
+    default:
+        break
     }
 }
 
@@ -55,4 +58,3 @@ func cleanUpIntegrationTests(cacheName: String, cacheClient: CacheClientProtocol
 func generateStringWithUuid(prefix: String?) -> String {
     return "\(prefix ?? "")-\(UUID().uuidString)"
 }
-

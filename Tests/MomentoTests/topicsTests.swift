@@ -28,41 +28,37 @@ final class topicsTests: XCTestCase {
             topicName: topicName,
             value: "test-message"
         )
-        XCTAssertTrue(
-            invalidCacheNameResp is TopicPublishError,
-            "Unexpected response: \(invalidCacheNameResp)"
-        )
-        let invalidCacheNameErrorCode = (invalidCacheNameResp as! TopicPublishError).errorCode
-        XCTAssertEqual(
-            invalidCacheNameErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidCacheNameErrorCode)"
-        )
-        
+        switch invalidCacheNameResp {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         let invalidTopicNameResp = await self.topicClient.publish(
             cacheName: self.integrationTestCacheName,
             topicName: "",
             value: "test-message"
         )
-        XCTAssertTrue(
-            invalidTopicNameResp is TopicPublishError,
-            "Unexpected response: \(invalidTopicNameResp)"
-        )
-        let invalidTopicNameErrorCode = (invalidTopicNameResp as! TopicPublishError).errorCode
-        XCTAssertEqual(
-            invalidTopicNameErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidTopicNameErrorCode)"
-        )
-        
+        switch invalidTopicNameResp {
+        case .success(let success):
+            XCTFail("expected error but got \(success)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         let pubResp = await self.topicClient.publish(
             cacheName: self.integrationTestCacheName,
             topicName: topicName,
             value: "test-message"
         )
-        XCTAssertTrue(
-            pubResp is TopicPublishSuccess,
-            "Unexpected response: \((pubResp as! TopicPublishError).description)"
-        )
-    }    
+        switch pubResp {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        case .success(_):
+            XCTAssertTrue(true)
+        }
+    }
     
     func testTopicClientSubscribes() async throws {
         let topicName = generateStringWithUuid(prefix: "test-topic")
@@ -71,87 +67,91 @@ final class topicsTests: XCTestCase {
             cacheName: "",
             topicName: topicName
         )
-        XCTAssertTrue(
-            invalidCacheNameResp is TopicSubscribeError,
-            "Unexpected response: \(invalidCacheNameResp)"
-        )
-        let invalidCacheNameErrorCode = (invalidCacheNameResp as! TopicSubscribeError).errorCode
-        XCTAssertEqual(
-            invalidCacheNameErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidCacheNameErrorCode)"
-        )
-        
+        switch invalidCacheNameResp {
+        case .subscription(let sub):
+            XCTFail("expected error but got \(sub)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         let invalidTopicNameResp = await self.topicClient.subscribe(
             cacheName: self.integrationTestCacheName,
             topicName: ""
         )
-        XCTAssertTrue(
-            invalidTopicNameResp is TopicSubscribeError,
-            "Unexpected response: \(invalidTopicNameResp)"
-        )
-        let invalidTopicNameErrorCode = (invalidTopicNameResp as! TopicSubscribeError).errorCode
-        XCTAssertEqual(
-            invalidTopicNameErrorCode, MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            "Unexpected error code: \(invalidTopicNameErrorCode)"
-        )
-        
+        switch invalidTopicNameResp {
+        case .subscription(let sub):
+            XCTFail("expected error but got \(sub)")
+        case .error(let err):
+            XCTAssertEqual(MomentoErrorCode.INVALID_ARGUMENT_ERROR, err.errorCode)
+        }
+
         let subResp = await self.topicClient.subscribe(
             cacheName: self.integrationTestCacheName,
             topicName: topicName
         )
-        XCTAssertTrue(
-            subResp is TopicSubscription,
-            "Unexpected response: \((subResp as! TopicSubscribeError).description)"
-        )
+        switch subResp {
+        case .error(let err):
+            XCTFail("expected subscription but got \(err)")
+        case .subscription(let sub):
+            print("got subscription: \(sub)")
+            XCTAssertTrue(true)
+        }
     }
     
     func testTopicClientPublishesAndSubscribes() async throws {
         let topicName = generateStringWithUuid(prefix: "test-topic")
-        
+        let topicValue = "publishing and subscribing!"
         let subResp = await self.topicClient.subscribe(
             cacheName: self.integrationTestCacheName,
             topicName: topicName
         )
-        XCTAssertTrue(
-            subResp is TopicSubscription,
-            "Unexpected response: \((subResp as! TopicSubscribeError).description)"
-        )
-        
+        var subscription: TopicSubscription! = nil
+        switch subResp {
+        case .error(let err):
+            XCTFail("expected subscription but got \(err)")
+        case .subscription(let sub):
+            subscription = sub
+        }
+
         try await Task.sleep(nanoseconds: 1_000_000_000)
         let pubResp = await self.topicClient.publish(
             cacheName: self.integrationTestCacheName,
             topicName: topicName,
-            value: "publishing and subscribing!"
+            value: topicValue
         )
-        XCTAssertTrue(
-            pubResp is TopicPublishSuccess,
-            "Unexpected response: \((pubResp as! TopicPublishError).description)"
-        )
-        
-        let subscription = (subResp as! TopicSubscription).stream
-        for try await item in subscription {
-            XCTAssertTrue(
-                item is TopicSubscriptionItemText,
-                "received subscription item that was not text: \(String(describing: item))"
-            )
-            
-            let value = (item as! TopicSubscriptionItemText).value
-            XCTAssertEqual(value, "publishing and subscribing!", "unexpected topic subscription item value: \(value)")
+        switch pubResp {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        case .success(_):
+            XCTAssertTrue(true)
+        }
+
+        for try await item in subscription.stream {
+            switch item {
+            case .error(let err):
+                XCTFail("expected itemText but got \(err)")
+            case .itemBinary(let bin):
+                XCTFail("expected itemText but got \(bin)")
+            case .itemText(let itemText):
+                XCTAssertEqual(itemText.value, topicValue)
+            }
             break
         }
     }
 
     func testTopicClientPublishesAndSubscribesBinary() async throws {
         let topicName = generateStringWithUuid(prefix: "test-topic")
-        
         let subResp = await self.topicClient.subscribe(
             cacheName: self.integrationTestCacheName,
             topicName: topicName
         )
-        XCTAssertTrue(
-            subResp is TopicSubscription,
-            "Unexpected response: \((subResp as! TopicSubscribeError).description)"
-        )
+        var subscription: TopicSubscription! = nil
+        switch subResp {
+        case .error(let err):
+            XCTFail("expected subscription but got \(err)")
+        case .subscription(let sub):
+            subscription = sub
+        }
 
         try await Task.sleep(nanoseconds: 1_000_000_000)
         let binaryValue = "publishing and subscribing!".data(using: .utf8)!
@@ -160,24 +160,22 @@ final class topicsTests: XCTestCase {
             topicName: topicName,
             value: binaryValue
         )
-        XCTAssertTrue(
-            pubResp is TopicPublishSuccess,
-            "Unexpected response: \((pubResp as! TopicPublishError).description)"
-        )
+        switch pubResp {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        case .success(_):
+            XCTAssertTrue(true)
+        }
 
-        let subscription = (subResp as! TopicSubscription).stream
-        for try await item in subscription {
-            XCTAssertTrue(
-                item is TopicSubscriptionItemBinary,
-                "received subscription item that was not binary: \(String(describing: item))"
-            )
-
-            let value = (item as! TopicSubscriptionItemBinary).value
-            XCTAssertEqual(
-                value,
-                binaryValue,
-                "unexpected topic subscription item value: \(value)"
-            )
+        for try await item in subscription.stream {
+            switch item {
+            case .error(let err):
+                XCTFail("expected itemBinary but got \(err)")
+            case .itemText(let text):
+                XCTFail("expected itemBinary but got \(text)")
+            case .itemBinary(let itemBinary):
+                XCTAssertEqual(binaryValue, itemBinary.value)
+            }
             break
         }
     }

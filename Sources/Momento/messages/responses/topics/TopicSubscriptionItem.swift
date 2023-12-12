@@ -1,8 +1,12 @@
 import Foundation
 
-public protocol TopicSubscriptionItemResponse {}
+public enum TopicSubscriptionItemResponse {
+    case itemText(TopicSubscriptionItemText)
+    case itemBinary(TopicSubscriptionItemBinary)
+    case error(TopicSubscriptionItemError)
+}
 
-public class TopicSubscriptionItemText: TopicSubscriptionItemResponse {
+public class TopicSubscriptionItemText {
     public let value: String
     
     init(value: String) {
@@ -10,7 +14,7 @@ public class TopicSubscriptionItemText: TopicSubscriptionItemResponse {
     }
 }
 
-public class TopicSubscriptionItemBinary: TopicSubscriptionItemResponse {
+public class TopicSubscriptionItemBinary {
     public let value: Data
     
     init(value: Data) {
@@ -18,15 +22,17 @@ public class TopicSubscriptionItemBinary: TopicSubscriptionItemResponse {
     }
 }
 
-public class TopicSubscriptionItemError: ErrorResponseBase, TopicSubscriptionItemResponse {}
+public class TopicSubscriptionItemError: ErrorResponseBase {}
 
 internal func createTopicItemResponse(item: CacheClient_Pubsub__TopicItem) -> TopicSubscriptionItemResponse {
     switch item.value.kind {
     case .text:
-        return TopicSubscriptionItemText(value: item.value.text)
+        return TopicSubscriptionItemResponse.itemText(TopicSubscriptionItemText(value: item.value.text))
     case .binary:
-        return TopicSubscriptionItemBinary(value: item.value.binary)
+        return TopicSubscriptionItemResponse.itemBinary(TopicSubscriptionItemBinary(value: item.value.binary))
     default:
-        return TopicSubscriptionItemError(error: UnknownError(message: "unknown TopicItemResponse value: \(item.value)"))
+        return TopicSubscriptionItemResponse.error(
+            TopicSubscriptionItemError(error: UnknownError(message: "unknown TopicItemResponse value: \(item.value)"))
+        )
     }
 }
