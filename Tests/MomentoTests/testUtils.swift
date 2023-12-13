@@ -14,12 +14,12 @@ func setUpIntegrationTests() async -> TestSetup {
         let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: apiKeyEnvVarName)
         
         let topicClient = TopicClient(
-            configuration: TopicConfigurations.Default.latest(),
+            configuration: TopicClientConfigurations.iOS.latest(),
             credentialProvider: creds
         )
 
         let cacheClient = CacheClient(
-            configuration: CacheConfigurations.Default.latest().withClientTimeout(timeout: 30),
+            configuration: CacheClientConfigurations.iOS.latest().withClientTimeout(timeout: 30),
             credentialProvider: creds,
             defaultTtlSeconds: 10
         )
