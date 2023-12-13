@@ -33,9 +33,20 @@ func example_API_ListCaches(cacheClient: CacheClient) async {
     let result = await cacheClient.listCaches()
     switch result {
     case .success(let success):
-        print("Successfully created fetched list of caches: \(success.caches)")
+        print("Successfully created fetched list of caches: \(success.caches.map { $0.name })")
     case .error(let err):
         print("Unable to fetch list of caches: \(err)")
+    }
+}
+
+@available(macOS 10.15, iOS 13, *)
+func example_API_DeleteCache(cacheClient: CacheClient, cacheName: String) async {
+    let result = await cacheClient.deleteCache(cacheName: cacheName)
+    switch result {
+    case .success(let success):
+        print("Successfully deleted the cache")
+    case .error(let err):
+        print("Unable to delete cache: \(err)")
     }
 }
 
@@ -67,6 +78,20 @@ func example_API_Get(cacheClient: CacheClient, cacheName: String) async {
         print("Cache miss")
     case .error(let err):
         print("Unable to get item in the cache: \(err)")
+    }
+}
+
+@available(macOS 10.15, iOS 13, *)
+func example_API_Delete(cacheClient: CacheClient, cacheName: String) async {
+    let result = await cacheClient.delete(
+        cacheName: cacheName,
+        key: "key"
+    )
+    switch result {
+    case .success(_):
+        print("Successfully deleted item in the cache")
+    case .error(let err):
+        print("Unable to delete item in the cache: \(err)")
     }
 }
 
@@ -139,6 +164,7 @@ func main() async {
         await example_API_ListCaches(cacheClient: cacheClient)
         await example_API_Set(cacheClient: cacheClient, cacheName: cacheName)
         await example_API_Get(cacheClient: cacheClient, cacheName: cacheName)
+        await example_API_Delete(cacheClient: cacheClient, cacheName: cacheName)
 
         example_API_InstantiateTopicClient()
         await example_API_Publish(topicClient: topicClient, cacheName: cacheName)
@@ -161,6 +187,7 @@ func main() async {
             timeoutTask.cancel()
         }
         
+        await example_API_DeleteCache(cacheClient: cacheClient, cacheName: cacheName)
     } catch {
         print("Unexpected error running doc examples: \(error)")
     }
