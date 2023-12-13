@@ -17,7 +17,7 @@ func main() async {
 
     let subscribeResponse = await client.subscribe(cacheName: cacheName, topicName: topicName)
     
-    let subscription: TopicSubscription?
+    let subscription: TopicSubscription
     switch subscribeResponse {
     case .error(let err):
         print("Subscribe error: \(err)")
@@ -29,7 +29,7 @@ func main() async {
 
     let receiveTask = Task {
         do {
-            for try await item in subscription!.stream {
+            for try await item in subscription.stream {
                 var value: String = ""
                 switch item {
                 case .itemText(let textItem):
