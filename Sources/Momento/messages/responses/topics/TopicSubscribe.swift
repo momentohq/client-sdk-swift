@@ -20,7 +20,7 @@ public enum TopicSubscribeResponse {
     case error(TopicSubscribeError)
 }
 
-/// Indicates a successful topic subscribe request. Subscription items are returned asynchronously as `TopicSubscriptionItemResponse` objects through the use of an `AsyncCompactMapSequence`.
+/// Encapsulates a topic subscription. Iterate over the subscription's `stream` property to retrieve `TopicSubscriptionItemResponse` objects containing data published to the topic.
 @available(macOS 10.15, iOS 13, *)
 public class TopicSubscription {
     public typealias SubscriptionItemsMap = AsyncCompactMapSequence<GRPCAsyncResponseStream<CacheClient_Pubsub__SubscriptionItem>, TopicSubscriptionItemResponse>
