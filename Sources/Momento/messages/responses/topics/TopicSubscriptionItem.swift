@@ -26,7 +26,7 @@ public class TopicSubscriptionItemBinary: CustomStringConvertible {
     }
     
     public var description: String {
-        return "[\(type(of: self))] Value: \(self.value)"
+        return "[\(type(of: self))] Value: \(String(decoding: self.value, as: UTF8.self))"
     }
 }
 
