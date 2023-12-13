@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.3.2](https://github.com/momentohq/client-sdk-swift/compare/v0.3.1...v0.3.2) (2023-12-13)
+
+
+### Bug Fixes
+
+* actually build the topics example in ci ([#105](https://github.com/momentohq/client-sdk-swift/issues/105)) ([3151ee7](https://github.com/momentohq/client-sdk-swift/commit/3151ee7648a923c2d20aed9ae85edb54e0521c76))
+* allow users to provide String and Data values directly ([#94](https://github.com/momentohq/client-sdk-swift/issues/94)) ([abdb54c](https://github.com/momentohq/client-sdk-swift/commit/abdb54c530e97f6d8c1da392d8b15778314ad587))
+* only topic publish should apply client timeout ([#91](https://github.com/momentohq/client-sdk-swift/issues/91)) ([d7e847e](https://github.com/momentohq/client-sdk-swift/commit/d7e847ecca7f47ed7d270862be58a896990035a7))
+
+
+### Miscellaneous
+
+* add custom strings to print response types and values if applicable ([#103](https://github.com/momentohq/client-sdk-swift/issues/103)) ([8c2895a](https://github.com/momentohq/client-sdk-swift/commit/8c2895ad9e3dd0d4d03e031b480413cdf877a9d6))
+* add docstrings ([#104](https://github.com/momentohq/client-sdk-swift/issues/104)) ([bec7bcc](https://github.com/momentohq/client-sdk-swift/commit/bec7bcc7cd93698b7e9ede689c97a5b13e141a91))
+* add validator to check for empty lists ([#95](https://github.com/momentohq/client-sdk-swift/issues/95)) ([b121eb7](https://github.com/momentohq/client-sdk-swift/commit/b121eb79ad7e97903b0a432b76fcbc45f3129627))
+* consistent available tags for CacheClient and TopicClient ([#96](https://github.com/momentohq/client-sdk-swift/issues/96)) ([ca66689](https://github.com/momentohq/client-sdk-swift/commit/ca66689f0d386fb76e6d3017804fd03cde444b65))
+* improve pattern matching experience for response types ([#90](https://github.com/momentohq/client-sdk-swift/issues/90)) ([25247e5](https://github.com/momentohq/client-sdk-swift/commit/25247e5f6aa30840f496911ca6b7265ab5e2ffeb))
+* provide better error message when credential provider fails ([#93](https://github.com/momentohq/client-sdk-swift/issues/93)) ([413e895](https://github.com/momentohq/client-sdk-swift/commit/413e895ea81a0e9405501a74535ec69717a2edd2))
+* rename prebuilt config classes and targets for clarity ([#101](https://github.com/momentohq/client-sdk-swift/issues/101)) ([90cd30f](https://github.com/momentohq/client-sdk-swift/commit/90cd30fb4f3e8accb47b2b5df9280fa8470a8687))
+* topics related renamings for clarity ([#98](https://github.com/momentohq/client-sdk-swift/issues/98)) ([a461dad](https://github.com/momentohq/client-sdk-swift/commit/a461dad5d2fc14836cd3ef47b748d5b7c272756b))
+* update readme instructions for including Momento in Package.swift file ([#97](https://github.com/momentohq/client-sdk-swift/issues/97)) ([b541f8b](https://github.com/momentohq/client-sdk-swift/commit/b541f8b961134ab595a4372e6a77cc3602a7b852))
+
 ## [0.3.1](https://github.com/momentohq/client-sdk-swift/compare/v0.3.0...v0.3.1) (2023-12-06)
 
 
