@@ -298,14 +298,15 @@ public class CacheClient: CacheClientProtocol {
     /**
      Creates a cache if it does not exist.
      - Parameter cacheName: name of the cache to be created
-     - Returns: CacheCreateResponse representing the result of the create cache operation.
+     - Returns: `CacheCreateResponse` representing the result of the create cache operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
     ```
      switch response {
-     case let responseError as CacheCreateError:
-        // handle error
-     case let responseSuccess as CacheCreateSuccess:
-        // handle success
+     case .error(let err):
+        print("Error: \(err)")
+     case .success(_):
+        print("Success")
      }
     ```
      */
@@ -325,16 +326,17 @@ public class CacheClient: CacheClientProtocol {
     /**
      Deletes a cache and all items in it.
      - Parameter cacheName: name of the cache to be deleted
-     - Returns: DeleteCacheResponse representing the result of the delete cache operation.
+     - Returns: `DeleteCacheResponse` representing the result of the delete cache operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as DeleteCacheError:
-        // handle error
-     case let responseSuccess as DeleteCacheSuccess:
-        // handle success
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .success(_):
+         print("Success")
+      }
+     ```
      */
     public func deleteCache(cacheName: String) async -> DeleteCacheResponse {
         do {
@@ -351,17 +353,17 @@ public class CacheClient: CacheClientProtocol {
     
     /**
      Lists all caches.
-     - Returns: ListCachesResponse representing the result of the list caches operation.
+     - Returns: `ListCachesResponse` representing the result of the list caches operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as ListCachesError:
-        // handle error
-     case let responseSuccess as ListCachesSuccess:
-        // handle success
-        print(responseSuccess.caches)
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .success(let s):
+         print("Success: \(s.caches)")
+      }
+     ```
      */
     public func listCaches() async -> ListCachesResponse {
         return await self.controlClient.listCaches()
@@ -372,18 +374,19 @@ public class CacheClient: CacheClientProtocol {
      - Parameters:
         - cacheName: the name of the cache to perform the lookup in
         - key: the key to look up as type String
-     - Returns: GetResponse representing the result of the get operation.
+     - Returns: `GetResponse` representing the result of the get operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as GetError:
-        // handle error
-     case let responseMiss as GetMiss:
-        // handle miss
-     case let responseHit as GetHit:
-        // handle hit
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .miss(_):
+         print("Miss")
+      case .hit(let hit):
+         print("Hit: \(hit.valueString)")
+      }
+     ```
      */
     public func get(cacheName: String, key: String) async -> GetResponse {
         return await self.get(cacheName: cacheName, key: ScalarType.string(key))
@@ -394,18 +397,19 @@ public class CacheClient: CacheClientProtocol {
      - Parameters:
         - cacheName: the name of the cache to perform the lookup in
         - key: the key to look up as type Data
-     - Returns: GetResponse representing the result of the get operation.
+     - Returns: `GetResponse` representing the result of the get operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as CacheGetError:
-        // handle error
-     case let responseMiss as CacheGetMiss:
-        // handle miss
-     case let responseHit as CacheGetHit:
-        // handle hit
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .miss(_):
+         print("Miss")
+      case .hit(let hit):
+         print("Hit: \(hit.valueData)")
+      }
+     ```
      */
     public func get(cacheName: String, key: Data) async -> GetResponse {
         return await self.get(cacheName: cacheName, key: ScalarType.data(key))
@@ -432,16 +436,17 @@ public class CacheClient: CacheClientProtocol {
         - key: the key to set the value for
         - value: the value to associate with the key
         - ttl: the time to live for the item in the cache. Uses the client's default TTL if this is not supplied.
-     - Returns: SetResponse representing the result of the set operation.
+     - Returns: `SetResponse` representing the result of the set operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as SetError:
-        // handle error
-     case let responseSuccess as SetSuccess:
-        // handle success
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .success(_):
+         print("Success")
+      }
+     ```
      */
     public func set(
         cacheName: String,
@@ -464,16 +469,17 @@ public class CacheClient: CacheClientProtocol {
         - key: the key to set the value for
         - value: the value to associate with the key
         - ttl: the time to live for the item in the cache. Uses the client's default TTL if this is not supplied.
-     - Returns: SetResponse representing the result of the set operation.
+     - Returns: `SetResponse` representing the result of the set operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as CacheSetError:
-        // handle error
-     case let responseSuccess as CacheSetSuccess:
-        // handle success
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .success(_):
+         print("Success")
+      }
+     ```
      */
     public func set(
         cacheName: String,
@@ -496,16 +502,17 @@ public class CacheClient: CacheClientProtocol {
         - key: the key to set the value for
         - value: the value to associate with the key
         - ttl: the time to live for the item in the cache. Uses the client's default TTL if this is not supplied.
-     - Returns: SetResponse representing the result of the set operation.
+     - Returns: `SetResponse` representing the result of the set operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as CacheSetError:
-        // handle error
-     case let responseSuccess as CacheSetSuccess:
-        // handle success
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .success(_):
+         print("Success")
+      }
+     ```
      */
     public func set(
         cacheName: String,
@@ -528,16 +535,17 @@ public class CacheClient: CacheClientProtocol {
         - key: the key to set the value for
         - value: the value to associate with the key
         - ttl: the time to live for the item in the cache. Uses the client's default TTL if this is not supplied.
-     - Returns: SetResponse representing the result of the set operation.
+     - Returns: `SetResponse` representing the result of the set operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as CacheSetError:
-        // handle error
-     case let responseSuccess as CacheSetSuccess:
-        // handle success
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .success(_):
+         print("Success")
+      }
+     ```
      */
     public func set(
         cacheName: String,
@@ -578,6 +586,48 @@ public class CacheClient: CacheClientProtocol {
         )
     }
     
+    /**
+     Deletes the given key from the cache.
+     - Parameters:
+        - cacheName: the name of the cache to store the value in
+        - key: the key to delete as a String
+     - Returns: `DeleteResponse` representing the result of the set operation.
+     
+     Pattern matching can be used to operate on the appropriate subtype.
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .success(_):
+         print("Success")
+      }
+     ```
+     */
+    public func delete(cacheName: String, key: String) async -> DeleteResponse {
+        return await delete(cacheName: cacheName, key: ScalarType.string(key))
+    }
+
+    /**
+     Deletes the given key from the cache.
+     - Parameters:
+        - cacheName: the name of the cache to store the value in
+        - key: the key to delete as Data
+     - Returns: `DeleteResponse` representing the result of the set operation.
+     
+     Pattern matching can be used to operate on the appropriate subtype.
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .success(_):
+         print("Success")
+      }
+     ```
+     */
+    public func delete(cacheName: String, key: Data) async -> DeleteResponse {
+        return await delete(cacheName: cacheName, key: ScalarType.data(key))
+    }
+    
     internal func delete(cacheName: String, key: ScalarType) async -> DeleteResponse {
         do {
             try validateCacheName(cacheName: cacheName)
@@ -591,6 +641,7 @@ public class CacheClient: CacheClientProtocol {
         }
         return await self.dataClient.delete(cacheName: cacheName, key: key)
     }
+    
     /**
      Adds multiple elements to the back of the given list. Creates the list if it does not already exist.
      - Parameters:
@@ -599,16 +650,17 @@ public class CacheClient: CacheClientProtocol {
         - values: the elements to add to the list
         - truncateFrontToSize: If the list exceeds this length, remove excess from the front of the list. Must be positive.
         - ttl: refreshes the list's TTL using the client's default if this is not supplied.
-     - Returns: ListConcatenateBackResponse representing the result of the operation.
+     - Returns: `ListConcatenateBackResponse` representing the result of the operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as ListConcatenateBackError:
-        // handle error
-     case let responseSuccess as ListConcatenateBackSuccess:
-        // handle success
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .success(let s):
+         print("Success: \(s.listLength)")
+      }
+     ```
      */
     public func listConcatenateBack(
         cacheName: String,
@@ -634,16 +686,17 @@ public class CacheClient: CacheClientProtocol {
         - values: the elements to add to the list
         - truncateFrontToSize: If the list exceeds this length, remove excess from the front of the list. Must be positive.
         - ttl: refreshes the list's TTL using the client's default if this is not supplied.
-     - Returns: ListConcatenateBackResponse representing the result of the operation.
+     - Returns: `ListConcatenateBackResponse` representing the result of the operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as ListConcatenateBackError:
-        // handle error
-     case let responseSuccess as ListConcatenateBackSuccess:
-        // handle success
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .success(let s):
+         print("Success: \(s.listLength)")
+      }
+     ```
      */
     public func listConcatenateBack(
         cacheName: String,
@@ -700,16 +753,17 @@ public class CacheClient: CacheClientProtocol {
         - values: the elements to add to the list
         - truncateBackToSize: If the list exceeds this length, remove excess from the back of the list. Must be positive.
         - ttl: refreshes the list's TTL using the client's default if this is not supplied.
-     - Returns: ListConcatenateFrontResponse representing the result of the operation.
+     - Returns: `ListConcatenateFrontResponse` representing the result of the operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as ListConcatenateFrontError:
-        // handle error
-     case let responseSuccess as ListConcatenateFrontSuccess:
-        // handle success
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .success(let s):
+         print("Success: \(s.listLength)")
+      }
+     ```
      */
     public func listConcatenateFront(
         cacheName: String,
@@ -735,16 +789,17 @@ public class CacheClient: CacheClientProtocol {
         - values: the elements to add to the list
         - truncateBackToSize: If the list exceeds this length, remove excess from the back of the list. Must be positive.
         - ttl: refreshes the list's TTL using the client's default if this is not supplied.
-     - Returns: ListConcatenateFrontResponse representing the result of the operation.
+     - Returns: `ListConcatenateFrontResponse` representing the result of the operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as ListConcatenateFrontError:
-        // handle error
-     case let responseSuccess as ListConcatenateFrontSuccess:
-        // handle success
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .success(let s):
+         print("Success: \(s.listLength)")
+      }
+     ```
      */
     public func listConcatenateFront(
         cacheName: String,
@@ -798,18 +853,19 @@ public class CacheClient: CacheClientProtocol {
         - listName: the list to fetch
         - startIndex: start index (inclusive) to begin fetching
         - endIndex: end index (exclusive) to stop fetching
-     - Returns: ListFetchResponse representing the result of the operation.
+     - Returns: `ListFetchResponse` representing the result of the operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as ListFetchError:
-        // handle error
-     case let responseMiss as ListFetchMiss:
-        // list does not exist
-     case let responseHit as ListFetchHit:
-        // list exists, handle values
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .miss(_):
+         print("Miss")
+      case .hit(let hit):
+         print("Hit: \(hit.valueListString)")
+      }
+     ```
      */
     public func listFetch(
         cacheName: String,
@@ -841,18 +897,19 @@ public class CacheClient: CacheClientProtocol {
      - Parameters:
         - cacheName: the name of the cache containing the list
         - listName: the list to get the length of
-     - Returns: ListLengthResponse representing the result of the operation.
+     - Returns: `ListLengthResponse` representing the result of the operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as ListLengthError:
-        // handle error
-     case let responseMiss as ListLengthMiss:
-        // list does not exist
-     case let responseHit as ListLengthHit:
-        // list exists, handle length
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .miss(_):
+         print("Miss")
+      case .hit(let hit):
+         print("Hit: \(hit.length)")
+      }
+     ```
      */
     public func listLength(
         cacheName: String,
@@ -876,18 +933,19 @@ public class CacheClient: CacheClientProtocol {
      - Parameters:
         - cacheName: the name of the cache containing the list
         - listName: the list to get the last element from
-     - Returns: ListPopBackResponse representing the result of the operation.
+     - Returns: `ListPopBackResponse` representing the result of the operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as ListPopBackError:
-        // handle error
-     case let responseMiss as ListPopBackMiss:
-        // list does not exist
-     case let responseHit as ListPopBackHit:
-        // list exists, handle value
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .miss(_):
+         print("Miss")
+      case .hit(let hit):
+         print("Hit: \(hit.valueString)")
+      }
+     ```
      */
     public func listPopBack(
         cacheName: String,
@@ -911,18 +969,19 @@ public class CacheClient: CacheClientProtocol {
      - Parameters:
         - cacheName: the name of the cache containing the list
         - listName: the list to get the first element from
-     - Returns: ListPopFrontResponse representing the result of the operation.
+     - Returns: `ListPopFrontResponse` representing the result of the operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as ListPopFrontError:
-        // handle error
-     case let responseMiss as ListPopFrontMiss:
-        // list does not exist
-     case let responseHit as ListPopFrontHit:
-        // list exists, handle value
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .miss(_):
+         print("Miss")
+      case .hit(let hit):
+         print("Hit: \(hit.valueString)")
+      }
+     ```
      */
     public func listPopFront(
         cacheName: String,
@@ -946,19 +1005,20 @@ public class CacheClient: CacheClientProtocol {
      - Parameters:
         - cacheName: the name of the cache to store the list in
         - listName: the list to add to
-        - value: the element to add to the list
+        - value: the element to add to the list as String
         - truncateFrontToSize: If the list exceeds this length, remove excess from the front of the list. Must be positive.
         - ttl: refreshes the list's TTL using the client's default if this is not supplied.
-     - Returns: ListPushBackResponse representing the result of the operation.
+     - Returns: `ListPushBackResponse` representing the result of the operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as ListPushBackError:
-        // handle error
-     case let responseSuccess as ListPushBackSuccess:
-        // handle success
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .success(let s):
+         print("Success: \(s.listLength)")
+      }
+     ```
      */
     public func listPushBack(
         cacheName: String,
@@ -981,19 +1041,20 @@ public class CacheClient: CacheClientProtocol {
      - Parameters:
         - cacheName: the name of the cache to store the list in
         - listName: the list to add to
-        - value: the element to add to the list
+        - value: the element to add to the list as Data
         - truncateFrontToSize: If the list exceeds this length, remove excess from the front of the list. Must be positive.
         - ttl: refreshes the list's TTL using the client's default if this is not supplied.
-     - Returns: ListPushBackResponse representing the result of the operation.
+     - Returns: `ListPushBackResponse` representing the result of the operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as ListPushBackError:
-        // handle error
-     case let responseSuccess as ListPushBackSuccess:
-        // handle success
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .success(let s):
+         print("Success: \(s.listLength)")
+      }
+     ```
      */
     public func listPushBack(
         cacheName: String,
@@ -1044,19 +1105,20 @@ public class CacheClient: CacheClientProtocol {
      - Parameters:
         - cacheName: the name of the cache to store the list in
         - listName: the list to add to
-        - value: the element to add to the list
+        - value: the element to add to the list as String
         - truncateBackToSize: If the list exceeds this length, remove excess from the back of the list. Must be positive.
         - ttl: refreshes the list's TTL using the client's default if this is not supplied.
-     - Returns: ListPushFrontResponse representing the result of the operation.
+     - Returns: `ListPushFrontResponse` representing the result of the operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as ListPushFrontError:
-        // handle error
-     case let responseSuccess as ListPushFrontSuccess:
-        // handle success
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .success(let s):
+         print("Success: \(s.listLength)")
+      }
+     ```
      */
     public func listPushFront(
         cacheName: String,
@@ -1079,19 +1141,20 @@ public class CacheClient: CacheClientProtocol {
      - Parameters:
         - cacheName: the name of the cache to store the list in
         - listName: the list to add to
-        - value: the element to add to the list
+        - value: the element to add to the list as Data
         - truncateBackToSize: If the list exceeds this length, remove excess from the back of the list. Must be positive.
         - ttl: refreshes the list's TTL using the client's default if this is not supplied.
-     - Returns: ListPushFrontResponse representing the result of the operation.
+     - Returns: `ListPushFrontResponse` representing the result of the operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as ListPushFrontError:
-        // handle error
-     case let responseSuccess as ListPushFrontSuccess:
-        // handle success
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .success(let s):
+         print("Success: \(s.listLength)")
+      }
+     ```
      */
     public func listPushFront(
         cacheName: String,
@@ -1142,17 +1205,18 @@ public class CacheClient: CacheClientProtocol {
      - Parameters:
         - cacheName: the name of the cache containing the list
         - listName: the list to remove values from
-        - value: the value to remove
-     - Returns: ListRemoveValueResponse representing the result of the operation.
+        - value: the value to remove as String
+     - Returns: `ListRemoveValueResponse` representing the result of the operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as ListRemoveValueError:
-        // handle error
-     case let responseSuccess as ListRemoveValueSuccess:
-        // handle success
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .success(_):
+         print("Success")
+      }
+     ```
      */
     public func listRemoveValue(
         cacheName: String,
@@ -1167,17 +1231,18 @@ public class CacheClient: CacheClientProtocol {
      - Parameters:
         - cacheName: the name of the cache containing the list
         - listName: the list to remove values from
-        - value: the value to remove
-     - Returns: ListRemoveValueResponse representing the result of the operation.
+        - value: the value to remove as Data
+     - Returns: `ListRemoveValueResponse` representing the result of the operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as ListRemoveValueError:
-        // handle error
-     case let responseSuccess as ListRemoveValueSuccess:
-        // handle success
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .success(_):
+         print("Success")
+      }
+     ```
      */
     public func listRemoveValue(
         cacheName: String,
@@ -1217,16 +1282,17 @@ public class CacheClient: CacheClientProtocol {
         - startIndex: start index (inclusive) of the slice to retain. Defaults to the start of the list.
         - endIndex: end index (exclusive) of the slice to retain. Defaults to the end of the list.
         - ttl: refreshes the list's TTL using the client's default if this is not supplied.
-     - Returns: ListRetainResponse representing the result of the operation.
+     - Returns: `ListRetainResponse` representing the result of the operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch response {
-     case let responseError as ListRetainError:
-        // handle error
-     case let responseSuccess as ListRetainSuccess:
-        // handle success
-     }
-    ```
+     ```
+      switch response {
+      case .error(let err):
+         print("Error: \(err)")
+      case .success(_):
+         print("Success")
+      }
+     ```
      */
     public func listRetain(
         cacheName: String,
