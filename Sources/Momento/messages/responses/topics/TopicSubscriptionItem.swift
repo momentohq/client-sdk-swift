@@ -11,7 +11,7 @@ import Foundation
   case .itemText(let text):
       print("Text: \(text)")
   case .itemBinary(let binary):
-      print("Binary: \(binary)")
+      print("Binary: \(String(decoding: binary, as: UTF8.self))")
   }
  ```
  */
