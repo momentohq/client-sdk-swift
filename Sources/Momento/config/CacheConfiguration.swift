@@ -23,7 +23,7 @@ public protocol CacheClientConfigurationProtocol {
 /**
  Configuration options for Momento CacheClient.
  
- The easiest way to get a `CacheClientConfiguration` object is to use one of the prebuilt CacheClientConfigurations enums.
+ The easiest way to get a `CacheClientConfiguration` object is to use one of the prebuilt CacheClientConfigurations classes.
  ```
  let config = CacheClientConfigurations.iOS.latest()
  ```
