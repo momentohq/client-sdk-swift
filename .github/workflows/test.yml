@@ -34,7 +34,7 @@ jobs:
       - name: Run test
         run: swift test
 
-  topics-example:
+  examples:
     runs-on: ubuntu-latest
     container: swift:5.8
     steps:
@@ -46,21 +46,9 @@ jobs:
         with:
           token: ${{ secrets.github-token }}
 
-      - name: Build
+      - name: Build topics example
         run: cd Examples/topics && swift build
-  
-  cache-example:
-    runs-on: ubuntu-latest
-    container: swift:5.8
-    steps:
-    #   - uses: swift-actions/setup-swift@65540b95f51493d65f5e59e97dcef9629ddf11bf
-    #     with:
-    #         swift-version: ${{ matrix.swift }}
-      - name: Setup repo
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.github-token }}
 
-      - name: Build
+      - name: Build cache example
         run: cd Examples/cache && swift build
 
