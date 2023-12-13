@@ -1,12 +1,26 @@
 import GRPC
 import Logging
 
+/**
+ Enum for a topic subscribe request response type.
+ 
+ Pattern matching can be used to operate on the appropriate subtype.
+ ```
+  switch response {
+  case .error(let err):
+      print("Error: \(err)")
+  case .subscription(let sub):
+      for try await item in sub.stream {...}
+  }
+ ```
+ */
 @available(macOS 10.15, iOS 13, *)
 public enum TopicSubscribeResponse {
     case subscription(TopicSubscription)
     case error(TopicSubscribeError)
 }
 
+/// Encapsulates a topic subscription. Iterate over the subscription's `stream` property to retrieve `TopicSubscriptionItemResponse` objects containing data published to the topic.
 @available(macOS 10.15, iOS 13, *)
 public class TopicSubscription {
     public typealias SubscriptionItemsMap = AsyncCompactMapSequence<GRPCAsyncResponseStream<CacheClient_Pubsub__SubscriptionItem>, TopicSubscriptionItemResponse>
@@ -34,4 +48,12 @@ internal func processResult(item: CacheClient_Pubsub__SubscriptionItem) -> Topic
     return nil
 }
 
+/**
+ Indicates that an error occurred during the topic subscribe request.
+ 
+ The response object includes the following fields you can use to determine how you want to handle the error:
+ - `errorCode`: a unique Momento error code indicating the type of error that occurred
+ - `message`: a human-readable description of the error
+ - `innerException`: the original error that caused the failure; can be re-thrown
+ */
 public class TopicSubscribeError: ErrorResponseBase {}
