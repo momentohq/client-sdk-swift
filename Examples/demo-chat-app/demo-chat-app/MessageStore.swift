@@ -1,6 +1,6 @@
 import SwiftUI
 import CoreData
-import momento
+import Momento
 
 struct ReceivedMessage: Identifiable {
     let id = UUID()
@@ -10,7 +10,7 @@ struct ReceivedMessage: Identifiable {
 public class MessageStore: ObservableObject {
     @State private var momentoClient: Momento
     @Published var messages: [ReceivedMessage] = [ReceivedMessage(text: "Welcome to Momento Topics!")]
-    private var subscription: TopicSubscribeSuccess? = nil
+    private var subscription: TopicSubscription? = nil
     
     init(momentoClient: Momento) {
         self.momentoClient = momentoClient
@@ -24,28 +24,28 @@ public class MessageStore: ObservableObject {
                 topicName: momentoClient.topicName
             )
             switch subResp {
-            case let subResp as TopicSubscribeSuccess:
-                self.subscription = subResp
+            case .subscription(let subscription):
+                self.subscription = subscription
                 print("Successful subscription")
-            default:
-                fatalError("Unable to establish Topics subscription")
+            case .error(let err):
+                fatalError("Unable to establish Topics subscription: \(err)")
             }
         }
         
         do {
-            for try await item in self.subscription!.subscription {
+            for try await item in self.subscription!.stream {
                 var value: String = ""
                 switch item {
-                case let textItem as TopicSubscriptionItemText:
+                case .itemText(let textItem):
                     value = textItem.value
                     print("Subscriber recieved text message: \(value)")
                     messages.append(ReceivedMessage(text: value))
-                case let binaryItem as TopicSubscriptionItemBinary:
+                case .itemBinary(let binaryItem):
                     value = String(decoding: binaryItem.value, as: UTF8.self)
                     print("Subscriber recieved binary message: \(value)")
                     messages.append(ReceivedMessage(text: value))
-                default:
-                    print("received unknown item type: \(item)")
+                case .error(let err):
+                    print("Subscriber received error: \(err)")
                 }
             }
         } catch {
