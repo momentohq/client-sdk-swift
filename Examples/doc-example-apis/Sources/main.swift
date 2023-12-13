@@ -6,7 +6,7 @@ func example_API_InstantiateCacheClient() {
     do {
         let credentialProvider = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
         let cacheClient = CacheClient(
-            configuration: CacheConfigurations.Default.latest(),
+            configuration: CacheClientConfigurations.iOS.latest(),
             credentialProvider: credentialProvider,
             defaultTtlSeconds: 10
         )
@@ -75,7 +75,7 @@ func example_API_InstantiateTopicClient() {
     do {
         let credentialProvider = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
         let topicClient = TopicClient(
-            configuration: TopicConfigurations.Default.latest(),
+            configuration: TopicClientConfigurations.iOS.latest(),
             credentialProvider: credentialProvider
         )
     } catch {
@@ -119,17 +119,15 @@ func example_API_Subscribe(topicClient: TopicClient, cacheName: String) async {
 
 @available(macOS 10.15, iOS 13, *)
 func main() async {
-    var topicClient: TopicClient
-    var cacheClient: CacheClient
     do {
         let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
-        topicClient = TopicClient(
-            configuration: TopicConfigurations.Default.latest(),
+        let topicClient = TopicClient(
+            configuration: TopicClientConfigurations.iOS.latest(),
             credentialProvider: creds
         )
 
-        cacheClient = CacheClient(
-            configuration: CacheConfigurations.Default.latest(),
+        let cacheClient = CacheClient(
+            configuration: CacheClientConfigurations.iOS.latest(),
             credentialProvider: creds,
             defaultTtlSeconds: 10
         )
@@ -144,7 +142,25 @@ func main() async {
 
         example_API_InstantiateTopicClient()
         await example_API_Publish(topicClient: topicClient, cacheName: cacheName)
-        await example_API_Subscribe(topicClient: topicClient, cacheName: cacheName)
+
+        // make sure to timeout, else this example will cause the program to hang
+        let subscribeTask = Task {
+            await example_API_Subscribe(topicClient: topicClient, cacheName: cacheName)
+        }
+        // timeout in 3 seconds
+        let timeoutTask = Task {
+            try await Task.sleep(nanoseconds: 3_000_000_000)
+            subscribeTask.cancel()
+        }
+        await withTaskCancellationHandler {
+            await subscribeTask.value
+            timeoutTask.cancel()
+            return
+        } onCancel: {
+            subscribeTask.cancel()
+            timeoutTask.cancel()
+        }
+        
     } catch {
         print("Unexpected error running doc examples: \(error)")
     }

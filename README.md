@@ -37,7 +37,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/momentohq/client-sdk-swift", exact: "0.3.1")
+        .package(url: "https://github.com/momentohq/client-sdk-swift", exact: "0.3.2")
     ],
     targets: [
         .executableTarget(

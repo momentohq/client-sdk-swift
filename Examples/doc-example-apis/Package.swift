@@ -6,16 +6,13 @@ import PackageDescription
 let package = Package(
     name: "doc-example-apis",
     dependencies: [
-        // TODO: use released version
-        .package(name: "Momento", path: "../..")
+        .package(url: "https://github.com/momentohq/client-sdk-swift", exact: "0.3.2")
     ],
     targets: [
         .executableTarget(
             name: "doc-example-apis",
             dependencies: [
-                // TODO: use released version
-                // .product(name: "Momento", package: "client-sdk-swift")
-                "Momento"
+                .product(name: "Momento", package: "client-sdk-swift"),
             ],
             path: "Sources"
         ),
