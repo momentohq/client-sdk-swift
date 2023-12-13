@@ -51,4 +51,7 @@ jobs:
 
       - name: Build cache example
         run: cd Examples/cache && swift build
+      
+      - name: Run dev doc examples
+        run: cd Examples/doc-example-apis && swift run
 
