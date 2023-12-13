@@ -37,7 +37,6 @@ public class TopicClient: TopicClientProtocol {
         - configuration: TopicClient configuration object specifying grpc transport strategy and other settings
         - credentialProvider: provides the Momento API key, which you can create in the [Momento Web Console](https://console.gomomento.com/api-keys)
      */
-
     public init(
         configuration: TopicClientConfigurationProtocol,
         credentialProvider: CredentialProviderProtocol
@@ -56,13 +55,14 @@ public class TopicClient: TopicClientProtocol {
         - topicName: name of the topic
         - value: the value to be published as String
      - Returns: TopicPublishResponse representing the result of the publish operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
     ```
      switch publishResponse {
-     case let publishError as TopicPublishError:
-        // handle error
-     case is TopicPublishSuccess:
-        // handle success
+     case .error(let err):
+         print("Error: \(err)")
+     case .success(_):
+         print("Success")
      }
     ```
      */
@@ -81,13 +81,14 @@ public class TopicClient: TopicClientProtocol {
         - topicName: name of the topic
         - value: the value to be published as Data
      - Returns: TopicPublishResponse representing the result of the publish operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
     ```
      switch publishResponse {
-     case let publishError as TopicPublishError:
-        // handle error
-     case is TopicPublishSuccess:
-        // handle success
+     case .error(let err):
+         print("Error: \(err)")
+     case .success(_):
+         print("Success")
      }
     ```
      */
@@ -140,16 +141,16 @@ public class TopicClient: TopicClientProtocol {
         - cacheName: name of the cache containing the topic
         - topicName: name of the topic
      - Returns: TopicSubscribeResponse representing the result of the subscribe operation.
+     
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
-     switch subscribeResponse {
-     case let subscribeError as TopicSubscribeError:
-        // handle error
-     case let subscribeSuccess as TopicSubscribeSuccess:
-        // handle success, iterate over newly published messages
-        for try await item in subscribeSuccess.subscription {...}
-     }
-    ```
+     ```
+      switch subscribeResponse {
+      case .error(let err):
+          print("Error: \(err)")
+      case .subscription(let sub):
+          for try await item in sub.stream {...}
+      }
+     ```
      */
     public func subscribe(cacheName: String, topicName: String) async -> TopicSubscribeResponse {
         do {
