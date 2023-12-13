@@ -16,7 +16,7 @@ public class CacheInfo {
   case .error(let err):
      print("Error: \(err)")
   case .success(let s):
-     print("Success: \(s.caches)")
+     print("Success: \(s.caches.map{ $0.name })")
   }
  ```
  */
