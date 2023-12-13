@@ -1015,8 +1015,10 @@ public class CacheClient: CacheClientProtocol {
       switch response {
       case .error(let err):
          print("Error: \(err)")
-      case .success(let s):
-         print("Success: \(s.listLength)")
+      case .alreadyExists(_):
+         print("Cache already exists")
+      case .success(_):
+         print("Success")
       }
      ```
      */
