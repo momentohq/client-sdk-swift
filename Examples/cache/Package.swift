@@ -4,12 +4,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "momento-topics-example",
+    name: "momento-cache-example",
     platforms: [.macOS(.v10_15), .iOS(.v13)],
     products: [
         .executable(
-            name: "momento-topics-example",
-            targets: ["momento-topics-example"]
+            name: "momento-cache-example",
+            targets: ["momento-cache-example"]
         ),
     ],
     dependencies: [
@@ -17,7 +17,7 @@ let package = Package(
     ],
     targets: [
         .executableTarget(
-            name: "momento-topics-example",
+            name: "momento-cache-example",
             dependencies: [
                 .product(name: "Momento", package: "client-sdk-swift"),
             ],

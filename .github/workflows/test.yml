@@ -34,7 +34,7 @@ jobs:
       - name: Run test
         run: swift test
 
-  topics-example:
+  examples:
     runs-on: ubuntu-latest
     container: swift:5.8
     steps:
@@ -46,6 +46,9 @@ jobs:
         with:
           token: ${{ secrets.github-token }}
 
-      - name: Build
+      - name: Build topics example
         run: cd Examples/topics && swift build
+
+      - name: Build cache example
+        run: cd Examples/cache && swift build
 

@@ -1,4 +1,4 @@
-import momento
+import Momento
 
 func main() async {
     print("Running Momento Topics example!")
@@ -13,35 +13,33 @@ func main() async {
         return
     }
 
-    let client = TopicClient(configuration: TopicConfigurations.Default.latest(), credentialProvider: creds)
+    let client = TopicClient(configuration: TopicClientConfigurations.iOS.latest(), credentialProvider: creds)
 
     let subscribeResponse = await client.subscribe(cacheName: cacheName, topicName: topicName)
     
+    let subscription: TopicSubscription
     switch subscribeResponse {
-    case let subscribeError as TopicSubscribeError:
-        print("Subscribe error: \(subscribeError.description)")
+    case .error(let err):
+        print("Subscribe error: \(err)")
         return
-    case is TopicSubscribeSuccess:
+    case .subscription(let sub):
         print("Successful subscription!")
-    default:
-        print("Unknown subscribe response: \(subscribeResponse)")
-        return
+        subscription = sub
     }
-    
+
     let receiveTask = Task {
-        let subscription = (subscribeResponse as! TopicSubscribeSuccess).subscription
         do {
-            for try await item in subscription {
+            for try await item in subscription.stream {
                 var value: String = ""
                 switch item {
-                case let textItem as TopicSubscriptionItemText:
+                case .itemText(let textItem):
                     value = textItem.value
                     print("Subscriber recieved text message: \(value)")
-                case let binaryItem as TopicSubscriptionItemBinary:
+                case .itemBinary(let binaryItem):
                     value = String(decoding: binaryItem.value, as: UTF8.self)
                     print("Subscriber recieved binary message: \(value)")
-                default:
-                    print("received unknown item type: \(item)")
+                case .error(let err):
+                    print("Subscriber received error: \(err)")
                 }
 
                 // we can exit the loop once we receive the last message
@@ -62,14 +60,11 @@ func main() async {
 
         // Check the response type (error or success?)
         switch publishResponse {
-        case let publishError as TopicPublishError:
-            print("Publish error: \(publishError.description)")
+        case .error(let err):
+            print("Publish error: \(err)")
             return
-        case is TopicPublishSuccess:
+        case .success(_):
             print("Successfully published: \(message)")
-        default:
-            print("Unknown publish response: \(publishResponse)")
-            return
         }
     }
     

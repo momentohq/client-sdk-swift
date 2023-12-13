@@ -1,5 +1,5 @@
 import SwiftUI
-import momento
+import Momento
 
 class Momento: ObservableObject {
     private let momentoApiKey: String = ""
@@ -13,9 +13,9 @@ class Momento: ObservableObject {
             fatalError("Missing Momento API key in app initiation")
         }
         do {
-            let credProvider = try CredentialProvider.fromString(authToken: self.momentoApiKey)
+            let credProvider = try CredentialProvider.fromString(apiKey: self.momentoApiKey)
             self.topicClient = TopicClient(
-                configuration: TopicConfigurations.Default.latest().withClientTimeout(timeout: 600),
+                configuration: TopicClientConfigurations.iOS.latest().withClientTimeout(timeout: 600),
                 credentialProvider: credProvider
             )
         } catch {

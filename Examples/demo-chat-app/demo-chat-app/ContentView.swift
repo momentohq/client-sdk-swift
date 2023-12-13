@@ -1,5 +1,5 @@
 import SwiftUI
-import momento
+import Momento
 
 struct ContentView: View {
     @State private var momentoClient: Momento
@@ -88,10 +88,10 @@ struct ContentView: View {
             value: message
         )
         switch result {
-        case is TopicPublishSuccess:
+        case .success(_):
             print("Successful publish")
-        default:
-            print("Error publishing: \(result)")
+        case .error(let err):
+            print("Error publishing: \(err)")
         }
     }
 }
