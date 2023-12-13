@@ -23,7 +23,7 @@ public protocol TopicClientConfigurationProtocol {
 /**
  Configuration options for Momento TopicClient.
  
- The easiest way to get a `TopicClientConfiguration` object is to use one of the prebuilt TopicClientConfigurations enums.
+ The easiest way to get a `TopicClientConfiguration` object is to use one of the prebuilt TopicClientConfigurations classes.
  ```
  let config = TopicClientConfiguration.iOS.latest()
  ```
