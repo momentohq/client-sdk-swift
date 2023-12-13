@@ -11,9 +11,23 @@ public protocol TopicClientConfigurationProtocol {
     - Returns a new `TopicClientConfiguration` object with the specified transport strategy
     */
     func withTransportStrategy(transportStrategy: TransportStrategyProtocol) -> TopicClientConfigurationProtocol
+    
+    /**
+    Convenience copy constructor that updates the client-side timeout setting in the transport strategy
+    - Parameter timeout: a `TimeInterval` respresenting the client-side timeout
+    - Returns a new `TopicClientConfiguration` object with its transport strategy updated to use the specified client timeout
+    */
     func withClientTimeout(timeout: TimeInterval) -> TopicClientConfigurationProtocol
 }
 
+/**
+ Configuration options for Momento TopicClient.
+ 
+ The easiest way to get a `TopicClientConfiguration` object is to use one of the prebuilt TopicClientConfigurations enums.
+ ```
+ let config = TopicClientConfiguration.iOS.latest()
+ ```
+ */
 public class TopicClientConfiguration: TopicClientConfigurationProtocol {
     public var transportStrategy: TransportStrategyProtocol
     
