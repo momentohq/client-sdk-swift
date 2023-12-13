@@ -17,12 +17,16 @@ public enum ListPushFrontResponse {
 }
 
 /// Indicates a successful list push front request.
-public class ListPushFrontSuccess {
+public class ListPushFrontSuccess: CustomStringConvertible {
     /// The new length of the list after the push front operation.
     public let listLength: UInt32
     
     init(length: UInt32) {
         self.listLength = length
+    }
+    
+    public var description: String {
+        return "[\(type(of: self))] List length after push: \(self.listLength)"
     }
 }
 

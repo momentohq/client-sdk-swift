@@ -17,12 +17,16 @@ public enum ListPushBackResponse {
 }
 
 /// Indicates a successful list push back request.
-public class ListPushBackSuccess {
+public class ListPushBackSuccess: CustomStringConvertible {
     /// The new length of the list after the push back operation.
     public let listLength: UInt32
     
     init(length: UInt32) {
         self.listLength = length
+    }
+    
+    public var description: String {
+        return "[\(type(of: self))] List length after push: \(self.listLength)"
     }
 }
 

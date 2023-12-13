@@ -22,7 +22,7 @@ public enum GetResponse {
 }
 
 /// Indicates that the requested data was successfully retrieved from the cache and can be accessed by the fields `valueString` or `valueData`.
-public class GetHit: Equatable {
+public class GetHit: Equatable, CustomStringConvertible {
     /// Cache item value as type String
     public let valueString: String
     /// Cache item value as type Data
@@ -35,6 +35,10 @@ public class GetHit: Equatable {
 
     public static func == (lhs: GetHit, rhs: GetHit) -> Bool {
         return lhs.valueData == rhs.valueData
+    }
+    
+    public var description: String {
+        return "[\(type(of: self))] Value: \(self.valueString)"
     }
 }
 

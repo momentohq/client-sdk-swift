@@ -22,7 +22,7 @@ public enum ListPopBackResponse {
 }
 
 /// Indicates that the requested data was successfully retrieved from the cache and can be accessed by the fields `valueString` or `valueData`.
-public class ListPopBackHit {
+public class ListPopBackHit: CustomStringConvertible {
     /// Popped value as String
     public let valueString: String
     /// Popped value as Data
@@ -31,6 +31,10 @@ public class ListPopBackHit {
     init(value: Data) {
         self.valueData = value
         self.valueString = String(decoding: value, as: UTF8.self)
+    }
+    
+    public var description: String {
+        return "[\(type(of: self))] Popped value: \(self.valueString)"
     }
 }
 

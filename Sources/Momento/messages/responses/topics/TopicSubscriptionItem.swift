@@ -22,20 +22,28 @@ public enum TopicSubscriptionItemResponse {
 }
 
 /// Topic subscription item that was recieved as type String and can be accessed using the `value` field
-public class TopicSubscriptionItemText {
+public class TopicSubscriptionItemText: CustomStringConvertible {
     public let value: String
     
     init(value: String) {
         self.value = value
     }
+    
+    public var description: String {
+        return "[\(type(of: self))] Value: \(self.value)"
+    }
 }
 
 /// Topic subscription item that was recieved as type Data and can be accessed using the `value` field
-public class TopicSubscriptionItemBinary {
+public class TopicSubscriptionItemBinary: CustomStringConvertible {
     public let value: Data
     
     init(value: Data) {
         self.value = value
+    }
+    
+    public var description: String {
+        return "[\(type(of: self))] Value: \(String(decoding: self.value, as: UTF8.self))"
     }
 }
 

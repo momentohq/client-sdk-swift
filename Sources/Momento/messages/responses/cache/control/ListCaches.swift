@@ -26,7 +26,7 @@ public enum ListCachesResponse {
 }
 
 /// Indicates a successful list caches request.
-public class ListCachesSuccess {
+public class ListCachesSuccess: CustomStringConvertible {
     /// An array of `CacheInfo` objects, containing information about each cache.
     public let caches: [CacheInfo]
     
@@ -34,6 +34,10 @@ public class ListCachesSuccess {
         self.caches = caches.map({ cache in
             return CacheInfo(name: cache.cacheName)
         })
+    }
+    
+    public var description: String {
+        return "[\(type(of: self))] Length of caches list: \(self.caches.count)"
     }
 }
 

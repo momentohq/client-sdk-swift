@@ -22,7 +22,7 @@ public enum ListFetchResponse {
 }
 
 /// Indicates that the requested list was successfully retrieved from the cache and can be accessed by the fields `valueListString` or `valueListData`.
-public class ListFetchHit {
+public class ListFetchHit: CustomStringConvertible {
     /// List values as type String
     public let valueListString: [String]
     /// List values as type Data
@@ -31,6 +31,10 @@ public class ListFetchHit {
     init(values: [Data]) {
         self.valueListData = values
         self.valueListString = values.map { String(decoding: $0, as: UTF8.self) }
+    }
+    
+    public var description: String {
+        return "[\(type(of: self))] List length: \(self.valueListData.count)"
     }
 }
 

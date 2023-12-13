@@ -17,12 +17,16 @@ public enum ListConcatenateBackResponse {
 }
 
 /// Indicates a successful list concatenate back request.
-public class ListConcatenateBackSuccess {
+public class ListConcatenateBackSuccess: CustomStringConvertible {
     /// The new length of the list after the concatenate operation.
     public let listLength: UInt32
 
     init(length: UInt32) {
         self.listLength = length
+    }
+    
+    public var description: String {
+        return "[\(type(of: self))] List length post-concatenation: \(self.listLength)"
     }
 }
 
