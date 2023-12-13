@@ -47,5 +47,5 @@ jobs:
           token: ${{ secrets.github-token }}
 
       - name: Build
-        run: swift build
+        run: cd Examples/topics && swift build
 
