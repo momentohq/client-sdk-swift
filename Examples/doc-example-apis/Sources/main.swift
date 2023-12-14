@@ -12,6 +12,7 @@ func example_API_InstantiateCacheClient() {
         )
     } catch {
         print("Unable to create cache client: \(error)")
+        exit(1)
     }
 }
 
@@ -25,6 +26,7 @@ func example_API_CreateCache(cacheClient: CacheClient, cacheName: String) async 
         print("Successfully created the cache!")
     case .error(let err):
         print("Unable to create the cache: \(err)")
+        exit(1)
     }
 }
 
@@ -36,6 +38,7 @@ func example_API_ListCaches(cacheClient: CacheClient) async {
         print("Successfully created fetched list of caches: \(success.caches.map { $0.name })")
     case .error(let err):
         print("Unable to fetch list of caches: \(err)")
+        exit(1)
     }
 }
 
@@ -47,6 +50,7 @@ func example_API_DeleteCache(cacheClient: CacheClient, cacheName: String) async 
         print("Successfully deleted the cache")
     case .error(let err):
         print("Unable to delete cache: \(err)")
+        exit(1)
     }
 }
 
@@ -62,6 +66,7 @@ func example_API_Set(cacheClient: CacheClient, cacheName: String) async {
         print("Successfully set item in the cache")
     case .error(let err):
         print("Unable to set item in the cache: \(err)")
+        exit(1)
     }
 }
 
@@ -78,6 +83,7 @@ func example_API_Get(cacheClient: CacheClient, cacheName: String) async {
         print("Cache miss")
     case .error(let err):
         print("Unable to get item in the cache: \(err)")
+        exit(1)
     }
 }
 
@@ -92,6 +98,7 @@ func example_API_Delete(cacheClient: CacheClient, cacheName: String) async {
         print("Successfully deleted item in the cache")
     case .error(let err):
         print("Unable to delete item in the cache: \(err)")
+        exit(1)
     }
 }
 
@@ -105,6 +112,7 @@ func example_API_InstantiateTopicClient() {
         )
     } catch {
         print("Unable to create topic client: \(error)")
+        exit(1)
     }
 }
 
@@ -120,6 +128,7 @@ func example_API_Publish(topicClient: TopicClient, cacheName: String) async {
         print("Successfully published message!")
     case .error(let err):
         print("Unable to publish message: \(err)")
+        exit(1)
     }
 }
 
@@ -133,12 +142,16 @@ func example_API_Subscribe(topicClient: TopicClient, cacheName: String) async {
             for try await message in subscription.stream {
                 print("Received message: \(message)")
             }
+        } catch is CancellationError {
+            print("Subscription was cancelled, exiting Topics Subscribe example")
         } catch {
             print("Unexpected error while receving message: \(error)")
+            exit(1)
         }
 
     case.error(let err):
         print("Unable to subscribe to topic: \(err)")
+        exit(1)
     }
 }
 
@@ -190,6 +203,7 @@ func main() async {
         await example_API_DeleteCache(cacheClient: cacheClient, cacheName: cacheName)
     } catch {
         print("Unexpected error running doc examples: \(error)")
+        exit(1)
     }
 }
 
