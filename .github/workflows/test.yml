@@ -28,23 +28,11 @@ jobs:
         with:
           token: ${{ secrets.github-token }}
 
-      - name: Build
+      - name: Build momento package
         run: swift build
 
-      - name: Run test
+      - name: Run momento package tests
         run: swift test
-
-  examples:
-    runs-on: ubuntu-latest
-    container: swift:5.8
-    steps:
-    #   - uses: swift-actions/setup-swift@65540b95f51493d65f5e59e97dcef9629ddf11bf
-    #     with:
-    #         swift-version: ${{ matrix.swift }}
-      - name: Setup repo
-        uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.github-token }}
 
       - name: Build topics example
         run: cd Examples/topics && swift build
