@@ -117,7 +117,7 @@ func example_API_InstantiateTopicClient() {
 }
 
 @available(macOS 10.15, iOS 13, *)
-func example_API_Publish(topicClient: TopicClient, cacheName: String) async {
+func example_API_TopicPublish(topicClient: TopicClient, cacheName: String) async {
     let result = await topicClient.publish(
         cacheName: cacheName,
         topicName: "topic",
@@ -133,7 +133,7 @@ func example_API_Publish(topicClient: TopicClient, cacheName: String) async {
 }
 
 @available(macOS 10.15, iOS 13, *)
-func example_API_Subscribe(topicClient: TopicClient, cacheName: String) async {
+func example_API_TopicSubscribe(topicClient: TopicClient, cacheName: String) async {
     let result = await topicClient.subscribe(cacheName: cacheName, topicName: "topic")
     switch result {
     case .subscription(let subscription):
@@ -180,11 +180,11 @@ func main() async {
         await example_API_Delete(cacheClient: cacheClient, cacheName: cacheName)
 
         example_API_InstantiateTopicClient()
-        await example_API_Publish(topicClient: topicClient, cacheName: cacheName)
+        await example_API_TopicPublish(topicClient: topicClient, cacheName: cacheName)
 
         // make sure to timeout, else this example will cause the program to hang
         let subscribeTask = Task {
-            await example_API_Subscribe(topicClient: topicClient, cacheName: cacheName)
+            await example_API_TopicSubscribe(topicClient: topicClient, cacheName: cacheName)
         }
         // timeout in 3 seconds
         let timeoutTask = Task {
