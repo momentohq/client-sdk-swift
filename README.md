@@ -53,7 +53,7 @@ let package = Package(
 
 ## Usage
 
-Check out our [topics example](./Examples/topics/README.md) directory for a complete example of using the Momento Swift SDK to implement a publish and subscribe system.
+Check out our [topics example](./Examples/topics/README.md) directory for a complete example of using the Momento Swift SDK to implement a publish and subscribe system and our [cache example](./Examples/cache/README.md) directory for an example of using the cache client.
 
 ## Getting Started and Documentation
 
@@ -61,7 +61,7 @@ General documentation on Momento and the Momento SDKs is available on the [Momen
 
 ## Examples
 
-Check out full working code in the [topics example](./Examples/topics/README.md) directory of this repository!
+Check out full working code in the [Example](./Examples/) directory of this repository!
 
 ## Logging
 
