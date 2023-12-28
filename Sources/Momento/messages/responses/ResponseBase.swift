@@ -1,4 +1,4 @@
-public class ErrorResponseBase: ErrorResponseBaseProtocol, CustomStringConvertible {
+public class ErrorResponseBase: ErrorResponseBaseProtocol, Error, CustomStringConvertible {
     var error: SdkError
     public var message: String { return self.error.message }
     public var errorCode: MomentoErrorCode { return self.error.errorCode }
