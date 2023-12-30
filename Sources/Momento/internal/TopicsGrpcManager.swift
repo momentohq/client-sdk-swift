@@ -43,4 +43,8 @@ internal class TopicsGrpcManager {
     func getClient() -> CacheClient_Pubsub_PubsubAsyncClient {
         return self.client
     }
+    
+    func close() {
+        let _ = self.channel.close()
+    }
 }
