@@ -69,8 +69,9 @@ We are using [swift-log](https://github.com/apple/swift-log) to create internal 
 The default logging backend provided by swift-log ([`StreamLogHandler`](https://github.com/apple/swift-log/#default-logger-behavior)) simply prints to stdout at a default logging level of `.info`.
 
 To change the logging level and/or redirect logs to stderr, you would call  [`LoggingSystem.bootstrap(...)`](https://github.com/apple/swift-log/#default-logger-behavior) once at the beginning of your program like so:
-```
-LoggingSystem.bootstrap {
+
+```swift
+LoggingSystem.bootstrap { _ in
     var handler = StreamLogHandler.standardError(label: "momento-logger")
     handler.logLevel = .debug
     return handler
