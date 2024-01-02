@@ -48,6 +48,10 @@ let package = Package(
 
 Check out our [topics example](./Examples/topics/README.md) directory for a complete example of using the Momento Swift SDK to implement a publish and subscribe system and our [cache example](./Examples/cache/README.md) directory for an example of using the cache client.
 
+Here is a quickstart you can use for your own project:
+
+{% include "./Examples/doc-example-apis/readme.swift" %}
+
 ## Getting Started and Documentation
 
 General documentation on Momento and the Momento SDKs is available on the [Momento Docs website](https://docs.momentohq.com/). Specific usage examples for the Swift SDK can be found in the [cache](https://docs.momentohq.com/cache/develop/sdks/swift/cheat-sheet) and [topics](https://docs.momentohq.com/topics/develop/sdks/swift/cheat-sheet) cheat sheets!
