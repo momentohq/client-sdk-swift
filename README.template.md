@@ -44,6 +44,7 @@ let package = Package(
     ]
 )
 ```
+
 ## Usage
 
 Check out our [topics example](./Examples/topics/README.md) directory for a complete example of using the Momento Swift SDK to implement a publish and subscribe system and our [cache example](./Examples/cache/README.md) directory for an example of using the cache client.
@@ -66,7 +67,8 @@ We are using [swift-log](https://github.com/apple/swift-log) to create internal 
 The default logging backend provided by swift-log ([`StreamLogHandler`](https://github.com/apple/swift-log/#default-logger-behavior)) simply prints to stdout at a default logging level of `.info`.
 
 To change the logging level and/or redirect logs to stderr, you would call  [`LoggingSystem.bootstrap(...)`](https://github.com/apple/swift-log/#default-logger-behavior) once at the beginning of your program like so:
-```
+
+```swift
 LoggingSystem.bootstrap {
     var handler = StreamLogHandler.standardError(label: "momento-logger")
     handler.logLevel = .debug
@@ -81,4 +83,3 @@ You can also use the `LoggingSystem.bootstrap` call to configure your preferred 
 If you are interested in contributing to the SDK, please see the [CONTRIBUTING](./CONTRIBUTING.md) docs.
 
 {{ ossFooter }}
-
