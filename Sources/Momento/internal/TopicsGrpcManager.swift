@@ -23,8 +23,8 @@ internal class TopicsGrpcManager {
                 // Additional configuration, like keepalive.
                 // Note: Keepalive should in most circumstances not be necessary.
                 configuration.keepalive = ClientConnectionKeepalive(
-                    interval: .seconds(15),
-                    timeout: .seconds(10)
+                    interval: .seconds(10),
+                    timeout: .seconds(5)
                 )
             }
         } catch {
