@@ -39,6 +39,9 @@ jobs:
 
       - name: Build cache example
         run: cd Examples/cache && swift build
+
+      - name: Build quickstart example
+        run: cd Examples/quickstart && swift build
       
       - name: Run dev doc examples
         env:

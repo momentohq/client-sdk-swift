@@ -9,7 +9,7 @@ func main() async {
         creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
     } catch {
         print("Error establishing credential provider: \(error)")
-        return
+        exit(1)
     }
 
     let cacheClient = CacheClient(
@@ -29,6 +29,7 @@ func main() async {
         print("Cache miss")
     case .error(let err):
         print("Unable to get item in the cache: \(err)")
+        exit(1)
     }
 }
 
