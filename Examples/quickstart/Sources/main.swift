@@ -1,4 +1,5 @@
 import Momento
+import Foundation
 
 func main() async {
   print("Running Momento Cache example!")
