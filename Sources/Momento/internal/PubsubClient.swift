@@ -28,7 +28,7 @@ class PubsubClient: PubsubClientProtocol {
     let configuration: TopicClientConfigurationProtocol
     let credentialProvider: CredentialProviderProtocol
     let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
-    let headers = ["agent": "swift:0.1.0"]
+    let headers = ["agent": "swift:0.3.2"]
     let grpcManager: TopicsGrpcManager
     let client: CacheClient_Pubsub_PubsubAsyncClient
     
