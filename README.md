@@ -1,10 +1,23 @@
 <head>
-  <meta name="Momento Go Client Library Documentation" content="Go client software development kit for Momento Cache">
+  <meta name="Momento Swift Client Library Documentation" content="Swift client software development kit for Momento Cache">
 </head>
 <img src="https://docs.momentohq.com/img/logo.svg" alt="logo" width="400"/>
 
 [![project status](https://momentohq.github.io/standards-and-practices/badges/project-status-official.svg)](https://github.com/momentohq/standards-and-practices/blob/main/docs/momento-on-github.md)
 [![project stability](https://momentohq.github.io/standards-and-practices/badges/project-stability-beta.svg)](https://github.com/momentohq/standards-and-practices/blob/main/docs/momento-on-github.md)
+
+# Momento Swift Client Library
+
+Momento Cache is a fast, simple, pay-as-you-go caching solution without any of the operational overhead
+required by traditional caching solutions.  This repo contains the source code for the Momento Swift client library.
+
+To get started with Momento you will need a Momento Auth Token. You can get one from the [Momento Console](https://console.gomomento.com).
+
+* Website: [https://www.gomomento.com/](https://www.gomomento.com/)
+* Momento Documentation: [https://docs.momentohq.com/](https://docs.momentohq.com/)
+* Getting Started: [https://docs.momentohq.com/getting-started](https://docs.momentohq.com/getting-started)
+* Swift SDK Documentation: [https://docs.momentohq.com/develop/sdks/swift](https://docs.momentohq.com/develop/sdks/swift)
+* Discuss: [Momento Discord](https://discord.gg/3HkAKjUZGq)
 
 # Momento Swift SDK
 
@@ -54,6 +67,46 @@ let package = Package(
 ## Usage
 
 Check out our [topics example](./Examples/topics/README.md) directory for a complete example of using the Momento Swift SDK to implement a publish and subscribe system and our [cache example](./Examples/cache/README.md) directory for an example of using the cache client.
+
+Here is a quickstart you can use for your own project:
+
+import Momento
+import Foundation
+
+func main() async {
+  print("Running Momento Cache example!")
+  let cacheName = "example-cache"
+
+  var creds: CredentialProviderProtocol
+    do {
+        creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
+    } catch {
+        print("Error establishing credential provider: \(error)")
+        exit(1)
+    }
+
+    let cacheClient = CacheClient(
+      configuration: CacheClientConfigurations.iOS.latest(), 
+      credentialProvider: creds,
+      defaultTtlSeconds: 10
+    )
+
+    let getResult = await cacheClient.get(
+        cacheName: cacheName,
+        key: "key"
+    )
+    switch getResult {
+    case .hit(let hit):
+        print("Cache hit: \(hit.valueString)")
+    case .miss(_):
+        print("Cache miss")
+    case .error(let err):
+        print("Unable to get item in the cache: \(err)")
+        exit(1)
+    }
+}
+
+await main()
 
 ## Getting Started and Documentation
 
