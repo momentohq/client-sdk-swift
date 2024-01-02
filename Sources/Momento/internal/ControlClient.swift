@@ -3,6 +3,7 @@ import NIO
 import NIOHPACK
 import Logging
 
+@available(macOS 10.15, iOS 13, *)
 protocol ControlClientProtocol {
     func createCache(cacheName: String) async -> CreateCacheResponse
     

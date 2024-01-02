@@ -11,6 +11,7 @@ enum ScalarType {
 
 protocol CacheClientProtocol: ControlClientProtocol & DataClientProtocol {}
 
+@available(macOS 10.15, iOS 13, *)
 extension CacheClientProtocol {
     public func get(cacheName: String, key: String) async -> GetResponse {
         return await self.get(cacheName: cacheName, key: ScalarType.string(key))
