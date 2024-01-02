@@ -4,6 +4,7 @@ import NIO
 import NIOHPACK
 import Logging
 
+@available(macOS 10.15, iOS 13, *)
 protocol DataClientProtocol {
     func get(cacheName: String, key: ScalarType) async -> GetResponse
 
