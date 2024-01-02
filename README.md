@@ -57,11 +57,11 @@ Check out our [topics example](./Examples/topics/README.md) directory for a comp
 
 ## Getting Started and Documentation
 
-General documentation on Momento and the Momento SDKs is available on the [Momento Docs website](https://docs.momentohq.com/). Specific usage examples for the Swift SDK will be available there as well soon!
+General documentation on Momento and the Momento SDKs is available on the [Momento Docs website](https://docs.momentohq.com/). Specific usage examples for the Swift SDK can be found in the [cache](https://docs.momentohq.com/cache/develop/sdks/swift/cheat-sheet) and [topics](https://docs.momentohq.com/topics/develop/sdks/swift/cheat-sheet) cheat sheets!
 
 ## Examples
 
-Check out full working code in the [Example](./Examples/) directory of this repository!
+Check out full working code in the [Examples](./Examples/) directory of this repository!
 
 ## Logging
 
@@ -69,8 +69,9 @@ We are using [swift-log](https://github.com/apple/swift-log) to create internal 
 The default logging backend provided by swift-log ([`StreamLogHandler`](https://github.com/apple/swift-log/#default-logger-behavior)) simply prints to stdout at a default logging level of `.info`.
 
 To change the logging level and/or redirect logs to stderr, you would call  [`LoggingSystem.bootstrap(...)`](https://github.com/apple/swift-log/#default-logger-behavior) once at the beginning of your program like so:
-```
-LoggingSystem.bootstrap {
+
+```swift
+LoggingSystem.bootstrap { _ in
     var handler = StreamLogHandler.standardError(label: "momento-logger")
     handler.logLevel = .debug
     return handler
