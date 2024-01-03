@@ -57,6 +57,9 @@ public class TopicSubscription {
                 if (err.code == .cancelled) {
                     self.logger.debug("Canceled, not resubscribing")
                     return nil
+                } else if (err.code == .resourceExhausted) {
+                    self.logger.debug("Too many subscribers, not resubscribing")
+                    return nil
                 } else {
                     self.logger.debug("Caught GRPCStatus \(err), attempting to resubscribe")
                     await self.attemptResubscribe()
