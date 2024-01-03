@@ -15,7 +15,8 @@ protocol PubsubClientProtocol {
 
     func subscribe(
         cacheName: String,
-        topicName: String
+        topicName: String,
+        resumeAtTopicSequenceNumber: UInt64?
     ) async throws -> TopicSubscribeResponse
     
     func close()
@@ -23,12 +24,13 @@ protocol PubsubClientProtocol {
 
 @available(macOS 10.15, iOS 13, *)
 class PubsubClient: PubsubClientProtocol {
-    var logger: Logger
-    var configuration: TopicClientConfigurationProtocol
-    var credentialProvider: CredentialProviderProtocol
-    var sharedChannel: GRPCChannel
-    var eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
-    var client: CacheClient_Pubsub_PubsubAsyncClient
+    let logger = Logger(label: "PubsubClient")
+    let configuration: TopicClientConfigurationProtocol
+    let credentialProvider: CredentialProviderProtocol
+    let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
+    let headers = ["agent": "swift:0.3.2"]
+    let grpcManager: TopicsGrpcManager
+    let client: CacheClient_Pubsub_PubsubAsyncClient
     
     init(
         configuration: TopicClientConfigurationProtocol,
@@ -36,36 +38,12 @@ class PubsubClient: PubsubClientProtocol {
     ) {
         self.configuration = configuration
         self.credentialProvider = credentialProvider
-        self.logger = Logger(label: "PubsubClient")
-        
-        do {
-            self.sharedChannel = try GRPCChannelPool.with(
-                target: .host(credentialProvider.cacheEndpoint, port: 443),
-                transportSecurity: .tls(
-                    GRPCTLSConfiguration.makeClientDefault(compatibleWith: eventLoopGroup)
-                ),
-                eventLoopGroup: self.eventLoopGroup
-                ) { configuration in
-                    // Additional configuration, like keepalive.
-                    // Note: Keepalive should in most circumstances not be necessary.
-                    configuration.keepalive = ClientConnectionKeepalive(
-                        interval: .seconds(15),
-                        timeout: .seconds(10)
-                    )
-                }
-        } catch {
-            fatalError("Failed to open GRPC channel")
-        }
-        
-        let headers = ["agent": "swift:0.1.0"]
-
-        self.client = CacheClient_Pubsub_PubsubAsyncClient(
-            channel: self.sharedChannel,
-            defaultCallOptions: .init(
-                customMetadata: .init(headers.map { ($0, $1) })
-            ),
-            interceptors: PubsubClientInterceptorFactory(apiKey: credentialProvider.apiKey)
+        self.grpcManager = TopicsGrpcManager(
+            credentialProvider: credentialProvider,
+            eventLoopGroup: self.eventLoopGroup,
+            headers: self.headers
         )
+        self.client = self.grpcManager.getClient()
     }
     
     func publish(
@@ -91,9 +69,6 @@ class PubsubClient: PubsubClientProtocol {
             )
             // Successful publish returns client_sdk_swift.CacheClient_Pubsub__Empty
             self.logger.debug("Publish response: \(result)")
-            // TODO: I'm just resetting customMetadata after it's sent once to prevent the agent
-            //  header from being sent more than once. Need to repeat this in subscribe().
-            self.client.defaultCallOptions.customMetadata = HPACKHeaders()
             return TopicPublishResponse.success(TopicPublishSuccess())
         } catch let err as GRPCStatus {
             return TopicPublishResponse.error(TopicPublishError(error: grpcStatusToSdkError(grpcStatus: err)))
@@ -106,16 +81,25 @@ class PubsubClient: PubsubClientProtocol {
         }
     }
     
-    func subscribe(cacheName: String, topicName: String) async throws -> TopicSubscribeResponse {
+    func subscribe(cacheName: String, topicName: String, resumeAtTopicSequenceNumber: UInt64?) async throws -> TopicSubscribeResponse {
         var request = CacheClient_Pubsub__SubscriptionRequest()
         request.cacheName = cacheName
         request.topic = topicName
+        request.resumeAtTopicSequenceNumber = UInt64(resumeAtTopicSequenceNumber ?? 0)
         
         let result = self.client.subscribe(request)
-        return TopicSubscribeResponse.subscription(TopicSubscription(subscription: result))
+        return TopicSubscribeResponse.subscription(
+            TopicSubscription(
+                subscription: result,
+                lastSequenceNumber: request.resumeAtTopicSequenceNumber,
+                pubsubClient: self,
+                cacheName: cacheName,
+                topicName: topicName
+            )
+        )
     }
     
     func close() {
-        let _ = self.client.channel.close()
+        self.grpcManager.close()
     }
 }

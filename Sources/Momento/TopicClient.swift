@@ -167,7 +167,8 @@ public class TopicClient: TopicClientProtocol {
         do {
             let result = try await self.pubsubClient.subscribe(
                 cacheName: cacheName, 
-                topicName: topicName
+                topicName: topicName, 
+                resumeAtTopicSequenceNumber: nil
             )
             return result
         } catch {
