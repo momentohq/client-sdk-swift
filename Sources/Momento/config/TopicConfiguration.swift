@@ -24,7 +24,7 @@ public protocol TopicClientConfigurationProtocol {
  Configuration options for Momento TopicClient.
  
  The easiest way to get a `TopicClientConfiguration` object is to use one of the prebuilt TopicClientConfigurations classes.
- ```
+ ```swift
  let config = TopicClientConfiguration.iOS.latest()
  ```
  */

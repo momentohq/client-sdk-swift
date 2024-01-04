@@ -36,6 +36,13 @@ public class TopicClient: TopicClientProtocol {
      - Parameters:
         - configuration: TopicClient configuration object specifying grpc transport strategy and other settings
         - credentialProvider: provides the Momento API key, which you can create in the [Momento Web Console](https://console.gomomento.com/api-keys)
+     
+     ```swift
+     let topicClient = TopicClient(
+       configuration: TopicClientConfigurations.iOS.latest(),
+       credentialProvider: yourCredentialProvider
+     )
+     ```
      */
     public init(
         configuration: TopicClientConfigurationProtocol,
@@ -57,7 +64,7 @@ public class TopicClient: TopicClientProtocol {
      - Returns: TopicPublishResponse representing the result of the publish operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
+    ```swift
      switch publishResponse {
      case .error(let err):
          print("Error: \(err)")
@@ -83,7 +90,7 @@ public class TopicClient: TopicClientProtocol {
      - Returns: TopicPublishResponse representing the result of the publish operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
+    ```swift
      switch publishResponse {
      case .error(let err):
          print("Error: \(err)")
@@ -143,7 +150,7 @@ public class TopicClient: TopicClientProtocol {
      - Returns: TopicSubscribeResponse representing the result of the subscribe operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch subscribeResponse {
       case .error(let err):
           print("Error: \(err)")

@@ -24,7 +24,7 @@ public protocol CacheClientConfigurationProtocol {
  Configuration options for Momento CacheClient.
  
  The easiest way to get a `CacheClientConfiguration` object is to use one of the prebuilt CacheClientConfigurations classes.
- ```
+ ```swift
  let config = CacheClientConfigurations.iOS.latest()
  ```
  */

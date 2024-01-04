@@ -9,6 +9,7 @@ enum ScalarType {
 // with default values for non-required parameters and overloaded functions
 // that accept String and Data values directly rather than ScalarTypes
 
+@available(macOS 10.15, iOS 13, *)
 protocol CacheClientProtocol: ControlClientProtocol & DataClientProtocol {}
 
 @available(macOS 10.15, iOS 13, *)
@@ -277,6 +278,14 @@ public class CacheClient: CacheClientProtocol {
         - configuration: CacheClient configuration object specifying grpc transport strategy and other settings
         - credentialProvider: provides the Momento API key, which you can create in the [Momento Web Console](https://console.gomomento.com/api-keys)
         - defaultTtlSeconds: default time to live for the item in cache
+     
+     ```swift
+     let cacheClient = CacheClient(
+       configuration: CacheClientConfigurations.iOS.latest(),
+       credentialProvider: yourCredentialProvider,
+       defaultTtlSeconds: 10
+     )
+     ```
      */
     public init(
         configuration: CacheClientConfigurationProtocol,
@@ -302,7 +311,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `CacheCreateResponse` representing the result of the create cache operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-    ```
+    ```swift
      switch response {
      case .error(let err):
         print("Error: \(err)")
@@ -330,7 +339,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `DeleteCacheResponse` representing the result of the delete cache operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -357,7 +366,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `ListCachesResponse` representing the result of the list caches operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -378,7 +387,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `GetResponse` representing the result of the get operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -401,7 +410,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `GetResponse` representing the result of the get operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -440,7 +449,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `SetResponse` representing the result of the set operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -473,7 +482,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `SetResponse` representing the result of the set operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -506,7 +515,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `SetResponse` representing the result of the set operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -539,7 +548,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `SetResponse` representing the result of the set operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -595,7 +604,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `DeleteResponse` representing the result of the set operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -616,7 +625,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `DeleteResponse` representing the result of the set operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -654,7 +663,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `ListConcatenateBackResponse` representing the result of the operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -690,7 +699,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `ListConcatenateBackResponse` representing the result of the operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -757,7 +766,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `ListConcatenateFrontResponse` representing the result of the operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -793,7 +802,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `ListConcatenateFrontResponse` representing the result of the operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -857,7 +866,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `ListFetchResponse` representing the result of the operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -901,7 +910,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `ListLengthResponse` representing the result of the operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -937,7 +946,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `ListPopBackResponse` representing the result of the operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -973,7 +982,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `ListPopFrontResponse` representing the result of the operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -1012,7 +1021,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `ListPushBackResponse` representing the result of the operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -1050,7 +1059,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `ListPushBackResponse` representing the result of the operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -1114,7 +1123,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `ListPushFrontResponse` representing the result of the operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -1150,7 +1159,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `ListPushFrontResponse` representing the result of the operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -1212,7 +1221,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `ListRemoveValueResponse` representing the result of the operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -1238,7 +1247,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `ListRemoveValueResponse` representing the result of the operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")
@@ -1288,7 +1297,7 @@ public class CacheClient: CacheClientProtocol {
      - Returns: `ListRetainResponse` representing the result of the operation.
      
      Pattern matching can be used to operate on the appropriate subtype.
-     ```
+     ```swift
       switch response {
       case .error(let err):
          print("Error: \(err)")

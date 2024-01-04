@@ -2,7 +2,7 @@
  Enum for a delete cache request response type.
  
  Pattern matching can be used to operate on the appropriate subtype.
- ```
+ ```swift
   switch response {
   case .error(let err):
      print("Error: \(err)")

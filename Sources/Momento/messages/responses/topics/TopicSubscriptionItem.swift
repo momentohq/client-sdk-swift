@@ -4,7 +4,7 @@ import Foundation
  Enum to represent the data received from a topic subscription.
  
  Pattern matching can be used to operate on the appropriate subtype.
- ```
+ ```swift
   switch response {
   case .error(let err):
       print("Error: \(err)")
