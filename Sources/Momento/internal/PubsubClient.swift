@@ -87,10 +87,10 @@ class PubsubClient: PubsubClientProtocol {
         request.topic = topicName
         request.resumeAtTopicSequenceNumber = UInt64(resumeAtTopicSequenceNumber ?? 0)
         
-        let result = self.client.subscribe(request)
+        let result = self.client.makeSubscribeCall(request)
         return TopicSubscribeResponse.subscription(
             TopicSubscription(
-                subscription: result,
+                subscribeCallResponse: result,
                 lastSequenceNumber: request.resumeAtTopicSequenceNumber,
                 pubsubClient: self,
                 cacheName: cacheName,

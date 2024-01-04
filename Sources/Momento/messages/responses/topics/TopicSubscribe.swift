@@ -24,11 +24,11 @@ public enum TopicSubscribeResponse {
 /// Encapsulates a topic subscription. Iterate over the subscription's `stream` property to retrieve `TopicSubscriptionItemResponse` objects containing data published to the topic.
 @available(macOS 10.15, iOS 13, *)
 public class TopicSubscription {
+    private var subscribeCallResponse: GRPCAsyncServerStreamingCall<CacheClient_Pubsub__SubscriptionRequest, CacheClient_Pubsub__SubscriptionItem>
     private var subscription: GRPCAsyncResponseStream<CacheClient_Pubsub__SubscriptionItem>
     private var lastSequenceNumber: UInt64
     private let pubsubClient: PubsubClientProtocol
     private let logger = Logger(label: "TopicSubscribeResponse")
-    private var retry = true
     private let cacheName: String
     private let topicName: String
     
@@ -37,11 +37,11 @@ public class TopicSubscription {
     // Constructs an AsyncStream of subscription items using the iterator provided
     // by the GRPCAsyncResponseStream object.
     // If the iterator throws a `cancelled` GRPC status code, the AsyncStream will stop.
-    // If the user calls `unsubscribe` (sets the retry boolean to false), the AsyncStream will stop.
-    // Otherwise, given any other error, it will attempt to resubscribe (get new GRPCAsyncResponseStream
-    // and corresponding iterator).
+    // If the user calls `unsubscribe`, the AsyncStream will stop.
+    // Otherwise, given any other error, it will attempt to resubscribe
+    // (i.e. get new GRPCAsyncResponseStream and corresponding iterator).
     lazy public var stream = AsyncStream<TopicSubscriptionItemResponse> {
-        while (self.retry) {
+        while (true) {
             do {
                 let item = try await self.messageIterator.next()
                 if let nonNilItem = item {
@@ -69,11 +69,10 @@ public class TopicSubscription {
                 await self.attemptResubscribe()
             }
         }
-        return nil
     }
     
     init(
-        subscription: GRPCAsyncResponseStream<CacheClient_Pubsub__SubscriptionItem>, 
+        subscribeCallResponse: GRPCAsyncServerStreamingCall<CacheClient_Pubsub__SubscriptionRequest, CacheClient_Pubsub__SubscriptionItem>,
         lastSequenceNumber: UInt64,
         pubsubClient: PubsubClientProtocol,
         cacheName: String,
@@ -83,11 +82,12 @@ public class TopicSubscription {
         self.pubsubClient = pubsubClient
         self.cacheName = cacheName
         self.topicName = topicName
-        self.subscription = subscription
+        self.subscription = subscribeCallResponse.responseStream
+        self.subscribeCallResponse = subscribeCallResponse
     }
     
     public func unsubscribe() {
-        self.retry = false
+        self.subscribeCallResponse.cancel()
     }
     
     internal func processResult(item: CacheClient_Pubsub__SubscriptionItem) -> TopicSubscriptionItemResponse? {
