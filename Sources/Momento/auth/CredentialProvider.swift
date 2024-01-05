@@ -134,7 +134,7 @@ public class StringMomentoTokenProvider : CredentialProviderProtocol {
 public class EnvMomentoTokenProvider : StringMomentoTokenProvider {
     init(envVarName: String = "", controlEndpoint: String? = nil, cacheEndpoint: String? = nil) throws {
         if envVarName.isEmpty {
-            throw CredentialProviderError.emptyAuthEnvironmentVariable()
+            throw CredentialProviderError.emptyAuthEnvironmentVariable(message: "Could not find environment variable \(envVarName) or the variable was an empty string")
         }
         let apiKey = ProcessInfo.processInfo.environment[envVarName]
         try super.init(apiKey: apiKey ?? "", controlEndpoint: controlEndpoint, cacheEndpoint: cacheEndpoint)
