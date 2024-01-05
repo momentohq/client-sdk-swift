@@ -24,28 +24,26 @@ public enum TopicSubscribeResponse {
 /// Encapsulates a topic subscription. Iterate over the subscription's `stream` property to retrieve `TopicSubscriptionItemResponse` objects containing data published to the topic.
 @available(macOS 10.15, iOS 13, *)
 public class TopicSubscription {
-    private var subscription: GRPCAsyncResponseStream<CacheClient_Pubsub__SubscriptionItem>
+    private var subscribeCallResponse: GRPCAsyncServerStreamingCall<CacheClient_Pubsub__SubscriptionRequest, CacheClient_Pubsub__SubscriptionItem>
     private var lastSequenceNumber: UInt64
     private let pubsubClient: PubsubClientProtocol
     private let logger = Logger(label: "TopicSubscribeResponse")
-    private var retry = true
     private let cacheName: String
     private let topicName: String
-    
-    lazy private var messageIterator = subscription.makeAsyncIterator()
+    private var messageIterator: any AsyncIteratorProtocol
     
     // Constructs an AsyncStream of subscription items using the iterator provided
     // by the GRPCAsyncResponseStream object.
     // If the iterator throws a `cancelled` GRPC status code, the AsyncStream will stop.
-    // If the user calls `unsubscribe` (sets the retry boolean to false), the AsyncStream will stop.
-    // Otherwise, given any other error, it will attempt to resubscribe (get new GRPCAsyncResponseStream
-    // and corresponding iterator).
+    // If the user calls `unsubscribe`, the AsyncStream will stop.
+    // Otherwise, given any other error, it will attempt to resubscribe
+    // (i.e. get new GRPCAsyncResponseStream and corresponding iterator).
     lazy public var stream = AsyncStream<TopicSubscriptionItemResponse> {
-        while (self.retry) {
+        while (true) {
             do {
                 let item = try await self.messageIterator.next()
                 if let nonNilItem = item {
-                    if let processedItem = self.processResult(item: nonNilItem) {
+                    if let processedItem = self.processResult(item: nonNilItem as! CacheClient_Pubsub__SubscriptionItem) {
                         return processedItem
                     }
                 } else {
@@ -57,6 +55,9 @@ public class TopicSubscription {
                 if (err.code == .cancelled) {
                     self.logger.debug("Canceled, not resubscribing")
                     return nil
+                } else if (err.code == .resourceExhausted) {
+                    self.logger.debug("Too many subscribers, not resubscribing")
+                    return nil
                 } else {
                     self.logger.debug("Caught GRPCStatus \(err), attempting to resubscribe")
                     await self.attemptResubscribe()
@@ -66,11 +67,11 @@ public class TopicSubscription {
                 await self.attemptResubscribe()
             }
         }
-        return nil
     }
     
     init(
-        subscription: GRPCAsyncResponseStream<CacheClient_Pubsub__SubscriptionItem>, 
+        subscribeCallResponse: GRPCAsyncServerStreamingCall<CacheClient_Pubsub__SubscriptionRequest, CacheClient_Pubsub__SubscriptionItem>,
+        messageIterator: any AsyncIteratorProtocol,
         lastSequenceNumber: UInt64,
         pubsubClient: PubsubClientProtocol,
         cacheName: String,
@@ -80,11 +81,12 @@ public class TopicSubscription {
         self.pubsubClient = pubsubClient
         self.cacheName = cacheName
         self.topicName = topicName
-        self.subscription = subscription
+        self.subscribeCallResponse = subscribeCallResponse
+        self.messageIterator = messageIterator
     }
     
     public func unsubscribe() {
-        self.retry = false
+        self.subscribeCallResponse.cancel()
     }
     
     internal func processResult(item: CacheClient_Pubsub__SubscriptionItem) -> TopicSubscriptionItemResponse? {
@@ -112,8 +114,7 @@ public class TopicSubscription {
             )
             switch (subResp) {
             case .subscription(let s):
-                self.subscription = s.subscription
-                self.messageIterator = s.subscription.makeAsyncIterator()
+                self.messageIterator = s.messageIterator
                 logger.debug("Successfully resubscribed")
             case .error(let err):
                 logger.error("Received error instead of new subscription: \(err)")

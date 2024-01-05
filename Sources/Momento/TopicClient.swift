@@ -178,6 +178,8 @@ public class TopicClient: TopicClientProtocol {
                 resumeAtTopicSequenceNumber: nil
             )
             return result
+        } catch let err as TopicSubscribeError {
+            return TopicSubscribeResponse.error(err)
         } catch {
             return TopicSubscribeResponse.error(TopicSubscribeError(
                 error: UnknownError(
