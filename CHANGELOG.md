@@ -1,5 +1,29 @@
 # Changelog
 
+## [0.4.0](https://github.com/momentohq/client-sdk-swift/compare/v0.3.2...v0.4.0) (2024-01-05)
+
+
+### Features
+
+* topics subscription resiliency ([#119](https://github.com/momentohq/client-sdk-swift/issues/119)) ([118ac02](https://github.com/momentohq/client-sdk-swift/commit/118ac02aea5fa2c41a52c0c2ad1b781f8e737605))
+
+
+### Bug Fixes
+
+* add available attribute to cache client protocols ([#120](https://github.com/momentohq/client-sdk-swift/issues/120)) ([2ad256e](https://github.com/momentohq/client-sdk-swift/commit/2ad256e1ceb1de0754c8c37cf2a06e8c04013c38))
+* availability tag and topics subscriptions fixes ([#122](https://github.com/momentohq/client-sdk-swift/issues/122)) ([8dad389](https://github.com/momentohq/client-sdk-swift/commit/8dad38947891ef9d94aa0f5df46ab51a05a89e68))
+
+
+### Miscellaneous
+
+* add code snippets for dev docs ([#107](https://github.com/momentohq/client-sdk-swift/issues/107)) ([929e55d](https://github.com/momentohq/client-sdk-swift/commit/929e55dc31a6dc9b8f36b58caa62f8357a2460e9))
+* add examples readme and update readme generator ([#121](https://github.com/momentohq/client-sdk-swift/issues/121)) ([6ab8db5](https://github.com/momentohq/client-sdk-swift/commit/6ab8db56f82f5f830002f2d7311104d315b1f344))
+* fix up some wording about examples ([#118](https://github.com/momentohq/client-sdk-swift/issues/118)) ([1b5180e](https://github.com/momentohq/client-sdk-swift/commit/1b5180ea1f744c81f5766811ea238f5e76bd7892))
+* rename topics doc sample snippets ([#113](https://github.com/momentohq/client-sdk-swift/issues/113)) ([5e79e91](https://github.com/momentohq/client-sdk-swift/commit/5e79e91b4d9307ce544889277e5bd21bc5fa9e4a))
+* small error message and docstring fixes ([#123](https://github.com/momentohq/client-sdk-swift/issues/123)) ([1f5ba6c](https://github.com/momentohq/client-sdk-swift/commit/1f5ba6c6bb450638f73b3695125ca45de607a058))
+* swich stability badge from alpha to beta ([#117](https://github.com/momentohq/client-sdk-swift/issues/117)) ([99f4802](https://github.com/momentohq/client-sdk-swift/commit/99f480257c27fdd87e563d8e5c07bb81e1632230))
+* update examples ([#108](https://github.com/momentohq/client-sdk-swift/issues/108)) ([2a1526f](https://github.com/momentohq/client-sdk-swift/commit/2a1526fb693255c5a8e6230d36aeb6bb7007df67))
+
 ## [0.3.2](https://github.com/momentohq/client-sdk-swift/compare/v0.3.1...v0.3.2) (2023-12-13)
 
 
