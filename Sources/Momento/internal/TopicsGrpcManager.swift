@@ -24,8 +24,10 @@ internal class TopicsGrpcManager {
                 // Note: Keepalive should in most circumstances not be necessary.
                 configuration.keepalive = ClientConnectionKeepalive(
                     interval: .seconds(10),
-                    timeout: .seconds(5)
+                    timeout: .seconds(5),
+                    permitWithoutCalls: true
                 )
+                configuration.connectionPool.connectionsPerEventLoop = 100
             }
         } catch {
             fatalError("Failed to open GRPC channel")

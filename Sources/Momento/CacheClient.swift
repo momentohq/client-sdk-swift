@@ -8,7 +8,7 @@ enum ScalarType {
 // The CacheClient class provides user-friendly, public-facing methods
 // with default values for non-required parameters and overloaded functions
 // that accept String and Data values directly rather than ScalarTypes
-
+@available(macOS 10.15, iOS 13, *)
 protocol CacheClientProtocol: ControlClientProtocol & DataClientProtocol {}
 
 @available(macOS 10.15, iOS 13, *)

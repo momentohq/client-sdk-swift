@@ -87,16 +87,40 @@ class PubsubClient: PubsubClientProtocol {
         request.topic = topicName
         request.resumeAtTopicSequenceNumber = UInt64(resumeAtTopicSequenceNumber ?? 0)
         
-        let result = self.client.subscribe(request)
-        return TopicSubscribeResponse.subscription(
-            TopicSubscription(
-                subscription: result,
-                lastSequenceNumber: request.resumeAtTopicSequenceNumber,
-                pubsubClient: self,
-                cacheName: cacheName,
-                topicName: topicName
+        
+        let result = self.client.makeSubscribeCall(request)
+        
+        do {
+            var messageIterator = result.responseStream.makeAsyncIterator()
+            let firstElement = try await messageIterator.next()
+            if let nonNilFirstElement = firstElement {
+                switch nonNilFirstElement.kind {
+                case .heartbeat:
+                    logger.debug("Received heartbeat as first message, returning subscription")
+                    return TopicSubscribeResponse.subscription(
+                        TopicSubscription(
+                            subscribeCallResponse: result,
+                            messageIterator: messageIterator,
+                            lastSequenceNumber: request.resumeAtTopicSequenceNumber,
+                            pubsubClient: self,
+                            cacheName: cacheName,
+                            topicName: topicName
+                        )
+                    )
+                default:
+                    return TopicSubscribeResponse.error(TopicSubscribeError(error: InternalServerError(message: "Expected heartbeat message for topic \(topicName) on cache \(cacheName), got \(String(describing: nonNilFirstElement.kind))")))
+                }
+            }
+            return TopicSubscribeResponse.error(TopicSubscribeError(error: InternalServerError(message: "Expected heartbeat message for topic \(topicName) on cache \(cacheName), got \(String(describing: firstElement))")))
+        } catch let err as GRPCStatus {
+            return TopicSubscribeResponse.error(TopicSubscribeError(error: grpcStatusToSdkError(grpcStatus: err)))
+        } catch let err as GRPCConnectionPoolError {
+            return TopicSubscribeResponse.error(TopicSubscribeError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())))
+        } catch {
+            return TopicSubscribeResponse.error(
+                TopicSubscribeError(error: UnknownError(message: "unknown subscribe error \(error)"))
             )
-        )
+        }
     }
     
     func close() {
