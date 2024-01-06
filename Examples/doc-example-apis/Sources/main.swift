@@ -135,10 +135,21 @@ func example_API_TopicPublish(topicClient: TopicClient, cacheName: String) async
 @available(macOS 10.15, iOS 13, *)
 func example_API_TopicSubscribe(topicClient: TopicClient, cacheName: String) async {
     let subscribeResponse = await topicClient.subscribe(cacheName: cacheName, topicName: "topic")
+
+    #if swift(>=5.9)
     let subscription = switch subscribeResponse {
         case .error(let err): fatalError("Error subscribing to topic: \(err)")
         case .subscription(let sub): sub
     }
+    #else 
+    let subscription: TopicSubscription
+    switch subscribeResponse {
+        case .error(let err):
+            fatalError("Error subscribing to topic: \(err)")
+        case .subscription(let sub):
+            subscription = sub
+    }
+    #endif
 
     // unsubscribe in 5 seconds
     Task {

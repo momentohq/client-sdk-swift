@@ -16,10 +16,20 @@ func main() async {
     let client = TopicClient(configuration: TopicClientConfigurations.iOS.latest(), credentialProvider: creds)
 
     let subscribeResponse = await client.subscribe(cacheName: cacheName, topicName: topicName)
+    #if swift(>=5.9)
     let subscription = switch subscribeResponse {
         case .error(let err): fatalError("Error subscribing to topic: \(err)")
         case .subscription(let sub): sub
     }
+    #else 
+    let subscription: TopicSubscription
+    switch subscribeResponse {
+        case .error(let err):
+            fatalError("Error subscribing to topic: \(err)")
+        case .subscription(let sub):
+            subscription = sub
+    }
+    #endif
     print("Subscribed to the topic")
 
     Task {
