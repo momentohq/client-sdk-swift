@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- A Momento API key is required, you can generate one using the [Momento Console](https://console.gomomento.com)
+- A Momento API key is required, you can generate one using the [Momento Console](https://console.gomomento.com/api-keys)
 
 ## Running the example
 

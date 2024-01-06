@@ -2,18 +2,13 @@ import SwiftUI
 import Momento
 
 class Momento: ObservableObject {
-    private let momentoApiKey: String = ""
-    
     public var topicClient: TopicClientProtocol
     public let cacheName: String = "cache"
     public let topicName: String = "demo"
     
     init() {
-        if momentoApiKey.isEmpty {
-            fatalError("Missing Momento API key in app initiation")
-        }
         do {
-            let credProvider = try CredentialProvider.fromString(apiKey: self.momentoApiKey)
+            let credProvider = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
             self.topicClient = TopicClient(
                 configuration: TopicClientConfigurations.iOS.latest().withClientTimeout(timeout: 600),
                 credentialProvider: credProvider

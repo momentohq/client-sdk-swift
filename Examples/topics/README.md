@@ -2,8 +2,8 @@
 
 ## Prerequisites
 
-- A Momento API key is required, you can generate one using the [Momento Console](https://console.gomomento.com). 
-- A Momento Cache named `my-cache`. You can create a cache in the [Momento Console](https://console.gomomento.com) as well.
+- A Momento API key is required, you can generate one using the [Momento Console](https://console.gomomento.com/api-keys). 
+- A Momento Cache named `my-cache`. You can create a cache in the [Momento Console](https://console.gomomento.com/cache) as well.
 
 ## Running the example
 

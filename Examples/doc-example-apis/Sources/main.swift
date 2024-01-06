@@ -35,7 +35,7 @@ func example_API_ListCaches(cacheClient: CacheClient) async {
     let result = await cacheClient.listCaches()
     switch result {
     case .success(let success):
-        print("Successfully created fetched list of caches: \(success.caches.map { $0.name })")
+        print("Successfully fetched list of caches: \(success.caches.map { $0.name })")
     case .error(let err):
         print("Unable to fetch list of caches: \(err)")
         exit(1)
@@ -134,24 +134,31 @@ func example_API_TopicPublish(topicClient: TopicClient, cacheName: String) async
 
 @available(macOS 10.15, iOS 13, *)
 func example_API_TopicSubscribe(topicClient: TopicClient, cacheName: String) async {
-    let result = await topicClient.subscribe(cacheName: cacheName, topicName: "topic")
-    switch result {
-    case .subscription(let subscription):
-        print("Successfully subscribed to topic!")
-        do {
-            for try await message in subscription.stream {
-                print("Received message: \(message)")
-            }
-        } catch is CancellationError {
-            print("Subscription was cancelled, exiting Topics Subscribe example")
-        } catch {
-            print("Unexpected error while receving message: \(error)")
-            exit(1)
-        }
+    let subscribeResponse = await topicClient.subscribe(cacheName: cacheName, topicName: "topic")
+    let subscription = switch subscribeResponse {
+        case .error(let err): fatalError("Error subscribing to topic: \(err)")
+        case .subscription(let sub): sub
+    }
 
-    case.error(let err):
-        print("Unable to subscribe to topic: \(err)")
-        exit(1)
+    // unsubscribe in 5 seconds
+    Task {
+        try await Task.sleep(nanoseconds: 5_000_000_000)
+        subscription.unsubscribe()
+    }
+
+    // loop over messages as they are received
+    for try await item in subscription.stream {
+        var value: String = ""
+        switch item {
+        case .itemText(let textItem):
+            value = textItem.value
+            print("Subscriber recieved text message: \(value)")
+        case .itemBinary(let binaryItem):
+            value = String(decoding: binaryItem.value, as: UTF8.self)
+            print("Subscriber recieved binary message: \(value)")
+        case .error(let err):
+            print("Subscriber received error: \(err)")
+        }
     }
 }
 
@@ -181,24 +188,7 @@ func main() async {
 
         example_API_InstantiateTopicClient()
         await example_API_TopicPublish(topicClient: topicClient, cacheName: cacheName)
-
-        // make sure to timeout, else this example will cause the program to hang
-        let subscribeTask = Task {
-            await example_API_TopicSubscribe(topicClient: topicClient, cacheName: cacheName)
-        }
-        // timeout in 3 seconds
-        let timeoutTask = Task {
-            try await Task.sleep(nanoseconds: 3_000_000_000)
-            subscribeTask.cancel()
-        }
-        await withTaskCancellationHandler {
-            await subscribeTask.value
-            timeoutTask.cancel()
-            return
-        } onCancel: {
-            subscribeTask.cancel()
-            timeoutTask.cancel()
-        }
+        await example_API_TopicSubscribe(topicClient: topicClient, cacheName: cacheName)
         
         await example_API_DeleteCache(cacheClient: cacheClient, cacheName: cacheName)
     } catch {

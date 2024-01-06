@@ -1,4 +1,5 @@
 import Momento
+import Foundation
 
 func main() async {
   print("Running Momento Cache example!")
@@ -9,7 +10,7 @@ func main() async {
         creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
     } catch {
         print("Error establishing credential provider: \(error)")
-        return
+        exit(1)
     }
 
     let cacheClient = CacheClient(
@@ -26,6 +27,7 @@ func main() async {
         print("Successfully created the cache!")
     case .error(let err):
         print("Unable to create the cache: \(err)")
+        exit(1)
     }
 
     let listResult = await cacheClient.listCaches()
@@ -34,6 +36,7 @@ func main() async {
         print("Successfully created fetched list of caches: \(success.caches.map { $0.name })")
     case .error(let err):
         print("Unable to fetch list of caches: \(err)")
+        exit(1)
     }
 
     let setResult = await cacheClient.set(
@@ -46,6 +49,7 @@ func main() async {
         print("Successfully set item in the cache")
     case .error(let err):
         print("Unable to set item in the cache: \(err)")
+        exit(1)
     }
 
     let getResult = await cacheClient.get(
@@ -59,6 +63,7 @@ func main() async {
         print("Cache miss")
     case .error(let err):
         print("Unable to get item in the cache: \(err)")
+        exit(1)
     }
 
     let deleteResult = await cacheClient.deleteCache(cacheName: cacheName)
@@ -67,6 +72,7 @@ func main() async {
         print("Successfully deleted the cache!")
     case .error(let err):
         print("Unable to delete the cache: \(err)")
+        exit(1)
     }
 }
 
