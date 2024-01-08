@@ -23,10 +23,6 @@ public class MessageStore: ObservableObject {
                 cacheName: momentoClient.cacheName,
                 topicName: momentoClient.topicName
             )
-            // self.subscription = switch subResp {
-            //     case .subscription(let sub): sub
-            //     case .error(let err): fatalError("Unable to establish Topics subscription: \(err)")
-            // }
             #if swift(>=5.9)
             self.subscription = switch subResp {
                 case .subscription(let sub): sub
