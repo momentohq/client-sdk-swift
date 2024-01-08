@@ -19,6 +19,7 @@ jobs:
     container: swift:5.8
     env:
         TEST_API_KEY: ${{ secrets.auth-token }}
+        MOMENTO_API_KEY: ${{ secrets.auth-token }}
     steps:
     #   - uses: swift-actions/setup-swift@65540b95f51493d65f5e59e97dcef9629ddf11bf
     #     with:
@@ -38,13 +39,11 @@ jobs:
         run: cd Examples/topics && swift build
 
       - name: Build cache example
-        run: cd Examples/cache && swift build
+        run: cd Examples/cache && swift run
 
       - name: Build quickstart example
         run: cd Examples/quickstart && swift build
       
       - name: Run dev doc examples
-        env:
-          MOMENTO_API_KEY: ${{ secrets.auth-token }}
         run: cd Examples/doc-example-apis && swift run
 

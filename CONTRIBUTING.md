@@ -10,7 +10,7 @@ Happy coding :dancer:
 ## Requirements :coffee:
 
 - Swift version [5.4 or higher](https://www.swift.org/install/) is required
-- A Momento API key is required, you can generate one using the [Momento Console](https://console.gomomento.com)
+- A Momento API key is required, you can generate one using the [Momento Console](https://console.gomomento.com/api-keys)
 
 <br/>
 
