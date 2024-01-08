@@ -23,10 +23,23 @@ public class MessageStore: ObservableObject {
                 cacheName: momentoClient.cacheName,
                 topicName: momentoClient.topicName
             )
+            // self.subscription = switch subResp {
+            //     case .subscription(let sub): sub
+            //     case .error(let err): fatalError("Unable to establish Topics subscription: \(err)")
+            // }
+            #if swift(>=5.9)
             self.subscription = switch subResp {
                 case .subscription(let sub): sub
                 case .error(let err): fatalError("Unable to establish Topics subscription: \(err)")
             }
+            #else 
+            switch subscribeResponse {
+                case .error(let err):
+                    fatalError("Unable to establish Topics subscription: \(err)")
+                case .subscription(let sub):
+                    self.subscription = sub
+            }
+            #endif
         }
         
         for try await item in self.subscription!.stream {
