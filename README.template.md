@@ -51,7 +51,9 @@ Check out our [topics example](./Examples/topics/README.md) directory for a comp
 
 Here is a quickstart you can use for your own project:
 
+```swift
 {% include "./Examples/quickstart/Sources/main.swift" %}
+```
 
 ## Getting Started and Documentation
 
