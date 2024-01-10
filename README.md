@@ -70,6 +70,7 @@ Check out our [topics example](./Examples/topics/README.md) directory for a comp
 
 Here is a quickstart you can use for your own project:
 
+```swift
 import Momento
 import Foundation
 
@@ -107,6 +108,7 @@ func main() async {
 }
 
 await main()
+```
 
 ## Getting Started and Documentation
 
