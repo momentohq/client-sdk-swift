@@ -28,9 +28,9 @@ class PubsubClient: PubsubClientProtocol {
     let configuration: TopicClientConfigurationProtocol
     let credentialProvider: CredentialProviderProtocol
     let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
-    let headers = ["agent": "swift:0.3.2"]
     let grpcManager: TopicsGrpcManager
     let client: CacheClient_Pubsub_PubsubAsyncClient
+    var firstRequest = true
     
     init(
         configuration: TopicClientConfigurationProtocol,
@@ -40,10 +40,17 @@ class PubsubClient: PubsubClientProtocol {
         self.credentialProvider = credentialProvider
         self.grpcManager = TopicsGrpcManager(
             credentialProvider: credentialProvider,
-            eventLoopGroup: self.eventLoopGroup,
-            headers: self.headers
+            eventLoopGroup: self.eventLoopGroup
         )
         self.client = self.grpcManager.getClient()
+    }
+
+    func makeHeaders() -> [String:String] {
+        if self.firstRequest {
+            self.firstRequest = false
+            return ["agent": "swift:0.4.0"]
+        }
+        return [:];
     }
     
     func publish(
@@ -63,8 +70,11 @@ class PubsubClient: PubsubClientProtocol {
         }
         
         do {
-            let result = try await self.client.publish(request, callOptions: .init(
-                timeLimit: .timeout(.seconds(Int64(self.configuration.transportStrategy.getClientTimeout())))
+            let result = try await self.client.publish(
+                request,
+                callOptions: .init(
+                    customMetadata: .init(makeHeaders().map { ($0, $1) }), 
+                    timeLimit: .timeout(.seconds(Int64(self.configuration.transportStrategy.getClientTimeout())))
                 )
             )
             // Successful publish returns client_sdk_swift.CacheClient_Pubsub__Empty
@@ -88,7 +98,12 @@ class PubsubClient: PubsubClientProtocol {
         request.resumeAtTopicSequenceNumber = UInt64(resumeAtTopicSequenceNumber ?? 0)
         
         
-        let result = self.client.makeSubscribeCall(request)
+        let result = self.client.makeSubscribeCall(
+            request,
+            callOptions: .init(
+                customMetadata: .init(makeHeaders().map { ($0, $1) })
+            )
+        )
         
         do {
             var messageIterator = result.responseStream.makeAsyncIterator()

@@ -9,8 +9,7 @@ internal class TopicsGrpcManager {
     
     init(
         credentialProvider: CredentialProviderProtocol,
-        eventLoopGroup: EventLoopGroup,
-        headers: [String: String]
+        eventLoopGroup: EventLoopGroup
     ) {
         do {
             self.channel = try GRPCChannelPool.with(
@@ -35,9 +34,6 @@ internal class TopicsGrpcManager {
         
         self.client = CacheClient_Pubsub_PubsubAsyncClient(
             channel: self.channel,
-            defaultCallOptions: .init(
-                customMetadata: .init(headers.map { ($0, $1) })
-            ),
             interceptors: PubsubClientInterceptorFactory(apiKey: credentialProvider.apiKey)
         )
     }
