@@ -2,11 +2,6 @@
 public enum CacheClientConfigurations {
 
     public enum iOS {
-        /// Provides the default configuration for the `CacheClient` on iOS platforms
-        public static func defaultConfig() -> CacheClientConfiguration {
-            return latest()
-        }
-        
         /// Provides the latest recommended configuration for the `CacheClient` on iOS platforms
         public static func latest() -> CacheClientConfiguration {
             return CacheClientConfiguration(
@@ -18,11 +13,6 @@ public enum CacheClientConfigurations {
     }
     
     public enum macOS {
-        /// Provides the default configuration for the `CacheClient` on macOS platforms
-        public static func defaultConfig() -> CacheClientConfiguration {
-            return latest()
-        }
-        
         /// Provides the latest recommended configuration for the `CacheClient` on macOS platforms
         public static func latest() -> CacheClientConfiguration {
             return CacheClientConfiguration(
