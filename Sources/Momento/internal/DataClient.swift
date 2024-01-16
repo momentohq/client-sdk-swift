@@ -94,8 +94,8 @@ class DataClient: DataClientProtocol {
     private let grpcChannel: GRPCChannel
     private let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
     private let client: CacheClient_ScsNIOClient
-    private let headers: Dictionary<String, String>
     private let defaultTtlSeconds: TimeInterval
+    private var firstRequest = true
     
     init(
         configuration: CacheClientConfigurationProtocol,
@@ -126,12 +126,9 @@ class DataClient: DataClientProtocol {
             fatalError("Failed to open GRPC channel")
         }
         
-        self.headers = ["agent": "swift:0.1.0"]
-        
         self.client = CacheClient_ScsNIOClient(
             channel: self.grpcChannel,
             defaultCallOptions: .init(
-                customMetadata: .init(self.headers.map { ($0, $1) }),
                 timeLimit: .timeout(.seconds(Int64(self.configuration.transportStrategy.getClientTimeout())))
             ),
             interceptors: DataClientInterceptorFactory(apiKey: credentialProvider.apiKey)
@@ -139,7 +136,11 @@ class DataClient: DataClientProtocol {
     }
     
     private func makeHeaders(cacheName: String) -> Dictionary<String, String> {
-        return self.headers.merging(["cache": cacheName]) { (_, new) in new }
+        let headers = constructHeaders(firstRequest: self.firstRequest, cacheName: cacheName)
+        if self.firstRequest {
+            self.firstRequest = false
+        }
+        return headers
     }
     
     private func convertScalarTypeToData(element: ScalarType) -> Data {
