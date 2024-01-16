@@ -136,10 +136,9 @@ class DataClient: DataClientProtocol {
     }
     
     private func makeHeaders(cacheName: String) -> Dictionary<String, String> {
-        var headers = ["cache": cacheName]
+        let headers = constructHeaders(firstRequest: self.firstRequest, cacheName: cacheName)
         if self.firstRequest {
             self.firstRequest = false
-            headers = headers.merging(["agent": "swift:0.4.0"]) { (_, new) in new }
         }
         return headers
     }

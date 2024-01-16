@@ -46,11 +46,11 @@ class PubsubClient: PubsubClientProtocol {
     }
 
     func makeHeaders() -> [String:String] {
+        let headers = constructHeaders(firstRequest: self.firstRequest)
         if self.firstRequest {
             self.firstRequest = false
-            return ["agent": "swift:0.4.0"]
         }
-        return [:];
+        return headers
     }
     
     func publish(
