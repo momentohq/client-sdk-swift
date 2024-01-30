@@ -1331,6 +1331,10 @@ public class CacheClient: CacheClientProtocol {
         )
     }
 
+    /** Close the client and free up all associated resources.
+     
+     NOTE: the client object will not be usable after calling this method.
+    **/
     public func close() {
         self.controlClient.close()
         self.dataClient.close()
