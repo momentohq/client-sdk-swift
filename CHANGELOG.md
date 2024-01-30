@@ -1,5 +1,24 @@
 # Changelog
 
+## [0.5.0](https://github.com/momentohq/client-sdk-swift/compare/v0.4.0...v0.5.0) (2024-01-30)
+
+
+### Features
+
+* add close method to CacheClient ([#133](https://github.com/momentohq/client-sdk-swift/issues/133)) ([41c7a08](https://github.com/momentohq/client-sdk-swift/commit/41c7a086e42c8fa99850febe71bfc1664938b735))
+
+
+### Bug Fixes
+
+* remove defaultConfig configurations ([#132](https://github.com/momentohq/client-sdk-swift/issues/132)) ([501ffe5](https://github.com/momentohq/client-sdk-swift/commit/501ffe51566ff172f46ff3714a4c852905c3c8b9))
+
+
+### Miscellaneous
+
+* readme template was missing code block markdown for usage section ([#128](https://github.com/momentohq/client-sdk-swift/issues/128)) ([7746335](https://github.com/momentohq/client-sdk-swift/commit/7746335dd1cb11436d0d0851d509a970c2d65950))
+* send agent header only on first request for each client ([#131](https://github.com/momentohq/client-sdk-swift/issues/131)) ([7b8d213](https://github.com/momentohq/client-sdk-swift/commit/7b8d21389b196dd0792014c3d56c2f40519e7a0c))
+* update examples to use latest release and other small updates ([#124](https://github.com/momentohq/client-sdk-swift/issues/124)) ([905f508](https://github.com/momentohq/client-sdk-swift/commit/905f508c666d895622461ef5890d8d6c4cbeaed0))
+
 ## [0.4.0](https://github.com/momentohq/client-sdk-swift/compare/v0.3.2...v0.4.0) (2024-01-05)
 
 

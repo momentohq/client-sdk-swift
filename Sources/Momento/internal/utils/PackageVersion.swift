@@ -1,4 +1,4 @@
-let packageVersion = "0.4.0" // x-release-please-version
+let packageVersion = "0.5.0" // x-release-please-version
 
 internal func constructHeaders(firstRequest: Bool, cacheName: String? = nil) -> Dictionary<String, String> {
     var headers: [String:String] = [:]
