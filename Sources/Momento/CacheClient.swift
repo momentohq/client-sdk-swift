@@ -1024,10 +1024,8 @@ public class CacheClient: CacheClientProtocol {
       switch response {
       case .error(let err):
          print("Error: \(err)")
-      case .alreadyExists(_):
-         print("Cache already exists")
-      case .success(_):
-         print("Success")
+      case .success(let s):
+         print("Success: \(s.listLength)")
       }
      ```
      */
@@ -1331,5 +1329,10 @@ public class CacheClient: CacheClientProtocol {
             endIndex: endIndex,
             ttl: ttl
         )
+    }
+
+    public func close() {
+        self.controlClient.close()
+        self.dataClient.close()
     }
 }

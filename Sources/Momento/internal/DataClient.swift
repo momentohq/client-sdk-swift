@@ -84,6 +84,8 @@ protocol DataClientProtocol {
         endIndex: Int?,
         ttl: CollectionTtl?
     ) async -> ListRetainResponse
+
+    func close()
 }
 
 @available(macOS 10.15, iOS 13, *)
@@ -693,6 +695,14 @@ class DataClient: DataClientProtocol {
             return ListRetainResponse.error(
                 ListRetainError(error: UnknownError(message: "unknown list retain error \(error)"))
             )
+        }
+    }
+
+    func close() {
+        do {
+            try self.grpcChannel.close().wait()
+        } catch {
+            self.logger.error("Failed to close cache data client GRPC channel: \(error)")
         }
     }
 }
