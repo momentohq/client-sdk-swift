@@ -10,6 +10,8 @@ protocol ControlClientProtocol {
     func deleteCache(cacheName: String) async -> DeleteCacheResponse
     
     func listCaches() async -> ListCachesResponse
+
+    func close()
 }
 
 @available(macOS 10.15, iOS 13, *)
@@ -140,6 +142,14 @@ class ControlClient: ControlClientProtocol {
             return ListCachesResponse.error(
                 ListCachesError(error: UnknownError(message: "unknown cache create error \(error)"))
             )
+        }
+    }
+
+    func close() {
+        do {
+            try self.grpcChannel.close().wait()
+        } catch {
+            self.logger.error("Failed to close cache control client GRPC channel: \(error)")
         }
     }
 }

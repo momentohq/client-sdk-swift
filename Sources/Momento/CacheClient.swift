@@ -1024,10 +1024,8 @@ public class CacheClient: CacheClientProtocol {
       switch response {
       case .error(let err):
          print("Error: \(err)")
-      case .alreadyExists(_):
-         print("Cache already exists")
-      case .success(_):
-         print("Success")
+      case .success(let s):
+         print("Success: \(s.listLength)")
       }
      ```
      */
@@ -1331,5 +1329,14 @@ public class CacheClient: CacheClientProtocol {
             endIndex: endIndex,
             ttl: ttl
         )
+    }
+
+    /** Close the client and free up all associated resources.
+     
+     NOTE: the client object will not be usable after calling this method.
+    **/
+    public func close() {
+        self.controlClient.close()
+        self.dataClient.close()
     }
 }
