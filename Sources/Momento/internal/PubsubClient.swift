@@ -86,7 +86,7 @@ class PubsubClient: PubsubClientProtocol {
             return TopicPublishResponse.error(TopicPublishError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())))
         } catch {
             return TopicPublishResponse.error(
-                TopicPublishError(error: UnknownError(message: "unknown publish error \(error)"))
+                TopicPublishError(error: UnknownError(message: "unknown publish error: '\(error)'", innerException: error))
             )
         }
     }
@@ -133,7 +133,7 @@ class PubsubClient: PubsubClientProtocol {
             return TopicSubscribeResponse.error(TopicSubscribeError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())))
         } catch {
             return TopicSubscribeResponse.error(
-                TopicSubscribeError(error: UnknownError(message: "unknown subscribe error \(error)"))
+                TopicSubscribeError(error: UnknownError(message: "unknown subscribe error: '\(error)'", innerException: error))
             )
         }
     }

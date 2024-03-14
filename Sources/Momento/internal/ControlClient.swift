@@ -91,7 +91,7 @@ class ControlClient: ControlClientProtocol {
             )
         } catch {
             return CreateCacheResponse.error(
-                CreateCacheError(error: UnknownError(message: "unknown cache create error \(error)"))
+                CreateCacheError(error: UnknownError(message: "unknown cache create error: '\(error)'", innerException: error))
             )
         }
     }
@@ -116,7 +116,7 @@ class ControlClient: ControlClientProtocol {
             )
         } catch {
             return DeleteCacheResponse.error(
-                DeleteCacheError(error: UnknownError(message: "unknown cache create error \(error)"))
+                DeleteCacheError(error: UnknownError(message: "unknown cache delete error: '\(error)'", innerException: error))
             )
         }
     }
@@ -140,7 +140,7 @@ class ControlClient: ControlClientProtocol {
             )
         } catch {
             return ListCachesResponse.error(
-                ListCachesError(error: UnknownError(message: "unknown cache create error \(error)"))
+                ListCachesError(error: UnknownError(message: "unknown list caches error: '\(error)'", innerException: error))
             )
         }
     }
@@ -149,7 +149,7 @@ class ControlClient: ControlClientProtocol {
         do {
             try self.grpcChannel.close().wait()
         } catch {
-            self.logger.error("Failed to close cache control client GRPC channel: \(error)")
+            self.logger.error("Failed to close cache control client GRPC channel: '\(error)'")
         }
     }
 }
