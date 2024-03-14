@@ -302,6 +302,6 @@ internal func grpcStatusToSdkError(grpcStatus: GRPCStatus) -> SdkError {
     case .unknown:
         return UnknownServiceError(message: message, innerException: grpcStatus)
     default:
-        return UnknownError(message: "Unknown error")
+        return UnknownError(message: "Unknown error", innerException: grpcStatus)
     }
 }

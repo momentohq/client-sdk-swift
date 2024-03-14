@@ -119,7 +119,7 @@ public class TopicClient: TopicClientProtocol {
             return TopicPublishResponse.error(TopicPublishError(error: err))
         } catch {
             return TopicPublishResponse.error(
-                TopicPublishError(error: UnknownError(message: "unexpected error: \(error)", innerException: error))
+                TopicPublishError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         
@@ -134,7 +134,7 @@ public class TopicClient: TopicClientProtocol {
             return TopicPublishResponse.error(
                 TopicPublishError(
                     error: UnknownError(
-                        message: "Unknown error from publish",
+                        message: "Unknown error from publish: '\(error)'",
                         innerException: error
                     )
                 )
@@ -167,7 +167,7 @@ public class TopicClient: TopicClientProtocol {
             return TopicSubscribeResponse.error(TopicSubscribeError(error: err))
         } catch {
             return TopicSubscribeResponse.error(
-                TopicSubscribeError(error: UnknownError(message: "unexpected error: \(error)", innerException: error))
+                TopicSubscribeError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         
@@ -183,7 +183,7 @@ public class TopicClient: TopicClientProtocol {
         } catch {
             return TopicSubscribeResponse.error(TopicSubscribeError(
                 error: UnknownError(
-                    message: "Unknown error from subscribe",
+                    message: "Unknown error from subscribe: '\(error)'",
                     innerException: error
                 )
             ))

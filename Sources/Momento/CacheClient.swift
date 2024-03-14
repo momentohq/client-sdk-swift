@@ -326,7 +326,7 @@ public class CacheClient: CacheClientProtocol {
             return CreateCacheResponse.error(CreateCacheError(error: err))
         } catch {
             return CreateCacheResponse.error(
-                CreateCacheError(error: UnknownError(message: "unexpected error: \(error)", innerException: error))
+                CreateCacheError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.controlClient.createCache(cacheName: cacheName)
@@ -432,7 +432,7 @@ public class CacheClient: CacheClientProtocol {
             return GetResponse.error(GetError(error: err))
         } catch {
             return GetResponse.error(
-                GetError(error: UnknownError(message: "unexpected error: \(error)", innerException: error))
+                GetError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.get(cacheName: cacheName, key: key)
@@ -584,7 +584,7 @@ public class CacheClient: CacheClientProtocol {
             return SetResponse.error(SetError(error: err))
         } catch {
             return SetResponse.error(
-                SetError(error: UnknownError(message: "unexpected error: \(error)", innerException: error))
+                SetError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.set(
@@ -645,7 +645,7 @@ public class CacheClient: CacheClientProtocol {
             return DeleteResponse.error(DeleteError(error: err))
         } catch {
             return DeleteResponse.error(
-                DeleteError(error: UnknownError(message: "unexpected error: \(error)", innerException: error))
+                DeleteError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.delete(cacheName: cacheName, key: key)
@@ -740,7 +740,7 @@ public class CacheClient: CacheClientProtocol {
             return ListConcatenateBackResponse.error(ListConcatenateBackError(error: err))
         } catch {
             return ListConcatenateBackResponse.error(
-                ListConcatenateBackError(error: UnknownError(message: "unexpected error: \(error)", innerException: error))
+                ListConcatenateBackError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.listConcatenateBack(
@@ -841,7 +841,7 @@ public class CacheClient: CacheClientProtocol {
             return ListConcatenateFrontResponse.error(ListConcatenateFrontError(error: err))
         } catch {
             return ListConcatenateFrontResponse.error(
-                ListConcatenateFrontError(error: UnknownError(message: "unexpected error: \(error)", innerException: error))
+                ListConcatenateFrontError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.listConcatenateFront(
@@ -888,7 +888,7 @@ public class CacheClient: CacheClientProtocol {
             return ListFetchResponse.error(ListFetchError(error: err))
         } catch {
             return ListFetchResponse.error(
-                ListFetchError(error: UnknownError(message: "unexpected error: \(error)", innerException: error))
+                ListFetchError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.listFetch(
@@ -929,7 +929,7 @@ public class CacheClient: CacheClientProtocol {
             return ListLengthResponse.error(ListLengthError(error: err))
         } catch {
             return ListLengthResponse.error(
-                ListLengthError(error: UnknownError(message: "unexpected error: \(error)", innerException: error))
+                ListLengthError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.listLength(cacheName: cacheName, listName: listName)
@@ -965,7 +965,7 @@ public class CacheClient: CacheClientProtocol {
             return ListPopBackResponse.error(ListPopBackError(error: err))
         } catch {
             return ListPopBackResponse.error(
-                ListPopBackError(error: UnknownError(message: "unexpected error: \(error)", innerException: error))
+                ListPopBackError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.listPopBack(cacheName: cacheName, listName: listName)
@@ -1001,7 +1001,7 @@ public class CacheClient: CacheClientProtocol {
             return ListPopFrontResponse.error(ListPopFrontError(error: err))
         } catch {
             return ListPopFrontResponse.error(
-                ListPopFrontError(error: UnknownError(message: "unexpected error: \(error)", innerException: error))
+                ListPopFrontError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.listPopFront(cacheName: cacheName, listName: listName)
@@ -1095,7 +1095,7 @@ public class CacheClient: CacheClientProtocol {
             return ListPushBackResponse.error(ListPushBackError(error: err))
         } catch {
             return ListPushBackResponse.error(
-                ListPushBackError(error: UnknownError(message: "unexpected error: \(error)", innerException: error))
+                ListPushBackError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.listPushBack(
@@ -1195,7 +1195,7 @@ public class CacheClient: CacheClientProtocol {
             return ListPushFrontResponse.error(ListPushFrontError(error: err))
         } catch {
             return ListPushFrontResponse.error(
-                ListPushFrontError(error: UnknownError(message: "unexpected error: \(error)", innerException: error))
+                ListPushFrontError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.listPushFront(
@@ -1271,7 +1271,7 @@ public class CacheClient: CacheClientProtocol {
             return ListRemoveValueResponse.error(ListRemoveValueError(error: err))
         } catch {
             return ListRemoveValueResponse.error(
-                ListRemoveValueError(error: UnknownError(message: "unexpected error: \(error)", innerException: error))
+                ListRemoveValueError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.listRemoveValue(
@@ -1317,7 +1317,7 @@ public class CacheClient: CacheClientProtocol {
             return ListRetainResponse.error(ListRetainError(error: err))
         } catch {
             return ListRetainResponse.error(
-                ListRetainError(error: UnknownError(message: "unexpected error: \(error)", innerException: error))
+                ListRetainError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.listRetain(

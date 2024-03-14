@@ -387,7 +387,7 @@ class DataClient: DataClientProtocol {
                 return ListFetchResponse.miss(ListFetchMiss())
             default:
                 return ListFetchResponse.error(
-                    ListFetchError(error: UnknownError(message: "unknown list fetch error \(result)"))
+                    ListFetchError(error: UnknownError(message: "unknown list fetch result: \(result)"))
                 )
             }
         } catch let err as GRPCStatus {

@@ -149,7 +149,7 @@ class ControlClient: ControlClientProtocol {
         do {
             try self.grpcChannel.close().wait()
         } catch {
-            self.logger.error("Failed to close cache control client GRPC channel: \(error)")
+            self.logger.error("Failed to close cache control client GRPC channel: '\(error)'")
         }
     }
 }
