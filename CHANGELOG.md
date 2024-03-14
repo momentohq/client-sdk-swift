@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/momentohq/client-sdk-swift/compare/v0.5.0...v0.5.1) (2024-03-14)
+
+
+### Bug Fixes
+
+* pass errors as innerException and don't auto-resubscribe when connection becomes unavailable ([#134](https://github.com/momentohq/client-sdk-swift/issues/134)) ([2a5c77b](https://github.com/momentohq/client-sdk-swift/commit/2a5c77b592983ebbcf8b72e42d996572672e12fb))
+
 ## [0.5.0](https://github.com/momentohq/client-sdk-swift/compare/v0.4.0...v0.5.0) (2024-01-30)
 
 
