@@ -58,6 +58,12 @@ public class TopicSubscription {
                 } else if (err.code == .resourceExhausted) {
                     self.logger.debug("Too many subscribers, not resubscribing")
                     return nil
+                } else if (err.code == .unavailable) {
+                    // If the topic client is closed but the subscription is still open, we'll
+                    // receive a "shutdown" error that gets converted into an "unavailable"
+                    // GRPCStatus object. See: https://github.com/grpc/grpc-swift/blob/53e2739912b0d3090cfa6a8345fcadbe6fe2ba1a/Sources/GRPC/ConnectionPool/ConnectionPool.swift#L1025
+                    print("Connection was shutdown, not resubscribing")
+                    return nil
                 } else {
                     self.logger.debug("Caught GRPCStatus \(err), attempting to resubscribe")
                     await self.attemptResubscribe()
