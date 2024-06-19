@@ -44,17 +44,17 @@ protocol DataClientProtocol {
         cacheName: String,
         listName: String
     ) async -> ListLengthResponse
-    
+
     func listPopBack(
         cacheName: String,
         listName: String
     ) async -> ListPopBackResponse
-    
+
     func listPopFront(
         cacheName: String,
         listName: String
     ) async -> ListPopFrontResponse
-    
+
     func listPushBack(
         cacheName: String,
         listName: String,
@@ -62,7 +62,7 @@ protocol DataClientProtocol {
         truncateFrontToSize: Int?,
         ttl: CollectionTtl?
     ) async -> ListPushBackResponse
-    
+
     func listPushFront(
         cacheName: String,
         listName: String,
@@ -70,13 +70,13 @@ protocol DataClientProtocol {
         truncateBackToSize: Int?,
         ttl: CollectionTtl?
     ) async -> ListPushFrontResponse
-    
+
     func listRemoveValue(
         cacheName: String,
         listName: String,
         value: ScalarType
     ) async -> ListRemoveValueResponse
-    
+
     func listRetain(
         cacheName: String,
         listName: String,
@@ -98,7 +98,7 @@ class DataClient: DataClientProtocol {
     private let client: CacheClient_ScsNIOClient
     private let defaultTtlSeconds: TimeInterval
     private var firstRequest = true
-    
+
     init(
         configuration: CacheClientConfigurationProtocol,
         credentialProvider: CredentialProviderProtocol,
@@ -108,7 +108,7 @@ class DataClient: DataClientProtocol {
         self.credentialProvider = credentialProvider
         self.logger = Logger(label: "CacheDataClient")
         self.defaultTtlSeconds = defaultTtlSeconds
-        
+
         do {
             self.grpcChannel = try GRPCChannelPool.with(
                 target: .host(credentialProvider.cacheEndpoint, port: 443),
@@ -127,7 +127,7 @@ class DataClient: DataClientProtocol {
         } catch {
             fatalError("Failed to open GRPC channel")
         }
-        
+
         self.client = CacheClient_ScsNIOClient(
             channel: self.grpcChannel,
             defaultCallOptions: .init(
@@ -136,15 +136,15 @@ class DataClient: DataClientProtocol {
             interceptors: DataClientInterceptorFactory(apiKey: credentialProvider.apiKey)
         )
     }
-    
+
     private func makeHeaders(cacheName: String) -> Dictionary<String, String> {
-        let headers = constructHeaders(firstRequest: self.firstRequest, cacheName: cacheName)
+        let headers = constructHeaders(firstRequest: self.firstRequest, clientType: "cache", cacheName: cacheName)
         if self.firstRequest {
             self.firstRequest = false
         }
         return headers
     }
-    
+
     private func convertScalarTypeToData(element: ScalarType) -> Data {
         switch element {
         case .string(let s):
@@ -153,7 +153,7 @@ class DataClient: DataClientProtocol {
             return d
         }
     }
-    
+
     func get(cacheName: String, key: ScalarType) async -> GetResponse {
         var request = CacheClient__GetRequest()
         request.cacheKey = self.convertScalarTypeToData(element: key)
@@ -167,7 +167,7 @@ class DataClient: DataClientProtocol {
                 )
             )
         )
-        
+
         do {
             let result = try await call.response.get()
             if result.result == .hit {
@@ -191,7 +191,7 @@ class DataClient: DataClientProtocol {
             ))
         }
     }
-    
+
     func set(
         cacheName: String,
         key: ScalarType,
@@ -229,7 +229,7 @@ class DataClient: DataClientProtocol {
             ))
         }
     }
-    
+
     func delete(cacheName: String, key: ScalarType) async -> DeleteResponse {
         var request = CacheClient__DeleteRequest()
         request.cacheKey = self.convertScalarTypeToData(element: key)
@@ -270,11 +270,11 @@ class DataClient: DataClientProtocol {
         request.listName = Data(listName.utf8)
         request.values = values.map(self.convertScalarTypeToData)
         request.truncateFrontToSize = UInt32(truncateFrontToSize ?? 0)
-        
+
         let _ttl = ttl ?? CollectionTtl.fromCacheTtl()
         request.ttlMilliseconds = UInt64(_ttl.ttlMilliseconds() ?? self.defaultTtlSeconds * 1000)
         request.refreshTtl = _ttl.refreshTtl()
-        
+
         let headers = self.makeHeaders(cacheName: cacheName)
         let call = self.client.listConcatenateBack(
             request,
@@ -284,7 +284,7 @@ class DataClient: DataClientProtocol {
                 )
             )
         )
-        
+
         do {
             let result = try await call.response.get()
             return ListConcatenateBackResponse.success(ListConcatenateBackSuccess(length: result.listLength))
@@ -302,7 +302,7 @@ class DataClient: DataClientProtocol {
             )
         }
     }
-    
+
     func listConcatenateFront(
         cacheName: String,
         listName: String,
@@ -314,11 +314,11 @@ class DataClient: DataClientProtocol {
         request.listName = Data(listName.utf8)
         request.values = values.map(self.convertScalarTypeToData)
         request.truncateBackToSize = UInt32(truncateBackToSize ?? 0)
-        
+
         let _ttl = ttl ?? CollectionTtl.fromCacheTtl()
         request.ttlMilliseconds = UInt64(_ttl.ttlMilliseconds() ?? self.defaultTtlSeconds * 1000)
         request.refreshTtl = _ttl.refreshTtl()
-        
+
         let headers = self.makeHeaders(cacheName: cacheName)
         let call = self.client.listConcatenateFront(
             request,
@@ -328,7 +328,7 @@ class DataClient: DataClientProtocol {
                 )
             )
         )
-        
+
         do {
             let result = try await call.response.get()
             return ListConcatenateFrontResponse.success(ListConcatenateFrontSuccess(length: result.listLength))
@@ -346,7 +346,7 @@ class DataClient: DataClientProtocol {
             )
         }
     }
-    
+
     func listFetch(
         cacheName: String,
         listName: String,
@@ -355,19 +355,19 @@ class DataClient: DataClientProtocol {
     ) async -> ListFetchResponse {
         var request = CacheClient__ListFetchRequest()
         request.listName = Data(listName.utf8)
-        
+
         if let s = startIndex {
             request.startIndex = CacheClient__ListFetchRequest.OneOf_StartIndex.inclusiveStart(Int32(s))
         } else {
             request.startIndex = CacheClient__ListFetchRequest.OneOf_StartIndex.unboundedStart(CacheClient__Unbounded())
         }
-        
+
         if let e = endIndex {
             request.endIndex = CacheClient__ListFetchRequest.OneOf_EndIndex.exclusiveEnd(Int32(e))
         } else {
             request.endIndex = CacheClient__ListFetchRequest.OneOf_EndIndex.unboundedEnd(CacheClient__Unbounded())
         }
-        
+
         let headers = self.makeHeaders(cacheName: cacheName)
         let call = self.client.listFetch(
             request,
@@ -377,7 +377,7 @@ class DataClient: DataClientProtocol {
                 )
             )
         )
-        
+
         do {
             let result = try await call.response.get()
             switch result.list {
@@ -402,14 +402,14 @@ class DataClient: DataClientProtocol {
             )
         }
     }
-    
+
     func listLength(
         cacheName: String,
         listName: String
     ) async -> ListLengthResponse {
         var request = CacheClient__ListLengthRequest()
         request.listName = Data(listName.utf8)
-        
+
         let headers = self.makeHeaders(cacheName: cacheName)
         let call = self.client.listLength(
             request,
@@ -419,7 +419,7 @@ class DataClient: DataClientProtocol {
                 )
             )
         )
-        
+
         do {
             let result = try await call.response.get()
             switch result.list {
@@ -444,14 +444,14 @@ class DataClient: DataClientProtocol {
             )
         }
     }
-    
+
     func listPopBack(
         cacheName: String,
         listName: String
     ) async -> ListPopBackResponse {
         var request = CacheClient__ListPopBackRequest()
         request.listName = Data(listName.utf8)
-        
+
         let headers = self.makeHeaders(cacheName: cacheName)
         let call = self.client.listPopBack(
             request,
@@ -461,7 +461,7 @@ class DataClient: DataClientProtocol {
                 )
             )
         )
-        
+
         do {
             let result = try await call.response.get()
             switch result.list {
@@ -488,14 +488,14 @@ class DataClient: DataClientProtocol {
             )
         }
     }
-    
+
     func listPopFront(
         cacheName: String,
         listName: String
     ) async -> ListPopFrontResponse {
         var request = CacheClient__ListPopFrontRequest()
         request.listName = Data(listName.utf8)
-        
+
         let headers = self.makeHeaders(cacheName: cacheName)
         let call = self.client.listPopFront(
             request,
@@ -505,7 +505,7 @@ class DataClient: DataClientProtocol {
                 )
             )
         )
-        
+
         do {
             let result = try await call.response.get()
             switch result.list {
@@ -532,7 +532,7 @@ class DataClient: DataClientProtocol {
             )
         }
     }
-    
+
     func listPushBack(
         cacheName: String,
         listName: String,
@@ -544,11 +544,11 @@ class DataClient: DataClientProtocol {
         request.listName = Data(listName.utf8)
         request.value = self.convertScalarTypeToData(element: value)
         request.truncateFrontToSize = UInt32(truncateFrontToSize ?? 0)
-        
+
         let _ttl = ttl ?? CollectionTtl.fromCacheTtl()
         request.ttlMilliseconds = UInt64(_ttl.ttlMilliseconds() ?? self.defaultTtlSeconds * 1000)
         request.refreshTtl = _ttl.refreshTtl()
-        
+
         let headers = self.makeHeaders(cacheName: cacheName)
         let call = self.client.listPushBack(
             request,
@@ -558,7 +558,7 @@ class DataClient: DataClientProtocol {
                 )
             )
         )
-        
+
         do {
             let result = try await call.response.get()
             return ListPushBackResponse.success(ListPushBackSuccess(length: result.listLength))
@@ -576,7 +576,7 @@ class DataClient: DataClientProtocol {
             )
         }
     }
-    
+
     func listPushFront(
         cacheName: String,
         listName: String,
@@ -592,7 +592,7 @@ class DataClient: DataClientProtocol {
         let _ttl = ttl ?? CollectionTtl.fromCacheTtl()
         request.ttlMilliseconds = UInt64(_ttl.ttlMilliseconds() ?? self.defaultTtlSeconds * 1000)
         request.refreshTtl = _ttl.refreshTtl()
-        
+
         let headers = self.makeHeaders(cacheName: cacheName)
         let call = self.client.listPushFront(
             request,
@@ -602,7 +602,7 @@ class DataClient: DataClientProtocol {
                 )
             )
         )
-        
+
         do {
             let result = try await call.response.get()
             return ListPushFrontResponse.success(ListPushFrontSuccess(length: result.listLength))
@@ -620,7 +620,7 @@ class DataClient: DataClientProtocol {
             )
         }
     }
-    
+
     func listRemoveValue(
         cacheName: String,
         listName: String,
@@ -629,7 +629,7 @@ class DataClient: DataClientProtocol {
         var request = CacheClient__ListRemoveRequest()
         request.listName = Data(listName.utf8)
         request.allElementsWithValue = self.convertScalarTypeToData(element: value)
-        
+
         let headers = self.makeHeaders(cacheName: cacheName)
         let call = self.client.listRemove(
             request,
@@ -639,7 +639,7 @@ class DataClient: DataClientProtocol {
                 )
             )
         )
-        
+
         do {
             _ = try await call.response.get()
             return ListRemoveValueResponse.success(ListRemoveValueSuccess())
@@ -657,7 +657,7 @@ class DataClient: DataClientProtocol {
             )
         }
     }
-    
+
     func listRetain(
         cacheName: String,
         listName: String,
@@ -667,23 +667,23 @@ class DataClient: DataClientProtocol {
     ) async -> ListRetainResponse {
         var request = CacheClient__ListRetainRequest()
         request.listName = Data(listName.utf8)
-        
+
         let _ttl = ttl ?? CollectionTtl.fromCacheTtl()
         request.ttlMilliseconds = UInt64(_ttl.ttlMilliseconds() ?? self.defaultTtlSeconds * 1000)
         request.refreshTtl = _ttl.refreshTtl()
-        
+
         if let s = startIndex {
             request.startIndex = CacheClient__ListRetainRequest.OneOf_StartIndex.inclusiveStart(Int32(s))
         } else {
             request.startIndex = CacheClient__ListRetainRequest.OneOf_StartIndex.unboundedStart(CacheClient__Unbounded())
         }
-        
+
         if let e = endIndex {
             request.endIndex = CacheClient__ListRetainRequest.OneOf_EndIndex.exclusiveEnd(Int32(e))
         } else {
             request.endIndex = CacheClient__ListRetainRequest.OneOf_EndIndex.unboundedEnd(CacheClient__Unbounded())
         }
-        
+
         let headers = self.makeHeaders(cacheName: cacheName)
         let call = self.client.listRetain(
             request,
@@ -693,7 +693,7 @@ class DataClient: DataClientProtocol {
                 )
             )
         )
-        
+
         do {
             _ = try await call.response.get()
             return ListRetainResponse.success(ListRetainSuccess())

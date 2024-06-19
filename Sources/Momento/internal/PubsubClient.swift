@@ -6,7 +6,7 @@ import Logging
 @available(macOS 10.15, iOS 13, *)
 protocol PubsubClientProtocol {
     var configuration: TopicClientConfigurationProtocol { get }
-    
+
     func publish(
         cacheName: String,
         topicName: String,
@@ -18,7 +18,7 @@ protocol PubsubClientProtocol {
         topicName: String,
         resumeAtTopicSequenceNumber: UInt64?
     ) async throws -> TopicSubscribeResponse
-    
+
     func close()
 }
 
@@ -31,7 +31,7 @@ class PubsubClient: PubsubClientProtocol {
     let grpcManager: TopicsGrpcManager
     let client: CacheClient_Pubsub_PubsubAsyncClient
     var firstRequest = true
-    
+
     init(
         configuration: TopicClientConfigurationProtocol,
         credentialProvider: CredentialProviderProtocol
@@ -46,13 +46,13 @@ class PubsubClient: PubsubClientProtocol {
     }
 
     func makeHeaders() -> [String:String] {
-        let headers = constructHeaders(firstRequest: self.firstRequest)
+        let headers = constructHeaders(firstRequest: self.firstRequest, clientType: "topic")
         if self.firstRequest {
             self.firstRequest = false
         }
         return headers
     }
-    
+
     func publish(
         cacheName: String,
         topicName: String,
@@ -61,19 +61,19 @@ class PubsubClient: PubsubClientProtocol {
         var request = CacheClient_Pubsub__PublishRequest()
         request.cacheName = cacheName
         request.topic = topicName
-        
+
         switch value {
         case .string(let s):
             request.value.text = s
         case .data(let b):
             request.value.binary = b
         }
-        
+
         do {
             let result = try await self.client.publish(
                 request,
                 callOptions: .init(
-                    customMetadata: .init(makeHeaders().map { ($0, $1) }), 
+                    customMetadata: .init(makeHeaders().map { ($0, $1) }),
                     timeLimit: .timeout(.seconds(Int64(self.configuration.transportStrategy.getClientTimeout())))
                 )
             )
@@ -90,21 +90,21 @@ class PubsubClient: PubsubClientProtocol {
             )
         }
     }
-    
+
     func subscribe(cacheName: String, topicName: String, resumeAtTopicSequenceNumber: UInt64?) async throws -> TopicSubscribeResponse {
         var request = CacheClient_Pubsub__SubscriptionRequest()
         request.cacheName = cacheName
         request.topic = topicName
         request.resumeAtTopicSequenceNumber = UInt64(resumeAtTopicSequenceNumber ?? 0)
-        
-        
+
+
         let result = self.client.makeSubscribeCall(
             request,
             callOptions: .init(
                 customMetadata: .init(makeHeaders().map { ($0, $1) })
             )
         )
-        
+
         do {
             var messageIterator = result.responseStream.makeAsyncIterator()
             let firstElement = try await messageIterator.next()
@@ -137,7 +137,7 @@ class PubsubClient: PubsubClientProtocol {
             )
         }
     }
-    
+
     func close() {
         self.grpcManager.close()
     }
