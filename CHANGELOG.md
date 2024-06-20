@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/momentohq/client-sdk-swift/compare/v0.5.1...v0.6.0) (2024-06-20)
+
+
+### Features
+
+* add onetime headers ([#136](https://github.com/momentohq/client-sdk-swift/issues/136)) ([6312e4c](https://github.com/momentohq/client-sdk-swift/commit/6312e4c8bfb57729737c8539456230d021482b93))
+
 ## [0.5.1](https://github.com/momentohq/client-sdk-swift/compare/v0.5.0...v0.5.1) (2024-03-14)
 
 
