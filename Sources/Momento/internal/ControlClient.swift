@@ -6,9 +6,9 @@ import Logging
 @available(macOS 10.15, iOS 13, *)
 protocol ControlClientProtocol {
     func createCache(cacheName: String) async -> CreateCacheResponse
-    
+
     func deleteCache(cacheName: String) async -> DeleteCacheResponse
-    
+
     func listCaches() async -> ListCachesResponse
 
     func close()
@@ -23,7 +23,7 @@ class ControlClient: ControlClientProtocol {
     private let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
     private let client: ControlClient_ScsControlNIOClient
     private var firstRequest = true
-    
+
     init(
         configuration: CacheClientConfigurationProtocol,
         credentialProvider: CredentialProviderProtocol
@@ -31,7 +31,7 @@ class ControlClient: ControlClientProtocol {
         self.configuration = configuration
         self.credentialProvider = credentialProvider
         self.logger = Logger(label: "CacheControlClient")
-        
+
         do {
             self.grpcChannel = try GRPCChannelPool.with(
                 target: .host(credentialProvider.controlEndpoint, port: 443),
@@ -50,7 +50,7 @@ class ControlClient: ControlClientProtocol {
         } catch {
             fatalError("Failed to open GRPC channel")
         }
-        
+
         self.client = ControlClient_ScsControlNIOClient(
             channel: self.grpcChannel,
             defaultCallOptions: .init(
@@ -59,15 +59,15 @@ class ControlClient: ControlClientProtocol {
             interceptors: ControlClientInterceptorFactory(apiKey: credentialProvider.apiKey)
         )
     }
-    
+
     func makeHeaders() -> [String:String] {
-        let headers = constructHeaders(firstRequest: self.firstRequest)
+        let headers = constructHeaders(firstRequest: self.firstRequest, clientType: "cache")
         if self.firstRequest {
             self.firstRequest = false
         }
         return headers
     }
-    
+
     func createCache(cacheName: String) async -> CreateCacheResponse {
         var request = ControlClient__CreateCacheRequest()
         request.cacheName = cacheName
@@ -95,7 +95,7 @@ class ControlClient: ControlClientProtocol {
             )
         }
     }
-    
+
     func deleteCache(cacheName: String) async -> DeleteCacheResponse {
         var request = ControlClient__DeleteCacheRequest()
         request.cacheName = cacheName
@@ -120,7 +120,7 @@ class ControlClient: ControlClientProtocol {
             )
         }
     }
-    
+
     func listCaches() async -> ListCachesResponse {
         let call = self.client.listCaches(ControlClient__ListCachesRequest(), callOptions: .init(
             customMetadata: .init(makeHeaders().map { ($0, $1) })
