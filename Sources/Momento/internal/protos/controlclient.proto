@@ -19,21 +19,59 @@ service ScsControl {
   rpc CreateIndex (_CreateIndexRequest) returns (_CreateIndexResponse) {}
   rpc DeleteIndex(_DeleteIndexRequest) returns (_DeleteIndexResponse) {}
   rpc ListIndexes(_ListIndexesRequest) returns (_ListIndexesResponse) {}
+  rpc CreateStore (_CreateStoreRequest) returns (_CreateStoreResponse) {}
+  rpc DeleteStore (_DeleteStoreRequest) returns (_DeleteStoreResponse) {}
+  rpc ListStores (_ListStoresRequest) returns (_ListStoresResponse) {}
+}
+
+message _CreateStoreRequest {
+  string store_name = 1;
+}
+
+message _CreateStoreResponse {
+}
+
+message _DeleteStoreRequest {
+  string store_name = 1;
+}
+
+message _DeleteStoreResponse {
+}
+
+message _ListStoresRequest {
+  string next_token = 1;
+}
+
+message _ListStoresResponse {
+  repeated _Store store = 1;
+  string next_token = 2;
+}
+
+message _Store {
+  string store_name = 1;
+}
+
+message _SimilarityMetric {
+  message _EuclideanSimilarity {
+  }
+
+  message _InnerProduct {
+  }
+
+  message _CosineSimilarity {
+  }
+
+  oneof similarity_metric {
+    _EuclideanSimilarity euclidean_similarity = 1;
+    _InnerProduct inner_product = 2;
+    _CosineSimilarity cosine_similarity = 3;
+  }
 }
 
 message _CreateIndexRequest {
-  message _EuclideanSimilarity{}
-
-  message _InnerProduct{}
-
-  message _CosineSimilarity{}
   string index_name = 1;
   uint64 num_dimensions = 2;
-  oneof similarity_metric {
-    _EuclideanSimilarity euclidean_similarity = 3;
-    _InnerProduct inner_product = 4;
-    _CosineSimilarity cosine_similarity = 5;
-  }
+  _SimilarityMetric similarity_metric = 3;
 }
 
 message _CreateIndexResponse {
@@ -50,7 +88,12 @@ message _ListIndexesRequest {
 }
 
 message _ListIndexesResponse {
-  repeated string index_names = 1;
+  message _Index {
+    string index_name = 1;
+    uint64 num_dimensions = 2;
+    _SimilarityMetric similarity_metric = 3;
+  }
+  repeated _Index indexes = 1;
 }
 
 message _DeleteCacheRequest {

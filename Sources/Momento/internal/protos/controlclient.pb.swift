@@ -20,37 +20,115 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
-public struct ControlClient__CreateIndexRequest {
+public struct ControlClient__CreateStoreRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var indexName: String = String()
+  public var storeName: String = String()
 
-  public var numDimensions: UInt64 = 0
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
 
-  public var similarityMetric: ControlClient__CreateIndexRequest.OneOf_SimilarityMetric? = nil
+  public init() {}
+}
 
-  public var euclideanSimilarity: ControlClient__CreateIndexRequest._EuclideanSimilarity {
+public struct ControlClient__CreateStoreResponse {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct ControlClient__DeleteStoreRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var storeName: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct ControlClient__DeleteStoreResponse {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct ControlClient__ListStoresRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var nextToken: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct ControlClient__ListStoresResponse {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var store: [ControlClient__Store] = []
+
+  public var nextToken: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct ControlClient__Store {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var storeName: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct ControlClient__SimilarityMetric {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var similarityMetric: ControlClient__SimilarityMetric.OneOf_SimilarityMetric? = nil
+
+  public var euclideanSimilarity: ControlClient__SimilarityMetric._EuclideanSimilarity {
     get {
       if case .euclideanSimilarity(let v)? = similarityMetric {return v}
-      return ControlClient__CreateIndexRequest._EuclideanSimilarity()
+      return ControlClient__SimilarityMetric._EuclideanSimilarity()
     }
     set {similarityMetric = .euclideanSimilarity(newValue)}
   }
 
-  public var innerProduct: ControlClient__CreateIndexRequest._InnerProduct {
+  public var innerProduct: ControlClient__SimilarityMetric._InnerProduct {
     get {
       if case .innerProduct(let v)? = similarityMetric {return v}
-      return ControlClient__CreateIndexRequest._InnerProduct()
+      return ControlClient__SimilarityMetric._InnerProduct()
     }
     set {similarityMetric = .innerProduct(newValue)}
   }
 
-  public var cosineSimilarity: ControlClient__CreateIndexRequest._CosineSimilarity {
+  public var cosineSimilarity: ControlClient__SimilarityMetric._CosineSimilarity {
     get {
       if case .cosineSimilarity(let v)? = similarityMetric {return v}
-      return ControlClient__CreateIndexRequest._CosineSimilarity()
+      return ControlClient__SimilarityMetric._CosineSimilarity()
     }
     set {similarityMetric = .cosineSimilarity(newValue)}
   }
@@ -58,12 +136,12 @@ public struct ControlClient__CreateIndexRequest {
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public enum OneOf_SimilarityMetric: Equatable {
-    case euclideanSimilarity(ControlClient__CreateIndexRequest._EuclideanSimilarity)
-    case innerProduct(ControlClient__CreateIndexRequest._InnerProduct)
-    case cosineSimilarity(ControlClient__CreateIndexRequest._CosineSimilarity)
+    case euclideanSimilarity(ControlClient__SimilarityMetric._EuclideanSimilarity)
+    case innerProduct(ControlClient__SimilarityMetric._InnerProduct)
+    case cosineSimilarity(ControlClient__SimilarityMetric._CosineSimilarity)
 
   #if !swift(>=4.1)
-    public static func ==(lhs: ControlClient__CreateIndexRequest.OneOf_SimilarityMetric, rhs: ControlClient__CreateIndexRequest.OneOf_SimilarityMetric) -> Bool {
+    public static func ==(lhs: ControlClient__SimilarityMetric.OneOf_SimilarityMetric, rhs: ControlClient__SimilarityMetric.OneOf_SimilarityMetric) -> Bool {
       // The use of inline closures is to circumvent an issue where the compiler
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
@@ -119,6 +197,31 @@ public struct ControlClient__CreateIndexRequest {
   public init() {}
 }
 
+public struct ControlClient__CreateIndexRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var indexName: String = String()
+
+  public var numDimensions: UInt64 = 0
+
+  public var similarityMetric: ControlClient__SimilarityMetric {
+    get {return _similarityMetric ?? ControlClient__SimilarityMetric()}
+    set {_similarityMetric = newValue}
+  }
+  /// Returns true if `similarityMetric` has been explicitly set.
+  public var hasSimilarityMetric: Bool {return self._similarityMetric != nil}
+  /// Clears the value of `similarityMetric`. Subsequent reads from it will return its default value.
+  public mutating func clearSimilarityMetric() {self._similarityMetric = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _similarityMetric: ControlClient__SimilarityMetric? = nil
+}
+
 public struct ControlClient__CreateIndexResponse {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -166,9 +269,34 @@ public struct ControlClient__ListIndexesResponse {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  public var indexNames: [String] = []
+  public var indexes: [ControlClient__ListIndexesResponse._Index] = []
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public struct _Index {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    public var indexName: String = String()
+
+    public var numDimensions: UInt64 = 0
+
+    public var similarityMetric: ControlClient__SimilarityMetric {
+      get {return _similarityMetric ?? ControlClient__SimilarityMetric()}
+      set {_similarityMetric = newValue}
+    }
+    /// Returns true if `similarityMetric` has been explicitly set.
+    public var hasSimilarityMetric: Bool {return self._similarityMetric != nil}
+    /// Clears the value of `similarityMetric`. Subsequent reads from it will return its default value.
+    public mutating func clearSimilarityMetric() {self._similarityMetric = nil}
+
+    public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    public init() {}
+
+    fileprivate var _similarityMetric: ControlClient__SimilarityMetric? = nil
+  }
 
   public init() {}
 }
@@ -430,16 +558,25 @@ public struct ControlClient__FlushCacheResponse {
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
+extension ControlClient__CreateStoreRequest: @unchecked Sendable {}
+extension ControlClient__CreateStoreResponse: @unchecked Sendable {}
+extension ControlClient__DeleteStoreRequest: @unchecked Sendable {}
+extension ControlClient__DeleteStoreResponse: @unchecked Sendable {}
+extension ControlClient__ListStoresRequest: @unchecked Sendable {}
+extension ControlClient__ListStoresResponse: @unchecked Sendable {}
+extension ControlClient__Store: @unchecked Sendable {}
+extension ControlClient__SimilarityMetric: @unchecked Sendable {}
+extension ControlClient__SimilarityMetric.OneOf_SimilarityMetric: @unchecked Sendable {}
+extension ControlClient__SimilarityMetric._EuclideanSimilarity: @unchecked Sendable {}
+extension ControlClient__SimilarityMetric._InnerProduct: @unchecked Sendable {}
+extension ControlClient__SimilarityMetric._CosineSimilarity: @unchecked Sendable {}
 extension ControlClient__CreateIndexRequest: @unchecked Sendable {}
-extension ControlClient__CreateIndexRequest.OneOf_SimilarityMetric: @unchecked Sendable {}
-extension ControlClient__CreateIndexRequest._EuclideanSimilarity: @unchecked Sendable {}
-extension ControlClient__CreateIndexRequest._InnerProduct: @unchecked Sendable {}
-extension ControlClient__CreateIndexRequest._CosineSimilarity: @unchecked Sendable {}
 extension ControlClient__CreateIndexResponse: @unchecked Sendable {}
 extension ControlClient__DeleteIndexRequest: @unchecked Sendable {}
 extension ControlClient__DeleteIndexResponse: @unchecked Sendable {}
 extension ControlClient__ListIndexesRequest: @unchecked Sendable {}
 extension ControlClient__ListIndexesResponse: @unchecked Sendable {}
+extension ControlClient__ListIndexesResponse._Index: @unchecked Sendable {}
 extension ControlClient__DeleteCacheRequest: @unchecked Sendable {}
 extension ControlClient__DeleteCacheResponse: @unchecked Sendable {}
 extension ControlClient__CreateCacheRequest: @unchecked Sendable {}
@@ -464,14 +601,10 @@ extension ControlClient__FlushCacheResponse: @unchecked Sendable {}
 
 fileprivate let _protobuf_package = "control_client"
 
-extension ControlClient__CreateIndexRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + "._CreateIndexRequest"
+extension ControlClient__CreateStoreRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + "._CreateStoreRequest"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "index_name"),
-    2: .standard(proto: "num_dimensions"),
-    3: .standard(proto: "euclidean_similarity"),
-    4: .standard(proto: "inner_product"),
-    5: .standard(proto: "cosine_similarity"),
+    1: .standard(proto: "store_name"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -480,10 +613,214 @@ extension ControlClient__CreateIndexRequest: SwiftProtobuf.Message, SwiftProtobu
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeSingularStringField(value: &self.indexName) }()
-      case 2: try { try decoder.decodeSingularUInt64Field(value: &self.numDimensions) }()
-      case 3: try {
-        var v: ControlClient__CreateIndexRequest._EuclideanSimilarity?
+      case 1: try { try decoder.decodeSingularStringField(value: &self.storeName) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.storeName.isEmpty {
+      try visitor.visitSingularStringField(value: self.storeName, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: ControlClient__CreateStoreRequest, rhs: ControlClient__CreateStoreRequest) -> Bool {
+    if lhs.storeName != rhs.storeName {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension ControlClient__CreateStoreResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + "._CreateStoreResponse"
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: ControlClient__CreateStoreResponse, rhs: ControlClient__CreateStoreResponse) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension ControlClient__DeleteStoreRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + "._DeleteStoreRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "store_name"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.storeName) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.storeName.isEmpty {
+      try visitor.visitSingularStringField(value: self.storeName, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: ControlClient__DeleteStoreRequest, rhs: ControlClient__DeleteStoreRequest) -> Bool {
+    if lhs.storeName != rhs.storeName {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension ControlClient__DeleteStoreResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + "._DeleteStoreResponse"
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: ControlClient__DeleteStoreResponse, rhs: ControlClient__DeleteStoreResponse) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension ControlClient__ListStoresRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + "._ListStoresRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "next_token"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.nextToken) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.nextToken.isEmpty {
+      try visitor.visitSingularStringField(value: self.nextToken, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: ControlClient__ListStoresRequest, rhs: ControlClient__ListStoresRequest) -> Bool {
+    if lhs.nextToken != rhs.nextToken {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension ControlClient__ListStoresResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + "._ListStoresResponse"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "store"),
+    2: .standard(proto: "next_token"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeRepeatedMessageField(value: &self.store) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.nextToken) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.store.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.store, fieldNumber: 1)
+    }
+    if !self.nextToken.isEmpty {
+      try visitor.visitSingularStringField(value: self.nextToken, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: ControlClient__ListStoresResponse, rhs: ControlClient__ListStoresResponse) -> Bool {
+    if lhs.store != rhs.store {return false}
+    if lhs.nextToken != rhs.nextToken {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension ControlClient__Store: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + "._Store"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "store_name"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.storeName) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.storeName.isEmpty {
+      try visitor.visitSingularStringField(value: self.storeName, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: ControlClient__Store, rhs: ControlClient__Store) -> Bool {
+    if lhs.storeName != rhs.storeName {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension ControlClient__SimilarityMetric: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + "._SimilarityMetric"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "euclidean_similarity"),
+    2: .standard(proto: "inner_product"),
+    3: .standard(proto: "cosine_similarity"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try {
+        var v: ControlClient__SimilarityMetric._EuclideanSimilarity?
         var hadOneofValue = false
         if let current = self.similarityMetric {
           hadOneofValue = true
@@ -495,8 +832,8 @@ extension ControlClient__CreateIndexRequest: SwiftProtobuf.Message, SwiftProtobu
           self.similarityMetric = .euclideanSimilarity(v)
         }
       }()
-      case 4: try {
-        var v: ControlClient__CreateIndexRequest._InnerProduct?
+      case 2: try {
+        var v: ControlClient__SimilarityMetric._InnerProduct?
         var hadOneofValue = false
         if let current = self.similarityMetric {
           hadOneofValue = true
@@ -508,8 +845,8 @@ extension ControlClient__CreateIndexRequest: SwiftProtobuf.Message, SwiftProtobu
           self.similarityMetric = .innerProduct(v)
         }
       }()
-      case 5: try {
-        var v: ControlClient__CreateIndexRequest._CosineSimilarity?
+      case 3: try {
+        var v: ControlClient__SimilarityMetric._CosineSimilarity?
         var hadOneofValue = false
         if let current = self.similarityMetric {
           hadOneofValue = true
@@ -531,41 +868,33 @@ extension ControlClient__CreateIndexRequest: SwiftProtobuf.Message, SwiftProtobu
     // allocates stack space for every if/case branch local when no optimizations
     // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
     // https://github.com/apple/swift-protobuf/issues/1182
-    if !self.indexName.isEmpty {
-      try visitor.visitSingularStringField(value: self.indexName, fieldNumber: 1)
-    }
-    if self.numDimensions != 0 {
-      try visitor.visitSingularUInt64Field(value: self.numDimensions, fieldNumber: 2)
-    }
     switch self.similarityMetric {
     case .euclideanSimilarity?: try {
       guard case .euclideanSimilarity(let v)? = self.similarityMetric else { preconditionFailure() }
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
     }()
     case .innerProduct?: try {
       guard case .innerProduct(let v)? = self.similarityMetric else { preconditionFailure() }
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
     }()
     case .cosineSimilarity?: try {
       guard case .cosineSimilarity(let v)? = self.similarityMetric else { preconditionFailure() }
-      try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
     }()
     case nil: break
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: ControlClient__CreateIndexRequest, rhs: ControlClient__CreateIndexRequest) -> Bool {
-    if lhs.indexName != rhs.indexName {return false}
-    if lhs.numDimensions != rhs.numDimensions {return false}
+  public static func ==(lhs: ControlClient__SimilarityMetric, rhs: ControlClient__SimilarityMetric) -> Bool {
     if lhs.similarityMetric != rhs.similarityMetric {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension ControlClient__CreateIndexRequest._EuclideanSimilarity: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = ControlClient__CreateIndexRequest.protoMessageName + "._EuclideanSimilarity"
+extension ControlClient__SimilarityMetric._EuclideanSimilarity: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = ControlClient__SimilarityMetric.protoMessageName + "._EuclideanSimilarity"
   public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -577,14 +906,14 @@ extension ControlClient__CreateIndexRequest._EuclideanSimilarity: SwiftProtobuf.
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: ControlClient__CreateIndexRequest._EuclideanSimilarity, rhs: ControlClient__CreateIndexRequest._EuclideanSimilarity) -> Bool {
+  public static func ==(lhs: ControlClient__SimilarityMetric._EuclideanSimilarity, rhs: ControlClient__SimilarityMetric._EuclideanSimilarity) -> Bool {
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension ControlClient__CreateIndexRequest._InnerProduct: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = ControlClient__CreateIndexRequest.protoMessageName + "._InnerProduct"
+extension ControlClient__SimilarityMetric._InnerProduct: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = ControlClient__SimilarityMetric.protoMessageName + "._InnerProduct"
   public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -596,14 +925,14 @@ extension ControlClient__CreateIndexRequest._InnerProduct: SwiftProtobuf.Message
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: ControlClient__CreateIndexRequest._InnerProduct, rhs: ControlClient__CreateIndexRequest._InnerProduct) -> Bool {
+  public static func ==(lhs: ControlClient__SimilarityMetric._InnerProduct, rhs: ControlClient__SimilarityMetric._InnerProduct) -> Bool {
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
 }
 
-extension ControlClient__CreateIndexRequest._CosineSimilarity: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = ControlClient__CreateIndexRequest.protoMessageName + "._CosineSimilarity"
+extension ControlClient__SimilarityMetric._CosineSimilarity: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = ControlClient__SimilarityMetric.protoMessageName + "._CosineSimilarity"
   public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -615,7 +944,55 @@ extension ControlClient__CreateIndexRequest._CosineSimilarity: SwiftProtobuf.Mes
     try unknownFields.traverse(visitor: &visitor)
   }
 
-  public static func ==(lhs: ControlClient__CreateIndexRequest._CosineSimilarity, rhs: ControlClient__CreateIndexRequest._CosineSimilarity) -> Bool {
+  public static func ==(lhs: ControlClient__SimilarityMetric._CosineSimilarity, rhs: ControlClient__SimilarityMetric._CosineSimilarity) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension ControlClient__CreateIndexRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + "._CreateIndexRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "index_name"),
+    2: .standard(proto: "num_dimensions"),
+    3: .standard(proto: "similarity_metric"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.indexName) }()
+      case 2: try { try decoder.decodeSingularUInt64Field(value: &self.numDimensions) }()
+      case 3: try { try decoder.decodeSingularMessageField(value: &self._similarityMetric) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if !self.indexName.isEmpty {
+      try visitor.visitSingularStringField(value: self.indexName, fieldNumber: 1)
+    }
+    if self.numDimensions != 0 {
+      try visitor.visitSingularUInt64Field(value: self.numDimensions, fieldNumber: 2)
+    }
+    try { if let v = self._similarityMetric {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: ControlClient__CreateIndexRequest, rhs: ControlClient__CreateIndexRequest) -> Bool {
+    if lhs.indexName != rhs.indexName {return false}
+    if lhs.numDimensions != rhs.numDimensions {return false}
+    if lhs._similarityMetric != rhs._similarityMetric {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -713,7 +1090,7 @@ extension ControlClient__ListIndexesRequest: SwiftProtobuf.Message, SwiftProtobu
 extension ControlClient__ListIndexesResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + "._ListIndexesResponse"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    1: .standard(proto: "index_names"),
+    1: .same(proto: "indexes"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -722,21 +1099,69 @@ extension ControlClient__ListIndexesResponse: SwiftProtobuf.Message, SwiftProtob
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
-      case 1: try { try decoder.decodeRepeatedStringField(value: &self.indexNames) }()
+      case 1: try { try decoder.decodeRepeatedMessageField(value: &self.indexes) }()
       default: break
       }
     }
   }
 
   public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    if !self.indexNames.isEmpty {
-      try visitor.visitRepeatedStringField(value: self.indexNames, fieldNumber: 1)
+    if !self.indexes.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.indexes, fieldNumber: 1)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: ControlClient__ListIndexesResponse, rhs: ControlClient__ListIndexesResponse) -> Bool {
-    if lhs.indexNames != rhs.indexNames {return false}
+    if lhs.indexes != rhs.indexes {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension ControlClient__ListIndexesResponse._Index: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = ControlClient__ListIndexesResponse.protoMessageName + "._Index"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "index_name"),
+    2: .standard(proto: "num_dimensions"),
+    3: .standard(proto: "similarity_metric"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.indexName) }()
+      case 2: try { try decoder.decodeSingularUInt64Field(value: &self.numDimensions) }()
+      case 3: try { try decoder.decodeSingularMessageField(value: &self._similarityMetric) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if !self.indexName.isEmpty {
+      try visitor.visitSingularStringField(value: self.indexName, fieldNumber: 1)
+    }
+    if self.numDimensions != 0 {
+      try visitor.visitSingularUInt64Field(value: self.numDimensions, fieldNumber: 2)
+    }
+    try { if let v = self._similarityMetric {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: ControlClient__ListIndexesResponse._Index, rhs: ControlClient__ListIndexesResponse._Index) -> Bool {
+    if lhs.indexName != rhs.indexName {return false}
+    if lhs.numDimensions != rhs.numDimensions {return false}
+    if lhs._similarityMetric != rhs._similarityMetric {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

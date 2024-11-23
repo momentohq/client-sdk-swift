@@ -21,10 +21,27 @@ public protocol CacheClient_ScsClientProtocol: GRPCClient {
     callOptions: CallOptions?
   ) -> UnaryCall<CacheClient__GetRequest, CacheClient__GetResponse>
 
+  func getBatch(
+    _ request: CacheClient__GetBatchRequest,
+    callOptions: CallOptions?,
+    handler: @escaping (CacheClient__GetResponse) -> Void
+  ) -> ServerStreamingCall<CacheClient__GetBatchRequest, CacheClient__GetResponse>
+
   func set(
     _ request: CacheClient__SetRequest,
     callOptions: CallOptions?
   ) -> UnaryCall<CacheClient__SetRequest, CacheClient__SetResponse>
+
+  func setBatch(
+    _ request: CacheClient__SetBatchRequest,
+    callOptions: CallOptions?,
+    handler: @escaping (CacheClient__SetResponse) -> Void
+  ) -> ServerStreamingCall<CacheClient__SetBatchRequest, CacheClient__SetResponse>
+
+  func setIf(
+    _ request: CacheClient__SetIfRequest,
+    callOptions: CallOptions?
+  ) -> UnaryCall<CacheClient__SetIfRequest, CacheClient__SetIfResponse>
 
   func setIfNotExists(
     _ request: CacheClient__SetIfNotExistsRequest,
@@ -95,6 +112,11 @@ public protocol CacheClient_ScsClientProtocol: GRPCClient {
     _ request: CacheClient__SetFetchRequest,
     callOptions: CallOptions?
   ) -> UnaryCall<CacheClient__SetFetchRequest, CacheClient__SetFetchResponse>
+
+  func setSample(
+    _ request: CacheClient__SetSampleRequest,
+    callOptions: CallOptions?
+  ) -> UnaryCall<CacheClient__SetSampleRequest, CacheClient__SetSampleResponse>
 
   func setUnion(
     _ request: CacheClient__SetUnionRequest,
@@ -240,6 +262,27 @@ extension CacheClient_ScsClientProtocol {
     )
   }
 
+  /// Server streaming call to GetBatch
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to GetBatch.
+  ///   - callOptions: Call options.
+  ///   - handler: A closure called when each response is received from the server.
+  /// - Returns: A `ServerStreamingCall` with futures for the metadata and status.
+  public func getBatch(
+    _ request: CacheClient__GetBatchRequest,
+    callOptions: CallOptions? = nil,
+    handler: @escaping (CacheClient__GetResponse) -> Void
+  ) -> ServerStreamingCall<CacheClient__GetBatchRequest, CacheClient__GetResponse> {
+    return self.makeServerStreamingCall(
+      path: CacheClient_ScsClientMetadata.Methods.getBatch.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeGetBatchInterceptors() ?? [],
+      handler: handler
+    )
+  }
+
   /// Unary call to Set
   ///
   /// - Parameters:
@@ -258,7 +301,46 @@ extension CacheClient_ScsClientProtocol {
     )
   }
 
-  /// Unary call to SetIfNotExists
+  /// Server streaming call to SetBatch
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to SetBatch.
+  ///   - callOptions: Call options.
+  ///   - handler: A closure called when each response is received from the server.
+  /// - Returns: A `ServerStreamingCall` with futures for the metadata and status.
+  public func setBatch(
+    _ request: CacheClient__SetBatchRequest,
+    callOptions: CallOptions? = nil,
+    handler: @escaping (CacheClient__SetResponse) -> Void
+  ) -> ServerStreamingCall<CacheClient__SetBatchRequest, CacheClient__SetResponse> {
+    return self.makeServerStreamingCall(
+      path: CacheClient_ScsClientMetadata.Methods.setBatch.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeSetBatchInterceptors() ?? [],
+      handler: handler
+    )
+  }
+
+  /// Unary call to SetIf
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to SetIf.
+  ///   - callOptions: Call options.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  public func setIf(
+    _ request: CacheClient__SetIfRequest,
+    callOptions: CallOptions? = nil
+  ) -> UnaryCall<CacheClient__SetIfRequest, CacheClient__SetIfResponse> {
+    return self.makeUnaryCall(
+      path: CacheClient_ScsClientMetadata.Methods.setIf.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeSetIfInterceptors() ?? []
+    )
+  }
+
+  /// Deprecated because we have SetIf - Absent to cover this case.
   ///
   /// - Parameters:
   ///   - request: Request to send to SetIfNotExists.
@@ -507,6 +589,24 @@ extension CacheClient_ScsClientProtocol {
       request: request,
       callOptions: callOptions ?? self.defaultCallOptions,
       interceptors: self.interceptors?.makeSetFetchInterceptors() ?? []
+    )
+  }
+
+  /// Unary call to SetSample
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to SetSample.
+  ///   - callOptions: Call options.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  public func setSample(
+    _ request: CacheClient__SetSampleRequest,
+    callOptions: CallOptions? = nil
+  ) -> UnaryCall<CacheClient__SetSampleRequest, CacheClient__SetSampleResponse> {
+    return self.makeUnaryCall(
+      path: CacheClient_ScsClientMetadata.Methods.setSample.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeSetSampleInterceptors() ?? []
     )
   }
 
@@ -1021,10 +1121,25 @@ public protocol CacheClient_ScsAsyncClientProtocol: GRPCClient {
     callOptions: CallOptions?
   ) -> GRPCAsyncUnaryCall<CacheClient__GetRequest, CacheClient__GetResponse>
 
+  func makeGetBatchCall(
+    _ request: CacheClient__GetBatchRequest,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncServerStreamingCall<CacheClient__GetBatchRequest, CacheClient__GetResponse>
+
   func makeSetCall(
     _ request: CacheClient__SetRequest,
     callOptions: CallOptions?
   ) -> GRPCAsyncUnaryCall<CacheClient__SetRequest, CacheClient__SetResponse>
+
+  func makeSetBatchCall(
+    _ request: CacheClient__SetBatchRequest,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncServerStreamingCall<CacheClient__SetBatchRequest, CacheClient__SetResponse>
+
+  func makeSetIfCall(
+    _ request: CacheClient__SetIfRequest,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<CacheClient__SetIfRequest, CacheClient__SetIfResponse>
 
   func makeSetIfNotExistsCall(
     _ request: CacheClient__SetIfNotExistsRequest,
@@ -1095,6 +1210,11 @@ public protocol CacheClient_ScsAsyncClientProtocol: GRPCClient {
     _ request: CacheClient__SetFetchRequest,
     callOptions: CallOptions?
   ) -> GRPCAsyncUnaryCall<CacheClient__SetFetchRequest, CacheClient__SetFetchResponse>
+
+  func makeSetSampleCall(
+    _ request: CacheClient__SetSampleRequest,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<CacheClient__SetSampleRequest, CacheClient__SetSampleResponse>
 
   func makeSetUnionCall(
     _ request: CacheClient__SetUnionRequest,
@@ -1239,6 +1359,18 @@ extension CacheClient_ScsAsyncClientProtocol {
     )
   }
 
+  public func makeGetBatchCall(
+    _ request: CacheClient__GetBatchRequest,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncServerStreamingCall<CacheClient__GetBatchRequest, CacheClient__GetResponse> {
+    return self.makeAsyncServerStreamingCall(
+      path: CacheClient_ScsClientMetadata.Methods.getBatch.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeGetBatchInterceptors() ?? []
+    )
+  }
+
   public func makeSetCall(
     _ request: CacheClient__SetRequest,
     callOptions: CallOptions? = nil
@@ -1248,6 +1380,30 @@ extension CacheClient_ScsAsyncClientProtocol {
       request: request,
       callOptions: callOptions ?? self.defaultCallOptions,
       interceptors: self.interceptors?.makeSetInterceptors() ?? []
+    )
+  }
+
+  public func makeSetBatchCall(
+    _ request: CacheClient__SetBatchRequest,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncServerStreamingCall<CacheClient__SetBatchRequest, CacheClient__SetResponse> {
+    return self.makeAsyncServerStreamingCall(
+      path: CacheClient_ScsClientMetadata.Methods.setBatch.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeSetBatchInterceptors() ?? []
+    )
+  }
+
+  public func makeSetIfCall(
+    _ request: CacheClient__SetIfRequest,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<CacheClient__SetIfRequest, CacheClient__SetIfResponse> {
+    return self.makeAsyncUnaryCall(
+      path: CacheClient_ScsClientMetadata.Methods.setIf.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeSetIfInterceptors() ?? []
     )
   }
 
@@ -1416,6 +1572,18 @@ extension CacheClient_ScsAsyncClientProtocol {
       request: request,
       callOptions: callOptions ?? self.defaultCallOptions,
       interceptors: self.interceptors?.makeSetFetchInterceptors() ?? []
+    )
+  }
+
+  public func makeSetSampleCall(
+    _ request: CacheClient__SetSampleRequest,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<CacheClient__SetSampleRequest, CacheClient__SetSampleResponse> {
+    return self.makeAsyncUnaryCall(
+      path: CacheClient_ScsClientMetadata.Methods.setSample.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeSetSampleInterceptors() ?? []
     )
   }
 
@@ -1722,6 +1890,18 @@ extension CacheClient_ScsAsyncClientProtocol {
     )
   }
 
+  public func getBatch(
+    _ request: CacheClient__GetBatchRequest,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncResponseStream<CacheClient__GetResponse> {
+    return self.performAsyncServerStreamingCall(
+      path: CacheClient_ScsClientMetadata.Methods.getBatch.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeGetBatchInterceptors() ?? []
+    )
+  }
+
   public func set(
     _ request: CacheClient__SetRequest,
     callOptions: CallOptions? = nil
@@ -1731,6 +1911,30 @@ extension CacheClient_ScsAsyncClientProtocol {
       request: request,
       callOptions: callOptions ?? self.defaultCallOptions,
       interceptors: self.interceptors?.makeSetInterceptors() ?? []
+    )
+  }
+
+  public func setBatch(
+    _ request: CacheClient__SetBatchRequest,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncResponseStream<CacheClient__SetResponse> {
+    return self.performAsyncServerStreamingCall(
+      path: CacheClient_ScsClientMetadata.Methods.setBatch.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeSetBatchInterceptors() ?? []
+    )
+  }
+
+  public func setIf(
+    _ request: CacheClient__SetIfRequest,
+    callOptions: CallOptions? = nil
+  ) async throws -> CacheClient__SetIfResponse {
+    return try await self.performAsyncUnaryCall(
+      path: CacheClient_ScsClientMetadata.Methods.setIf.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeSetIfInterceptors() ?? []
     )
   }
 
@@ -1899,6 +2103,18 @@ extension CacheClient_ScsAsyncClientProtocol {
       request: request,
       callOptions: callOptions ?? self.defaultCallOptions,
       interceptors: self.interceptors?.makeSetFetchInterceptors() ?? []
+    )
+  }
+
+  public func setSample(
+    _ request: CacheClient__SetSampleRequest,
+    callOptions: CallOptions? = nil
+  ) async throws -> CacheClient__SetSampleResponse {
+    return try await self.performAsyncUnaryCall(
+      path: CacheClient_ScsClientMetadata.Methods.setSample.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeSetSampleInterceptors() ?? []
     )
   }
 
@@ -2213,8 +2429,17 @@ public protocol CacheClient_ScsClientInterceptorFactoryProtocol: Sendable {
   /// - Returns: Interceptors to use when invoking 'get'.
   func makeGetInterceptors() -> [ClientInterceptor<CacheClient__GetRequest, CacheClient__GetResponse>]
 
+  /// - Returns: Interceptors to use when invoking 'getBatch'.
+  func makeGetBatchInterceptors() -> [ClientInterceptor<CacheClient__GetBatchRequest, CacheClient__GetResponse>]
+
   /// - Returns: Interceptors to use when invoking 'set'.
   func makeSetInterceptors() -> [ClientInterceptor<CacheClient__SetRequest, CacheClient__SetResponse>]
+
+  /// - Returns: Interceptors to use when invoking 'setBatch'.
+  func makeSetBatchInterceptors() -> [ClientInterceptor<CacheClient__SetBatchRequest, CacheClient__SetResponse>]
+
+  /// - Returns: Interceptors to use when invoking 'setIf'.
+  func makeSetIfInterceptors() -> [ClientInterceptor<CacheClient__SetIfRequest, CacheClient__SetIfResponse>]
 
   /// - Returns: Interceptors to use when invoking 'setIfNotExists'.
   func makeSetIfNotExistsInterceptors() -> [ClientInterceptor<CacheClient__SetIfNotExistsRequest, CacheClient__SetIfNotExistsResponse>]
@@ -2257,6 +2482,9 @@ public protocol CacheClient_ScsClientInterceptorFactoryProtocol: Sendable {
 
   /// - Returns: Interceptors to use when invoking 'setFetch'.
   func makeSetFetchInterceptors() -> [ClientInterceptor<CacheClient__SetFetchRequest, CacheClient__SetFetchResponse>]
+
+  /// - Returns: Interceptors to use when invoking 'setSample'.
+  func makeSetSampleInterceptors() -> [ClientInterceptor<CacheClient__SetSampleRequest, CacheClient__SetSampleResponse>]
 
   /// - Returns: Interceptors to use when invoking 'setUnion'.
   func makeSetUnionInterceptors() -> [ClientInterceptor<CacheClient__SetUnionRequest, CacheClient__SetUnionResponse>]
@@ -2337,7 +2565,10 @@ public enum CacheClient_ScsClientMetadata {
     fullName: "cache_client.Scs",
     methods: [
       CacheClient_ScsClientMetadata.Methods.get,
+      CacheClient_ScsClientMetadata.Methods.getBatch,
       CacheClient_ScsClientMetadata.Methods.set,
+      CacheClient_ScsClientMetadata.Methods.setBatch,
+      CacheClient_ScsClientMetadata.Methods.setIf,
       CacheClient_ScsClientMetadata.Methods.setIfNotExists,
       CacheClient_ScsClientMetadata.Methods.delete,
       CacheClient_ScsClientMetadata.Methods.keysExist,
@@ -2352,6 +2583,7 @@ public enum CacheClient_ScsClientMetadata {
       CacheClient_ScsClientMetadata.Methods.dictionaryDelete,
       CacheClient_ScsClientMetadata.Methods.dictionaryLength,
       CacheClient_ScsClientMetadata.Methods.setFetch,
+      CacheClient_ScsClientMetadata.Methods.setSample,
       CacheClient_ScsClientMetadata.Methods.setUnion,
       CacheClient_ScsClientMetadata.Methods.setDifference,
       CacheClient_ScsClientMetadata.Methods.setContains,
@@ -2386,9 +2618,27 @@ public enum CacheClient_ScsClientMetadata {
       type: GRPCCallType.unary
     )
 
+    public static let getBatch = GRPCMethodDescriptor(
+      name: "GetBatch",
+      path: "/cache_client.Scs/GetBatch",
+      type: GRPCCallType.serverStreaming
+    )
+
     public static let set = GRPCMethodDescriptor(
       name: "Set",
       path: "/cache_client.Scs/Set",
+      type: GRPCCallType.unary
+    )
+
+    public static let setBatch = GRPCMethodDescriptor(
+      name: "SetBatch",
+      path: "/cache_client.Scs/SetBatch",
+      type: GRPCCallType.serverStreaming
+    )
+
+    public static let setIf = GRPCMethodDescriptor(
+      name: "SetIf",
+      path: "/cache_client.Scs/SetIf",
       type: GRPCCallType.unary
     )
 
@@ -2473,6 +2723,12 @@ public enum CacheClient_ScsClientMetadata {
     public static let setFetch = GRPCMethodDescriptor(
       name: "SetFetch",
       path: "/cache_client.Scs/SetFetch",
+      type: GRPCCallType.unary
+    )
+
+    public static let setSample = GRPCMethodDescriptor(
+      name: "SetSample",
+      path: "/cache_client.Scs/SetSample",
       type: GRPCCallType.unary
     )
 
@@ -2628,8 +2884,15 @@ public protocol CacheClient_ScsProvider: CallHandlerProvider {
 
   func get(request: CacheClient__GetRequest, context: StatusOnlyCallContext) -> EventLoopFuture<CacheClient__GetResponse>
 
+  func getBatch(request: CacheClient__GetBatchRequest, context: StreamingResponseCallContext<CacheClient__GetResponse>) -> EventLoopFuture<GRPCStatus>
+
   func set(request: CacheClient__SetRequest, context: StatusOnlyCallContext) -> EventLoopFuture<CacheClient__SetResponse>
 
+  func setBatch(request: CacheClient__SetBatchRequest, context: StreamingResponseCallContext<CacheClient__SetResponse>) -> EventLoopFuture<GRPCStatus>
+
+  func setIf(request: CacheClient__SetIfRequest, context: StatusOnlyCallContext) -> EventLoopFuture<CacheClient__SetIfResponse>
+
+  /// Deprecated because we have SetIf - Absent to cover this case.
   func setIfNotExists(request: CacheClient__SetIfNotExistsRequest, context: StatusOnlyCallContext) -> EventLoopFuture<CacheClient__SetIfNotExistsResponse>
 
   func delete(request: CacheClient__DeleteRequest, context: StatusOnlyCallContext) -> EventLoopFuture<CacheClient__DeleteResponse>
@@ -2657,6 +2920,8 @@ public protocol CacheClient_ScsProvider: CallHandlerProvider {
   func dictionaryLength(request: CacheClient__DictionaryLengthRequest, context: StatusOnlyCallContext) -> EventLoopFuture<CacheClient__DictionaryLengthResponse>
 
   func setFetch(request: CacheClient__SetFetchRequest, context: StatusOnlyCallContext) -> EventLoopFuture<CacheClient__SetFetchResponse>
+
+  func setSample(request: CacheClient__SetSampleRequest, context: StatusOnlyCallContext) -> EventLoopFuture<CacheClient__SetSampleResponse>
 
   func setUnion(request: CacheClient__SetUnionRequest, context: StatusOnlyCallContext) -> EventLoopFuture<CacheClient__SetUnionResponse>
 
@@ -2747,6 +3012,15 @@ extension CacheClient_ScsProvider {
         userFunction: self.get(request:context:)
       )
 
+    case "GetBatch":
+      return ServerStreamingServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<CacheClient__GetBatchRequest>(),
+        responseSerializer: ProtobufSerializer<CacheClient__GetResponse>(),
+        interceptors: self.interceptors?.makeGetBatchInterceptors() ?? [],
+        userFunction: self.getBatch(request:context:)
+      )
+
     case "Set":
       return UnaryServerHandler(
         context: context,
@@ -2754,6 +3028,24 @@ extension CacheClient_ScsProvider {
         responseSerializer: ProtobufSerializer<CacheClient__SetResponse>(),
         interceptors: self.interceptors?.makeSetInterceptors() ?? [],
         userFunction: self.set(request:context:)
+      )
+
+    case "SetBatch":
+      return ServerStreamingServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<CacheClient__SetBatchRequest>(),
+        responseSerializer: ProtobufSerializer<CacheClient__SetResponse>(),
+        interceptors: self.interceptors?.makeSetBatchInterceptors() ?? [],
+        userFunction: self.setBatch(request:context:)
+      )
+
+    case "SetIf":
+      return UnaryServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<CacheClient__SetIfRequest>(),
+        responseSerializer: ProtobufSerializer<CacheClient__SetIfResponse>(),
+        interceptors: self.interceptors?.makeSetIfInterceptors() ?? [],
+        userFunction: self.setIf(request:context:)
       )
 
     case "SetIfNotExists":
@@ -2880,6 +3172,15 @@ extension CacheClient_ScsProvider {
         responseSerializer: ProtobufSerializer<CacheClient__SetFetchResponse>(),
         interceptors: self.interceptors?.makeSetFetchInterceptors() ?? [],
         userFunction: self.setFetch(request:context:)
+      )
+
+    case "SetSample":
+      return UnaryServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<CacheClient__SetSampleRequest>(),
+        responseSerializer: ProtobufSerializer<CacheClient__SetSampleResponse>(),
+        interceptors: self.interceptors?.makeSetSampleInterceptors() ?? [],
+        userFunction: self.setSample(request:context:)
       )
 
     case "SetUnion":
@@ -3115,11 +3416,29 @@ public protocol CacheClient_ScsAsyncProvider: CallHandlerProvider, Sendable {
     context: GRPCAsyncServerCallContext
   ) async throws -> CacheClient__GetResponse
 
+  func getBatch(
+    request: CacheClient__GetBatchRequest,
+    responseStream: GRPCAsyncResponseStreamWriter<CacheClient__GetResponse>,
+    context: GRPCAsyncServerCallContext
+  ) async throws
+
   func set(
     request: CacheClient__SetRequest,
     context: GRPCAsyncServerCallContext
   ) async throws -> CacheClient__SetResponse
 
+  func setBatch(
+    request: CacheClient__SetBatchRequest,
+    responseStream: GRPCAsyncResponseStreamWriter<CacheClient__SetResponse>,
+    context: GRPCAsyncServerCallContext
+  ) async throws
+
+  func setIf(
+    request: CacheClient__SetIfRequest,
+    context: GRPCAsyncServerCallContext
+  ) async throws -> CacheClient__SetIfResponse
+
+  /// Deprecated because we have SetIf - Absent to cover this case.
   func setIfNotExists(
     request: CacheClient__SetIfNotExistsRequest,
     context: GRPCAsyncServerCallContext
@@ -3189,6 +3508,11 @@ public protocol CacheClient_ScsAsyncProvider: CallHandlerProvider, Sendable {
     request: CacheClient__SetFetchRequest,
     context: GRPCAsyncServerCallContext
   ) async throws -> CacheClient__SetFetchResponse
+
+  func setSample(
+    request: CacheClient__SetSampleRequest,
+    context: GRPCAsyncServerCallContext
+  ) async throws -> CacheClient__SetSampleResponse
 
   func setUnion(
     request: CacheClient__SetUnionRequest,
@@ -3358,6 +3682,15 @@ extension CacheClient_ScsAsyncProvider {
         wrapping: { try await self.get(request: $0, context: $1) }
       )
 
+    case "GetBatch":
+      return GRPCAsyncServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<CacheClient__GetBatchRequest>(),
+        responseSerializer: ProtobufSerializer<CacheClient__GetResponse>(),
+        interceptors: self.interceptors?.makeGetBatchInterceptors() ?? [],
+        wrapping: { try await self.getBatch(request: $0, responseStream: $1, context: $2) }
+      )
+
     case "Set":
       return GRPCAsyncServerHandler(
         context: context,
@@ -3365,6 +3698,24 @@ extension CacheClient_ScsAsyncProvider {
         responseSerializer: ProtobufSerializer<CacheClient__SetResponse>(),
         interceptors: self.interceptors?.makeSetInterceptors() ?? [],
         wrapping: { try await self.set(request: $0, context: $1) }
+      )
+
+    case "SetBatch":
+      return GRPCAsyncServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<CacheClient__SetBatchRequest>(),
+        responseSerializer: ProtobufSerializer<CacheClient__SetResponse>(),
+        interceptors: self.interceptors?.makeSetBatchInterceptors() ?? [],
+        wrapping: { try await self.setBatch(request: $0, responseStream: $1, context: $2) }
+      )
+
+    case "SetIf":
+      return GRPCAsyncServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<CacheClient__SetIfRequest>(),
+        responseSerializer: ProtobufSerializer<CacheClient__SetIfResponse>(),
+        interceptors: self.interceptors?.makeSetIfInterceptors() ?? [],
+        wrapping: { try await self.setIf(request: $0, context: $1) }
       )
 
     case "SetIfNotExists":
@@ -3491,6 +3842,15 @@ extension CacheClient_ScsAsyncProvider {
         responseSerializer: ProtobufSerializer<CacheClient__SetFetchResponse>(),
         interceptors: self.interceptors?.makeSetFetchInterceptors() ?? [],
         wrapping: { try await self.setFetch(request: $0, context: $1) }
+      )
+
+    case "SetSample":
+      return GRPCAsyncServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<CacheClient__SetSampleRequest>(),
+        responseSerializer: ProtobufSerializer<CacheClient__SetSampleResponse>(),
+        interceptors: self.interceptors?.makeSetSampleInterceptors() ?? [],
+        wrapping: { try await self.setSample(request: $0, context: $1) }
       )
 
     case "SetUnion":
@@ -3721,9 +4081,21 @@ public protocol CacheClient_ScsServerInterceptorFactoryProtocol: Sendable {
   ///   Defaults to calling `self.makeInterceptors()`.
   func makeGetInterceptors() -> [ServerInterceptor<CacheClient__GetRequest, CacheClient__GetResponse>]
 
+  /// - Returns: Interceptors to use when handling 'getBatch'.
+  ///   Defaults to calling `self.makeInterceptors()`.
+  func makeGetBatchInterceptors() -> [ServerInterceptor<CacheClient__GetBatchRequest, CacheClient__GetResponse>]
+
   /// - Returns: Interceptors to use when handling 'set'.
   ///   Defaults to calling `self.makeInterceptors()`.
   func makeSetInterceptors() -> [ServerInterceptor<CacheClient__SetRequest, CacheClient__SetResponse>]
+
+  /// - Returns: Interceptors to use when handling 'setBatch'.
+  ///   Defaults to calling `self.makeInterceptors()`.
+  func makeSetBatchInterceptors() -> [ServerInterceptor<CacheClient__SetBatchRequest, CacheClient__SetResponse>]
+
+  /// - Returns: Interceptors to use when handling 'setIf'.
+  ///   Defaults to calling `self.makeInterceptors()`.
+  func makeSetIfInterceptors() -> [ServerInterceptor<CacheClient__SetIfRequest, CacheClient__SetIfResponse>]
 
   /// - Returns: Interceptors to use when handling 'setIfNotExists'.
   ///   Defaults to calling `self.makeInterceptors()`.
@@ -3780,6 +4152,10 @@ public protocol CacheClient_ScsServerInterceptorFactoryProtocol: Sendable {
   /// - Returns: Interceptors to use when handling 'setFetch'.
   ///   Defaults to calling `self.makeInterceptors()`.
   func makeSetFetchInterceptors() -> [ServerInterceptor<CacheClient__SetFetchRequest, CacheClient__SetFetchResponse>]
+
+  /// - Returns: Interceptors to use when handling 'setSample'.
+  ///   Defaults to calling `self.makeInterceptors()`.
+  func makeSetSampleInterceptors() -> [ServerInterceptor<CacheClient__SetSampleRequest, CacheClient__SetSampleResponse>]
 
   /// - Returns: Interceptors to use when handling 'setUnion'.
   ///   Defaults to calling `self.makeInterceptors()`.
@@ -3884,7 +4260,10 @@ public enum CacheClient_ScsServerMetadata {
     fullName: "cache_client.Scs",
     methods: [
       CacheClient_ScsServerMetadata.Methods.get,
+      CacheClient_ScsServerMetadata.Methods.getBatch,
       CacheClient_ScsServerMetadata.Methods.set,
+      CacheClient_ScsServerMetadata.Methods.setBatch,
+      CacheClient_ScsServerMetadata.Methods.setIf,
       CacheClient_ScsServerMetadata.Methods.setIfNotExists,
       CacheClient_ScsServerMetadata.Methods.delete,
       CacheClient_ScsServerMetadata.Methods.keysExist,
@@ -3899,6 +4278,7 @@ public enum CacheClient_ScsServerMetadata {
       CacheClient_ScsServerMetadata.Methods.dictionaryDelete,
       CacheClient_ScsServerMetadata.Methods.dictionaryLength,
       CacheClient_ScsServerMetadata.Methods.setFetch,
+      CacheClient_ScsServerMetadata.Methods.setSample,
       CacheClient_ScsServerMetadata.Methods.setUnion,
       CacheClient_ScsServerMetadata.Methods.setDifference,
       CacheClient_ScsServerMetadata.Methods.setContains,
@@ -3933,9 +4313,27 @@ public enum CacheClient_ScsServerMetadata {
       type: GRPCCallType.unary
     )
 
+    public static let getBatch = GRPCMethodDescriptor(
+      name: "GetBatch",
+      path: "/cache_client.Scs/GetBatch",
+      type: GRPCCallType.serverStreaming
+    )
+
     public static let set = GRPCMethodDescriptor(
       name: "Set",
       path: "/cache_client.Scs/Set",
+      type: GRPCCallType.unary
+    )
+
+    public static let setBatch = GRPCMethodDescriptor(
+      name: "SetBatch",
+      path: "/cache_client.Scs/SetBatch",
+      type: GRPCCallType.serverStreaming
+    )
+
+    public static let setIf = GRPCMethodDescriptor(
+      name: "SetIf",
+      path: "/cache_client.Scs/SetIf",
       type: GRPCCallType.unary
     )
 
@@ -4020,6 +4418,12 @@ public enum CacheClient_ScsServerMetadata {
     public static let setFetch = GRPCMethodDescriptor(
       name: "SetFetch",
       path: "/cache_client.Scs/SetFetch",
+      type: GRPCCallType.unary
+    )
+
+    public static let setSample = GRPCMethodDescriptor(
+      name: "SetSample",
+      path: "/cache_client.Scs/SetSample",
       type: GRPCCallType.unary
     )
 
