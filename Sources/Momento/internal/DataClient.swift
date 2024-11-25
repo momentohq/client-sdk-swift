@@ -359,13 +359,13 @@ class DataClient: DataClientProtocol {
         if let s = startIndex {
             request.startIndex = CacheClient__ListFetchRequest.OneOf_StartIndex.inclusiveStart(Int32(s))
         } else {
-            request.startIndex = CacheClient__ListFetchRequest.OneOf_StartIndex.unboundedStart(CacheClient__Unbounded())
+            request.startIndex = CacheClient__ListFetchRequest.OneOf_StartIndex.unboundedStart(Common__Unbounded())
         }
 
         if let e = endIndex {
             request.endIndex = CacheClient__ListFetchRequest.OneOf_EndIndex.exclusiveEnd(Int32(e))
         } else {
-            request.endIndex = CacheClient__ListFetchRequest.OneOf_EndIndex.unboundedEnd(CacheClient__Unbounded())
+            request.endIndex = CacheClient__ListFetchRequest.OneOf_EndIndex.unboundedEnd(Common__Unbounded())
         }
 
         let headers = self.makeHeaders(cacheName: cacheName)
@@ -675,13 +675,13 @@ class DataClient: DataClientProtocol {
         if let s = startIndex {
             request.startIndex = CacheClient__ListRetainRequest.OneOf_StartIndex.inclusiveStart(Int32(s))
         } else {
-            request.startIndex = CacheClient__ListRetainRequest.OneOf_StartIndex.unboundedStart(CacheClient__Unbounded())
+            request.startIndex = CacheClient__ListRetainRequest.OneOf_StartIndex.unboundedStart(Common__Unbounded())
         }
 
         if let e = endIndex {
             request.endIndex = CacheClient__ListRetainRequest.OneOf_EndIndex.exclusiveEnd(Int32(e))
         } else {
-            request.endIndex = CacheClient__ListRetainRequest.OneOf_EndIndex.unboundedEnd(CacheClient__Unbounded())
+            request.endIndex = CacheClient__ListRetainRequest.OneOf_EndIndex.unboundedEnd(Common__Unbounded())
         }
 
         let headers = self.makeHeaders(cacheName: cacheName)
