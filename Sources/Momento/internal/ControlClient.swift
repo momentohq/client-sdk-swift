@@ -82,16 +82,8 @@ class ControlClient: ControlClientProtocol {
             if err.code == GRPCStatus.Code.alreadyExists {
                 return CreateCacheResponse.alreadyExists(CreateCacheAlreadyExists())
             }
-            do {
-                let trailers = try await call.trailingMetadata.get()
-                return CreateCacheResponse.error(
-                    CreateCacheError(error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
-                )
-            } catch {
-                return CreateCacheResponse.error(
-                    CreateCacheError(error: grpcStatusToSdkError(grpcStatus: err))
-                )
-            }
+            let sdkError = await processError(err: err, call: call)
+            return CreateCacheResponse.error(CreateCacheError(error: sdkError))
         } catch let err as GRPCConnectionPoolError {
             return CreateCacheResponse.error(
                 CreateCacheError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
@@ -114,16 +106,8 @@ class ControlClient: ControlClientProtocol {
             // Successful creation returns ControlClient__DeleteCacheResponse
             return DeleteCacheResponse.success(DeleteCacheSuccess())
         } catch let err as GRPCStatus {
-            do {
-                let trailers = try await call.trailingMetadata.get()
-                return DeleteCacheResponse.error(
-                    DeleteCacheError(error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
-                )
-            } catch {
-                return DeleteCacheResponse.error(
-                    DeleteCacheError(error: grpcStatusToSdkError(grpcStatus: err))
-                )
-            }
+            let sdkError = await processError(err: err, call: call)
+            return DeleteCacheResponse.error(DeleteCacheError(error: sdkError))
         } catch let err as GRPCConnectionPoolError {
             return DeleteCacheResponse.error(
                 DeleteCacheError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
@@ -145,16 +129,8 @@ class ControlClient: ControlClientProtocol {
             self.logger.debug("list caches received: \(result.cache)")
             return ListCachesResponse.success(ListCachesSuccess(caches: result.cache))
         } catch let err as GRPCStatus {
-            do {
-                let trailers = try await call.trailingMetadata.get()
-                return ListCachesResponse.error(
-                    ListCachesError(error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
-                )
-            } catch {
-                return ListCachesResponse.error(
-                    ListCachesError(error: grpcStatusToSdkError(grpcStatus: err))
-                )
-            }
+            let sdkError = await processError(err: err, call: call)
+            return ListCachesResponse.error(ListCachesError(error: sdkError))
         } catch let err as GRPCConnectionPoolError {
             return ListCachesResponse.error(
                 ListCachesError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))

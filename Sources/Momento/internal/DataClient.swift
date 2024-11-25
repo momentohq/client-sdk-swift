@@ -180,16 +180,8 @@ class DataClient: DataClientProtocol {
                 ))
             }
         } catch let err as GRPCStatus {
-            do {
-                let trailers = try await call.trailingMetadata.get()
-                return GetResponse.error(
-                    GetError(error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
-                )
-            } catch {
-                return GetResponse.error(
-                    GetError(error: grpcStatusToSdkError(grpcStatus: err))
-                )
-            }
+            let sdkError = await processError(err: err, call: call)
+            return GetResponse.error(GetError(error: sdkError))
         } catch let err as GRPCConnectionPoolError {
             return GetResponse.error(GetError(
                 error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
@@ -227,16 +219,8 @@ class DataClient: DataClientProtocol {
             _ = try await call.response.get()
             return SetResponse.success(SetSuccess())
         } catch let err as GRPCStatus {
-            do {
-                let trailers = try await call.trailingMetadata.get()
-                return SetResponse.error(
-                    SetError(error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
-                )
-            } catch {
-                return SetResponse.error(
-                    SetError(error: grpcStatusToSdkError(grpcStatus: err))
-                )
-            }
+            let sdkError = await processError(err: err, call: call)
+            return SetResponse.error(SetError(error: sdkError))
         } catch let err as GRPCConnectionPoolError {
             return SetResponse.error(SetError(
                 error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
@@ -265,16 +249,8 @@ class DataClient: DataClientProtocol {
             _ = try await call.response.get()
             return DeleteResponse.success(DeleteSuccess())
         } catch let err as GRPCStatus {
-            do {
-                let trailers = try await call.trailingMetadata.get()
-                return DeleteResponse.error(
-                    DeleteError(error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
-                )
-            } catch {
-                return DeleteResponse.error(
-                    DeleteError(error: grpcStatusToSdkError(grpcStatus: err))
-                )
-            }
+            let sdkError = await processError(err: err, call: call)
+            return DeleteResponse.error(DeleteError(error: sdkError))
         } catch let err as GRPCConnectionPoolError {
             return DeleteResponse.error(DeleteError(
                 error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())
@@ -316,16 +292,8 @@ class DataClient: DataClientProtocol {
             let result = try await call.response.get()
             return ListConcatenateBackResponse.success(ListConcatenateBackSuccess(length: result.listLength))
         } catch let err as GRPCStatus {
-            do {
-                let trailers = try await call.trailingMetadata.get()
-                return ListConcatenateBackResponse.error(
-                    ListConcatenateBackError(error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
-                )
-            } catch {
-                return ListConcatenateBackResponse.error(
-                    ListConcatenateBackError(error: grpcStatusToSdkError(grpcStatus: err))
-                )
-            }
+            let sdkError = await processError(err: err, call: call)
+            return ListConcatenateBackResponse.error(ListConcatenateBackError(error: sdkError))
         } catch let err as GRPCConnectionPoolError {
             return ListConcatenateBackResponse.error(
                 ListConcatenateBackError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
@@ -367,16 +335,8 @@ class DataClient: DataClientProtocol {
             let result = try await call.response.get()
             return ListConcatenateFrontResponse.success(ListConcatenateFrontSuccess(length: result.listLength))
         } catch let err as GRPCStatus {
-            do {
-                let trailers = try await call.trailingMetadata.get()
-                return ListConcatenateFrontResponse.error(
-                    ListConcatenateFrontError(error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
-                )
-            } catch {
-                return ListConcatenateFrontResponse.error(
-                    ListConcatenateFrontError(error: grpcStatusToSdkError(grpcStatus: err))
-                )
-            }
+            let sdkError = await processError(err: err, call: call)
+            return ListConcatenateFrontResponse.error(ListConcatenateFrontError(error: sdkError))
         } catch let err as GRPCConnectionPoolError {
             return ListConcatenateFrontResponse.error(
                 ListConcatenateFrontError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
@@ -434,16 +394,8 @@ class DataClient: DataClientProtocol {
                 )
             }
         } catch let err as GRPCStatus {
-            do {
-                let trailers = try await call.trailingMetadata.get()
-                return ListFetchResponse.error(
-                    ListFetchError(error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
-                )
-            } catch {
-                return ListFetchResponse.error(
-                    ListFetchError(error: grpcStatusToSdkError(grpcStatus: err))
-                )
-            }
+            let sdkError = await processError(err: err, call: call)
+            return ListFetchResponse.error(ListFetchError(error: sdkError))
         } catch let err as GRPCConnectionPoolError {
             return ListFetchResponse.error(
                 ListFetchError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
@@ -485,16 +437,8 @@ class DataClient: DataClientProtocol {
                 )
             }
         } catch let err as GRPCStatus {
-            do {
-                let trailers = try await call.trailingMetadata.get()
-                return ListLengthResponse.error(
-                    ListLengthError(error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
-                )
-            } catch {
-                return ListLengthResponse.error(
-                    ListLengthError(error: grpcStatusToSdkError(grpcStatus: err))
-                )
-            }
+            let sdkError = await processError(err: err, call: call)
+            return ListLengthResponse.error(ListLengthError(error: sdkError))
         } catch let err as GRPCConnectionPoolError {
             return ListLengthResponse.error(
                 ListLengthError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
@@ -536,16 +480,8 @@ class DataClient: DataClientProtocol {
                 )
             }
         } catch let err as GRPCStatus {
-            do {
-                let trailers = try await call.trailingMetadata.get()
-                return ListPopBackResponse.error(
-                    ListPopBackError(error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
-                )
-            } catch {
-                return ListPopBackResponse.error(
-                    ListPopBackError(error: grpcStatusToSdkError(grpcStatus: err))
-                )
-            }
+            let sdkError = await processError(err: err, call: call)
+            return ListPopBackResponse.error(ListPopBackError(error: sdkError))
         } catch let err as GRPCConnectionPoolError {
             return ListPopBackResponse.error(
                 ListPopBackError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
@@ -589,16 +525,8 @@ class DataClient: DataClientProtocol {
                 )
             }
         } catch let err as GRPCStatus {
-            do {
-                let trailers = try await call.trailingMetadata.get()
-                return ListPopFrontResponse.error(
-                    ListPopFrontError(error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
-                )
-            } catch {
-                return ListPopFrontResponse.error(
-                    ListPopFrontError(error: grpcStatusToSdkError(grpcStatus: err))
-                )
-            }
+            let sdkError = await processError(err: err, call: call)
+            return ListPopFrontResponse.error(ListPopFrontError(error: sdkError))
         } catch let err as GRPCConnectionPoolError {
             return ListPopFrontResponse.error(
                 ListPopFrontError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
@@ -642,16 +570,8 @@ class DataClient: DataClientProtocol {
             let result = try await call.response.get()
             return ListPushBackResponse.success(ListPushBackSuccess(length: result.listLength))
         } catch let err as GRPCStatus {
-            do {
-                let trailers = try await call.trailingMetadata.get()
-                return ListPushBackResponse.error(
-                    ListPushBackError(error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
-                )
-            } catch {
-                return ListPushBackResponse.error(
-                    ListPushBackError(error: grpcStatusToSdkError(grpcStatus: err))
-                )
-            }
+            let sdkError = await processError(err: err, call: call)
+            return ListPushBackResponse.error(ListPushBackError(error: sdkError))
         } catch let err as GRPCConnectionPoolError {
             return ListPushBackResponse.error(
                 ListPushBackError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
@@ -695,16 +615,8 @@ class DataClient: DataClientProtocol {
             let result = try await call.response.get()
             return ListPushFrontResponse.success(ListPushFrontSuccess(length: result.listLength))
         } catch let err as GRPCStatus {
-            do {
-                let trailers = try await call.trailingMetadata.get()
-                return ListPushFrontResponse.error(
-                    ListPushFrontError(error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
-                )
-            } catch {
-                return ListPushFrontResponse.error(
-                    ListPushFrontError(error: grpcStatusToSdkError(grpcStatus: err))
-                )
-            }
+            let sdkError = await processError(err: err, call: call)
+            return ListPushFrontResponse.error(ListPushFrontError(error: sdkError))
         } catch let err as GRPCConnectionPoolError {
             return ListPushFrontResponse.error(
                 ListPushFrontError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
@@ -741,16 +653,8 @@ class DataClient: DataClientProtocol {
             _ = try await call.response.get()
             return ListRemoveValueResponse.success(ListRemoveValueSuccess())
         } catch let err as GRPCStatus {
-            do {
-                let trailers = try await call.trailingMetadata.get()
-                return ListRemoveValueResponse.error(
-                    ListRemoveValueError(error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
-                )
-            } catch {
-                return ListRemoveValueResponse.error(
-                    ListRemoveValueError(error: grpcStatusToSdkError(grpcStatus: err))
-                )
-            }
+            let sdkError = await processError(err: err, call: call)
+            return ListRemoveValueResponse.error(ListRemoveValueError(error: sdkError))
         } catch let err as GRPCConnectionPoolError {
             return ListRemoveValueResponse.error(
                 ListRemoveValueError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))
@@ -804,16 +708,8 @@ class DataClient: DataClientProtocol {
             _ = try await call.response.get()
             return ListRetainResponse.success(ListRetainSuccess())
         } catch let err as GRPCStatus {
-            do {
-                let trailers = try await call.trailingMetadata.get()
-                return ListRetainResponse.error(
-                    ListRetainError(error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
-                )
-            } catch {
-                return ListRetainResponse.error(
-                    ListRetainError(error: grpcStatusToSdkError(grpcStatus: err))
-                )
-            }
+            let sdkError = await processError(err: err, call: call)
+            return ListRetainResponse.error(ListRetainError(error: sdkError))
         } catch let err as GRPCConnectionPoolError {
             return ListRetainResponse.error(
                 ListRetainError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus()))

@@ -1,5 +1,6 @@
 import GRPC
 import NIOHPACK
+import SwiftProtobuf
 
 public enum MomentoErrorCode: String {
     /// Invalid argument passed to Momento client
@@ -359,5 +360,21 @@ func grpcStatusToSdkError(grpcStatus: GRPCStatus, metadata: HPACKHeaders? = nil)
         return UnknownServiceError(message: message, innerException: grpcStatus)
     default:
         return UnknownError(message: "Unknown error", innerException: grpcStatus)
+    }
+}
+
+func processError<Request: Message & Sendable, Response: Message & Sendable>(
+    err: GRPCStatus,
+    call: UnaryCall<Request, Response>
+) async -> SdkError {
+    if #available(macOS 10.15, *) {
+        do {
+            let trailers = try await call.trailingMetadata.get()
+            return grpcStatusToSdkError(grpcStatus: err, metadata: trailers)
+        } catch {
+            return grpcStatusToSdkError(grpcStatus: err)
+        }
+    } else {
+        return grpcStatusToSdkError(grpcStatus: err)
     }
 }
