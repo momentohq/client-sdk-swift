@@ -24,9 +24,13 @@ public enum TopicSubscriptionItemResponse {
 /// Topic subscription item that was recieved as type String and can be accessed using the `value` field
 public class TopicSubscriptionItemText: CustomStringConvertible {
     public let value: String
-    
-    init(value: String) {
+    public let lastSequenceNumber: UInt64
+    public let lastSequencePage: UInt64
+
+    init(value: String, lastSequenceNumber: UInt64, lastSequencePage: UInt64) {
         self.value = value
+        self.lastSequenceNumber = lastSequenceNumber
+        self.lastSequencePage = lastSequencePage
     }
     
     public var description: String {
@@ -37,9 +41,13 @@ public class TopicSubscriptionItemText: CustomStringConvertible {
 /// Topic subscription item that was recieved as type Data and can be accessed using the `value` field
 public class TopicSubscriptionItemBinary: CustomStringConvertible {
     public let value: Data
-    
-    init(value: Data) {
+    public let lastSequenceNumber: UInt64
+    public let lastSequencePage: UInt64
+
+    init(value: Data, lastSequenceNumber: UInt64, lastSequencePage: UInt64) {
         self.value = value
+        self.lastSequenceNumber = lastSequenceNumber
+        self.lastSequencePage = lastSequencePage
     }
     
     public var description: String {
@@ -60,9 +68,17 @@ public class TopicSubscriptionItemError: ErrorResponseBase {}
 internal func createTopicItemResponse(item: CacheClient_Pubsub__TopicItem) -> TopicSubscriptionItemResponse {
     switch item.value.kind {
     case .text:
-        return TopicSubscriptionItemResponse.itemText(TopicSubscriptionItemText(value: item.value.text))
+        return TopicSubscriptionItemResponse.itemText(
+            TopicSubscriptionItemText(
+                value: item.value.text, lastSequenceNumber: item.topicSequenceNumber, lastSequencePage: item.sequencePage
+            )
+        )
     case .binary:
-        return TopicSubscriptionItemResponse.itemBinary(TopicSubscriptionItemBinary(value: item.value.binary))
+        return TopicSubscriptionItemResponse.itemBinary(
+            TopicSubscriptionItemBinary(
+                value: item.value.binary, lastSequenceNumber: item.topicSequenceNumber, lastSequencePage: item.sequencePage
+            )
+        )
     default:
         return TopicSubscriptionItemResponse.error(
             TopicSubscriptionItemError(error: UnknownError(message: "unknown TopicItemResponse value: \(item.value)"))

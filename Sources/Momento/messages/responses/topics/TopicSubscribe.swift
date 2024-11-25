@@ -26,6 +26,7 @@ public enum TopicSubscribeResponse {
 public class TopicSubscription {
     private var subscribeCallResponse: GRPCAsyncServerStreamingCall<CacheClient_Pubsub__SubscriptionRequest, CacheClient_Pubsub__SubscriptionItem>
     private var lastSequenceNumber: UInt64
+    private var lastSequencePage: UInt64
     private let pubsubClient: PubsubClientProtocol
     private let logger = Logger(label: "TopicSubscribeResponse")
     private let cacheName: String
@@ -79,11 +80,13 @@ public class TopicSubscription {
         subscribeCallResponse: GRPCAsyncServerStreamingCall<CacheClient_Pubsub__SubscriptionRequest, CacheClient_Pubsub__SubscriptionItem>,
         messageIterator: any AsyncIteratorProtocol,
         lastSequenceNumber: UInt64,
+        lastSequencePage: UInt64,
         pubsubClient: PubsubClientProtocol,
         cacheName: String,
         topicName: String
     ) {
         self.lastSequenceNumber = lastSequenceNumber
+        self.lastSequencePage = lastSequencePage
         self.pubsubClient = pubsubClient
         self.cacheName = cacheName
         self.topicName = topicName
@@ -100,6 +103,7 @@ public class TopicSubscription {
         switch messageType {
         case .item:
             lastSequenceNumber = item.item.topicSequenceNumber
+            lastSequencePage = item.item.sequencePage
             return createTopicItemResponse(item: item.item)
         case .heartbeat:
             logger.debug("topic client received a heartbeat")
@@ -116,7 +120,8 @@ public class TopicSubscription {
             let subResp = try await self.pubsubClient.subscribe(
                 cacheName: self.cacheName,
                 topicName: self.topicName,
-                resumeAtTopicSequenceNumber: self.lastSequenceNumber
+                resumeAtTopicSequenceNumber: self.lastSequenceNumber,
+                resumeAtTopicSequencePage: self.lastSequencePage
             )
             switch (subResp) {
             case .subscription(let s):
