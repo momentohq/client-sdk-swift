@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.1](https://github.com/momentohq/client-sdk-swift/compare/v0.6.0...v0.6.1) (2024-11-25)
+
+
+### Miscellaneous
+
+* update license file ([#140](https://github.com/momentohq/client-sdk-swift/issues/140)) ([fc6862d](https://github.com/momentohq/client-sdk-swift/commit/fc6862dfc471d17c46aa4a120ba00a1676520147))
+
 ## [0.6.0](https://github.com/momentohq/client-sdk-swift/compare/v0.5.1...v0.6.0) (2024-06-20)
 
 
