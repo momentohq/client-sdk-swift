@@ -78,7 +78,7 @@ public struct Leaderboard__Element {
   public var id: UInt32 = 0
 
   /// The value by which this element is sorted within the leaderboard.
-  public var score: Float = 0
+  public var score: Double = 0
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -94,9 +94,9 @@ public struct Leaderboard__RankedElement {
 
   public var id: UInt32 = 0
 
-  public var score: Float = 0
-
   public var rank: UInt32 = 0
+
+  public var score: Double = 0
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -134,16 +134,6 @@ public struct Leaderboard__RankRange {
   public init() {}
 }
 
-public struct Leaderboard__Unbounded {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-}
-
 /// Query APIs using ScoreRange may match more than the limit of 8192 elements. These apis will
 /// include an offset and limit parameter pair, which can be used to page through score ranges
 /// matching many elements.
@@ -156,17 +146,17 @@ public struct Leaderboard__ScoreRange {
 
   public var min: Leaderboard__ScoreRange.OneOf_Min? = nil
 
-  public var unboundedMin: Leaderboard__Unbounded {
+  public var unboundedMin: Common__Unbounded {
     get {
       if case .unboundedMin(let v)? = min {return v}
-      return Leaderboard__Unbounded()
+      return Common__Unbounded()
     }
     set {min = .unboundedMin(newValue)}
   }
 
-  /// IEEE 754 single precision 32 bit floating point number.
+  /// IEEE 754 single precision 64 bit floating point number.
   /// Momento does not support NaN or Inf in leaderboards.
-  public var minInclusive: Float {
+  public var minInclusive: Double {
     get {
       if case .minInclusive(let v)? = min {return v}
       return 0
@@ -176,17 +166,17 @@ public struct Leaderboard__ScoreRange {
 
   public var max: Leaderboard__ScoreRange.OneOf_Max? = nil
 
-  public var unboundedMax: Leaderboard__Unbounded {
+  public var unboundedMax: Common__Unbounded {
     get {
       if case .unboundedMax(let v)? = max {return v}
-      return Leaderboard__Unbounded()
+      return Common__Unbounded()
     }
     set {max = .unboundedMax(newValue)}
   }
 
-  /// IEEE 754 single precision 32 bit floating point number.
+  /// IEEE 754 single precision 64 bit floating point number.
   /// Momento does not support NaN or Inf in leaderboards.
-  public var maxExclusive: Float {
+  public var maxExclusive: Double {
     get {
       if case .maxExclusive(let v)? = max {return v}
       return 0
@@ -197,10 +187,10 @@ public struct Leaderboard__ScoreRange {
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public enum OneOf_Min: Equatable {
-    case unboundedMin(Leaderboard__Unbounded)
-    /// IEEE 754 single precision 32 bit floating point number.
+    case unboundedMin(Common__Unbounded)
+    /// IEEE 754 single precision 64 bit floating point number.
     /// Momento does not support NaN or Inf in leaderboards.
-    case minInclusive(Float)
+    case minInclusive(Double)
 
   #if !swift(>=4.1)
     public static func ==(lhs: Leaderboard__ScoreRange.OneOf_Min, rhs: Leaderboard__ScoreRange.OneOf_Min) -> Bool {
@@ -223,10 +213,10 @@ public struct Leaderboard__ScoreRange {
   }
 
   public enum OneOf_Max: Equatable {
-    case unboundedMax(Leaderboard__Unbounded)
-    /// IEEE 754 single precision 32 bit floating point number.
+    case unboundedMax(Common__Unbounded)
+    /// IEEE 754 single precision 64 bit floating point number.
     /// Momento does not support NaN or Inf in leaderboards.
-    case maxExclusive(Float)
+    case maxExclusive(Double)
 
   #if !swift(>=4.1)
     public static func ==(lhs: Leaderboard__ScoreRange.OneOf_Max, rhs: Leaderboard__ScoreRange.OneOf_Max) -> Bool {
@@ -247,16 +237,6 @@ public struct Leaderboard__ScoreRange {
     }
   #endif
   }
-
-  public init() {}
-}
-
-public struct Leaderboard__Empty {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 }
@@ -454,11 +434,9 @@ extension Leaderboard__Order: @unchecked Sendable {}
 extension Leaderboard__Element: @unchecked Sendable {}
 extension Leaderboard__RankedElement: @unchecked Sendable {}
 extension Leaderboard__RankRange: @unchecked Sendable {}
-extension Leaderboard__Unbounded: @unchecked Sendable {}
 extension Leaderboard__ScoreRange: @unchecked Sendable {}
 extension Leaderboard__ScoreRange.OneOf_Min: @unchecked Sendable {}
 extension Leaderboard__ScoreRange.OneOf_Max: @unchecked Sendable {}
-extension Leaderboard__Empty: @unchecked Sendable {}
 extension Leaderboard__DeleteLeaderboardRequest: @unchecked Sendable {}
 extension Leaderboard__GetLeaderboardLengthRequest: @unchecked Sendable {}
 extension Leaderboard__GetLeaderboardLengthResponse: @unchecked Sendable {}
@@ -487,7 +465,7 @@ extension Leaderboard__Element: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
   public static let protoMessageName: String = _protobuf_package + "._Element"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "id"),
-    2: .same(proto: "score"),
+    3: .same(proto: "score"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -497,7 +475,7 @@ extension Leaderboard__Element: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularUInt32Field(value: &self.id) }()
-      case 2: try { try decoder.decodeSingularFloatField(value: &self.score) }()
+      case 3: try { try decoder.decodeSingularDoubleField(value: &self.score) }()
       default: break
       }
     }
@@ -508,7 +486,7 @@ extension Leaderboard__Element: SwiftProtobuf.Message, SwiftProtobuf._MessageImp
       try visitor.visitSingularUInt32Field(value: self.id, fieldNumber: 1)
     }
     if self.score != 0 {
-      try visitor.visitSingularFloatField(value: self.score, fieldNumber: 2)
+      try visitor.visitSingularDoubleField(value: self.score, fieldNumber: 3)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -525,8 +503,8 @@ extension Leaderboard__RankedElement: SwiftProtobuf.Message, SwiftProtobuf._Mess
   public static let protoMessageName: String = _protobuf_package + "._RankedElement"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "id"),
-    2: .same(proto: "score"),
     3: .same(proto: "rank"),
+    4: .same(proto: "score"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -536,8 +514,8 @@ extension Leaderboard__RankedElement: SwiftProtobuf.Message, SwiftProtobuf._Mess
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularUInt32Field(value: &self.id) }()
-      case 2: try { try decoder.decodeSingularFloatField(value: &self.score) }()
       case 3: try { try decoder.decodeSingularUInt32Field(value: &self.rank) }()
+      case 4: try { try decoder.decodeSingularDoubleField(value: &self.score) }()
       default: break
       }
     }
@@ -547,19 +525,19 @@ extension Leaderboard__RankedElement: SwiftProtobuf.Message, SwiftProtobuf._Mess
     if self.id != 0 {
       try visitor.visitSingularUInt32Field(value: self.id, fieldNumber: 1)
     }
-    if self.score != 0 {
-      try visitor.visitSingularFloatField(value: self.score, fieldNumber: 2)
-    }
     if self.rank != 0 {
       try visitor.visitSingularUInt32Field(value: self.rank, fieldNumber: 3)
+    }
+    if self.score != 0 {
+      try visitor.visitSingularDoubleField(value: self.score, fieldNumber: 4)
     }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Leaderboard__RankedElement, rhs: Leaderboard__RankedElement) -> Bool {
     if lhs.id != rhs.id {return false}
-    if lhs.score != rhs.score {return false}
     if lhs.rank != rhs.rank {return false}
+    if lhs.score != rhs.score {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -603,32 +581,13 @@ extension Leaderboard__RankRange: SwiftProtobuf.Message, SwiftProtobuf._MessageI
   }
 }
 
-extension Leaderboard__Unbounded: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + "._Unbounded"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let _ = try decoder.nextFieldNumber() {
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: Leaderboard__Unbounded, rhs: Leaderboard__Unbounded) -> Bool {
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
 extension Leaderboard__ScoreRange: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + "._ScoreRange"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "unbounded_min"),
-    2: .standard(proto: "min_inclusive"),
+    5: .standard(proto: "min_inclusive"),
     3: .standard(proto: "unbounded_max"),
-    4: .standard(proto: "max_exclusive"),
+    6: .standard(proto: "max_exclusive"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -638,7 +597,7 @@ extension Leaderboard__ScoreRange: SwiftProtobuf.Message, SwiftProtobuf._Message
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try {
-        var v: Leaderboard__Unbounded?
+        var v: Common__Unbounded?
         var hadOneofValue = false
         if let current = self.min {
           hadOneofValue = true
@@ -650,16 +609,8 @@ extension Leaderboard__ScoreRange: SwiftProtobuf.Message, SwiftProtobuf._Message
           self.min = .unboundedMin(v)
         }
       }()
-      case 2: try {
-        var v: Float?
-        try decoder.decodeSingularFloatField(value: &v)
-        if let v = v {
-          if self.min != nil {try decoder.handleConflictingOneOf()}
-          self.min = .minInclusive(v)
-        }
-      }()
       case 3: try {
-        var v: Leaderboard__Unbounded?
+        var v: Common__Unbounded?
         var hadOneofValue = false
         if let current = self.max {
           hadOneofValue = true
@@ -671,9 +622,17 @@ extension Leaderboard__ScoreRange: SwiftProtobuf.Message, SwiftProtobuf._Message
           self.max = .unboundedMax(v)
         }
       }()
-      case 4: try {
-        var v: Float?
-        try decoder.decodeSingularFloatField(value: &v)
+      case 5: try {
+        var v: Double?
+        try decoder.decodeSingularDoubleField(value: &v)
+        if let v = v {
+          if self.min != nil {try decoder.handleConflictingOneOf()}
+          self.min = .minInclusive(v)
+        }
+      }()
+      case 6: try {
+        var v: Double?
+        try decoder.decodeSingularDoubleField(value: &v)
         if let v = v {
           if self.max != nil {try decoder.handleConflictingOneOf()}
           self.max = .maxExclusive(v)
@@ -689,53 +648,24 @@ extension Leaderboard__ScoreRange: SwiftProtobuf.Message, SwiftProtobuf._Message
     // allocates stack space for every if/case branch local when no optimizations
     // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
     // https://github.com/apple/swift-protobuf/issues/1182
-    switch self.min {
-    case .unboundedMin?: try {
-      guard case .unboundedMin(let v)? = self.min else { preconditionFailure() }
+    try { if case .unboundedMin(let v)? = self.min {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
-    }()
-    case .minInclusive?: try {
-      guard case .minInclusive(let v)? = self.min else { preconditionFailure() }
-      try visitor.visitSingularFloatField(value: v, fieldNumber: 2)
-    }()
-    case nil: break
-    }
-    switch self.max {
-    case .unboundedMax?: try {
-      guard case .unboundedMax(let v)? = self.max else { preconditionFailure() }
+    } }()
+    try { if case .unboundedMax(let v)? = self.max {
       try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
-    }()
-    case .maxExclusive?: try {
-      guard case .maxExclusive(let v)? = self.max else { preconditionFailure() }
-      try visitor.visitSingularFloatField(value: v, fieldNumber: 4)
-    }()
-    case nil: break
-    }
+    } }()
+    try { if case .minInclusive(let v)? = self.min {
+      try visitor.visitSingularDoubleField(value: v, fieldNumber: 5)
+    } }()
+    try { if case .maxExclusive(let v)? = self.max {
+      try visitor.visitSingularDoubleField(value: v, fieldNumber: 6)
+    } }()
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Leaderboard__ScoreRange, rhs: Leaderboard__ScoreRange) -> Bool {
     if lhs.min != rhs.min {return false}
     if lhs.max != rhs.max {return false}
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
-extension Leaderboard__Empty: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + "._Empty"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let _ = try decoder.nextFieldNumber() {
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: Leaderboard__Empty, rhs: Leaderboard__Empty) -> Bool {
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

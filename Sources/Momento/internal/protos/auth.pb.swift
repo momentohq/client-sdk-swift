@@ -205,6 +205,8 @@ public struct Auth__GenerateApiTokenRequest {
 
   public var tokenID: String = String()
 
+  public var description_p: String = String()
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public enum OneOf_Expiry: Equatable {
@@ -611,6 +613,7 @@ extension Auth__GenerateApiTokenRequest: SwiftProtobuf.Message, SwiftProtobuf._M
     3: .standard(proto: "auth_token"),
     4: .same(proto: "permissions"),
     5: .standard(proto: "token_id"),
+    6: .same(proto: "description"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -648,6 +651,7 @@ extension Auth__GenerateApiTokenRequest: SwiftProtobuf.Message, SwiftProtobuf._M
       case 3: try { try decoder.decodeSingularStringField(value: &self.authToken) }()
       case 4: try { try decoder.decodeSingularMessageField(value: &self._permissions) }()
       case 5: try { try decoder.decodeSingularStringField(value: &self.tokenID) }()
+      case 6: try { try decoder.decodeSingularStringField(value: &self.description_p) }()
       default: break
       }
     }
@@ -678,6 +682,9 @@ extension Auth__GenerateApiTokenRequest: SwiftProtobuf.Message, SwiftProtobuf._M
     if !self.tokenID.isEmpty {
       try visitor.visitSingularStringField(value: self.tokenID, fieldNumber: 5)
     }
+    if !self.description_p.isEmpty {
+      try visitor.visitSingularStringField(value: self.description_p, fieldNumber: 6)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -686,6 +693,7 @@ extension Auth__GenerateApiTokenRequest: SwiftProtobuf.Message, SwiftProtobuf._M
     if lhs.authToken != rhs.authToken {return false}
     if lhs._permissions != rhs._permissions {return false}
     if lhs.tokenID != rhs.tokenID {return false}
+    if lhs.description_p != rhs.description_p {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

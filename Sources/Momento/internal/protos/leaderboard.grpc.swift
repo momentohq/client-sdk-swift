@@ -32,17 +32,17 @@ public protocol Leaderboard_LeaderboardClientProtocol: GRPCClient {
   func deleteLeaderboard(
     _ request: Leaderboard__DeleteLeaderboardRequest,
     callOptions: CallOptions?
-  ) -> UnaryCall<Leaderboard__DeleteLeaderboardRequest, Leaderboard__Empty>
+  ) -> UnaryCall<Leaderboard__DeleteLeaderboardRequest, Common__Empty>
 
   func upsertElements(
     _ request: Leaderboard__UpsertElementsRequest,
     callOptions: CallOptions?
-  ) -> UnaryCall<Leaderboard__UpsertElementsRequest, Leaderboard__Empty>
+  ) -> UnaryCall<Leaderboard__UpsertElementsRequest, Common__Empty>
 
   func removeElements(
     _ request: Leaderboard__RemoveElementsRequest,
     callOptions: CallOptions?
-  ) -> UnaryCall<Leaderboard__RemoveElementsRequest, Leaderboard__Empty>
+  ) -> UnaryCall<Leaderboard__RemoveElementsRequest, Common__Empty>
 
   func getLeaderboardLength(
     _ request: Leaderboard__GetLeaderboardLengthRequest,
@@ -79,7 +79,7 @@ extension Leaderboard_LeaderboardClientProtocol {
   public func deleteLeaderboard(
     _ request: Leaderboard__DeleteLeaderboardRequest,
     callOptions: CallOptions? = nil
-  ) -> UnaryCall<Leaderboard__DeleteLeaderboardRequest, Leaderboard__Empty> {
+  ) -> UnaryCall<Leaderboard__DeleteLeaderboardRequest, Common__Empty> {
     return self.makeUnaryCall(
       path: Leaderboard_LeaderboardClientMetadata.Methods.deleteLeaderboard.path,
       request: request,
@@ -98,7 +98,7 @@ extension Leaderboard_LeaderboardClientProtocol {
   public func upsertElements(
     _ request: Leaderboard__UpsertElementsRequest,
     callOptions: CallOptions? = nil
-  ) -> UnaryCall<Leaderboard__UpsertElementsRequest, Leaderboard__Empty> {
+  ) -> UnaryCall<Leaderboard__UpsertElementsRequest, Common__Empty> {
     return self.makeUnaryCall(
       path: Leaderboard_LeaderboardClientMetadata.Methods.upsertElements.path,
       request: request,
@@ -116,7 +116,7 @@ extension Leaderboard_LeaderboardClientProtocol {
   public func removeElements(
     _ request: Leaderboard__RemoveElementsRequest,
     callOptions: CallOptions? = nil
-  ) -> UnaryCall<Leaderboard__RemoveElementsRequest, Leaderboard__Empty> {
+  ) -> UnaryCall<Leaderboard__RemoveElementsRequest, Common__Empty> {
     return self.makeUnaryCall(
       path: Leaderboard_LeaderboardClientMetadata.Methods.removeElements.path,
       request: request,
@@ -125,7 +125,7 @@ extension Leaderboard_LeaderboardClientProtocol {
     )
   }
 
-  /// Returns the length of a leaderboard in terms of ID count. 
+  /// Returns the length of a leaderboard in terms of ID count.
   ///
   /// - Parameters:
   ///   - request: Request to send to GetLeaderboardLength.
@@ -283,17 +283,17 @@ public protocol Leaderboard_LeaderboardAsyncClientProtocol: GRPCClient {
   func makeDeleteLeaderboardCall(
     _ request: Leaderboard__DeleteLeaderboardRequest,
     callOptions: CallOptions?
-  ) -> GRPCAsyncUnaryCall<Leaderboard__DeleteLeaderboardRequest, Leaderboard__Empty>
+  ) -> GRPCAsyncUnaryCall<Leaderboard__DeleteLeaderboardRequest, Common__Empty>
 
   func makeUpsertElementsCall(
     _ request: Leaderboard__UpsertElementsRequest,
     callOptions: CallOptions?
-  ) -> GRPCAsyncUnaryCall<Leaderboard__UpsertElementsRequest, Leaderboard__Empty>
+  ) -> GRPCAsyncUnaryCall<Leaderboard__UpsertElementsRequest, Common__Empty>
 
   func makeRemoveElementsCall(
     _ request: Leaderboard__RemoveElementsRequest,
     callOptions: CallOptions?
-  ) -> GRPCAsyncUnaryCall<Leaderboard__RemoveElementsRequest, Leaderboard__Empty>
+  ) -> GRPCAsyncUnaryCall<Leaderboard__RemoveElementsRequest, Common__Empty>
 
   func makeGetLeaderboardLengthCall(
     _ request: Leaderboard__GetLeaderboardLengthRequest,
@@ -329,7 +329,7 @@ extension Leaderboard_LeaderboardAsyncClientProtocol {
   public func makeDeleteLeaderboardCall(
     _ request: Leaderboard__DeleteLeaderboardRequest,
     callOptions: CallOptions? = nil
-  ) -> GRPCAsyncUnaryCall<Leaderboard__DeleteLeaderboardRequest, Leaderboard__Empty> {
+  ) -> GRPCAsyncUnaryCall<Leaderboard__DeleteLeaderboardRequest, Common__Empty> {
     return self.makeAsyncUnaryCall(
       path: Leaderboard_LeaderboardClientMetadata.Methods.deleteLeaderboard.path,
       request: request,
@@ -341,7 +341,7 @@ extension Leaderboard_LeaderboardAsyncClientProtocol {
   public func makeUpsertElementsCall(
     _ request: Leaderboard__UpsertElementsRequest,
     callOptions: CallOptions? = nil
-  ) -> GRPCAsyncUnaryCall<Leaderboard__UpsertElementsRequest, Leaderboard__Empty> {
+  ) -> GRPCAsyncUnaryCall<Leaderboard__UpsertElementsRequest, Common__Empty> {
     return self.makeAsyncUnaryCall(
       path: Leaderboard_LeaderboardClientMetadata.Methods.upsertElements.path,
       request: request,
@@ -353,7 +353,7 @@ extension Leaderboard_LeaderboardAsyncClientProtocol {
   public func makeRemoveElementsCall(
     _ request: Leaderboard__RemoveElementsRequest,
     callOptions: CallOptions? = nil
-  ) -> GRPCAsyncUnaryCall<Leaderboard__RemoveElementsRequest, Leaderboard__Empty> {
+  ) -> GRPCAsyncUnaryCall<Leaderboard__RemoveElementsRequest, Common__Empty> {
     return self.makeAsyncUnaryCall(
       path: Leaderboard_LeaderboardClientMetadata.Methods.removeElements.path,
       request: request,
@@ -416,7 +416,7 @@ extension Leaderboard_LeaderboardAsyncClientProtocol {
   public func deleteLeaderboard(
     _ request: Leaderboard__DeleteLeaderboardRequest,
     callOptions: CallOptions? = nil
-  ) async throws -> Leaderboard__Empty {
+  ) async throws -> Common__Empty {
     return try await self.performAsyncUnaryCall(
       path: Leaderboard_LeaderboardClientMetadata.Methods.deleteLeaderboard.path,
       request: request,
@@ -428,7 +428,7 @@ extension Leaderboard_LeaderboardAsyncClientProtocol {
   public func upsertElements(
     _ request: Leaderboard__UpsertElementsRequest,
     callOptions: CallOptions? = nil
-  ) async throws -> Leaderboard__Empty {
+  ) async throws -> Common__Empty {
     return try await self.performAsyncUnaryCall(
       path: Leaderboard_LeaderboardClientMetadata.Methods.upsertElements.path,
       request: request,
@@ -440,7 +440,7 @@ extension Leaderboard_LeaderboardAsyncClientProtocol {
   public func removeElements(
     _ request: Leaderboard__RemoveElementsRequest,
     callOptions: CallOptions? = nil
-  ) async throws -> Leaderboard__Empty {
+  ) async throws -> Common__Empty {
     return try await self.performAsyncUnaryCall(
       path: Leaderboard_LeaderboardClientMetadata.Methods.removeElements.path,
       request: request,
@@ -518,13 +518,13 @@ public struct Leaderboard_LeaderboardAsyncClient: Leaderboard_LeaderboardAsyncCl
 public protocol Leaderboard_LeaderboardClientInterceptorFactoryProtocol: Sendable {
 
   /// - Returns: Interceptors to use when invoking 'deleteLeaderboard'.
-  func makeDeleteLeaderboardInterceptors() -> [ClientInterceptor<Leaderboard__DeleteLeaderboardRequest, Leaderboard__Empty>]
+  func makeDeleteLeaderboardInterceptors() -> [ClientInterceptor<Leaderboard__DeleteLeaderboardRequest, Common__Empty>]
 
   /// - Returns: Interceptors to use when invoking 'upsertElements'.
-  func makeUpsertElementsInterceptors() -> [ClientInterceptor<Leaderboard__UpsertElementsRequest, Leaderboard__Empty>]
+  func makeUpsertElementsInterceptors() -> [ClientInterceptor<Leaderboard__UpsertElementsRequest, Common__Empty>]
 
   /// - Returns: Interceptors to use when invoking 'removeElements'.
-  func makeRemoveElementsInterceptors() -> [ClientInterceptor<Leaderboard__RemoveElementsRequest, Leaderboard__Empty>]
+  func makeRemoveElementsInterceptors() -> [ClientInterceptor<Leaderboard__RemoveElementsRequest, Common__Empty>]
 
   /// - Returns: Interceptors to use when invoking 'getLeaderboardLength'.
   func makeGetLeaderboardLengthInterceptors() -> [ClientInterceptor<Leaderboard__GetLeaderboardLengthRequest, Leaderboard__GetLeaderboardLengthResponse>]
@@ -617,16 +617,16 @@ public protocol Leaderboard_LeaderboardProvider: CallHandlerProvider {
   var interceptors: Leaderboard_LeaderboardServerInterceptorFactoryProtocol? { get }
 
   /// Deletes a leaderboard. After this call, you're not incurring storage cost for this leaderboard anymore.
-  func deleteLeaderboard(request: Leaderboard__DeleteLeaderboardRequest, context: StatusOnlyCallContext) -> EventLoopFuture<Leaderboard__Empty>
+  func deleteLeaderboard(request: Leaderboard__DeleteLeaderboardRequest, context: StatusOnlyCallContext) -> EventLoopFuture<Common__Empty>
 
   /// Insert or update elements in a leaderboard. You can do up to 8192 elements per call.
   /// There is no partial failure: Upsert succeeds or fails.
-  func upsertElements(request: Leaderboard__UpsertElementsRequest, context: StatusOnlyCallContext) -> EventLoopFuture<Leaderboard__Empty>
+  func upsertElements(request: Leaderboard__UpsertElementsRequest, context: StatusOnlyCallContext) -> EventLoopFuture<Common__Empty>
 
   /// Remove up to 8192 elements at a time from a leaderboard. Elements are removed by id.
-  func removeElements(request: Leaderboard__RemoveElementsRequest, context: StatusOnlyCallContext) -> EventLoopFuture<Leaderboard__Empty>
+  func removeElements(request: Leaderboard__RemoveElementsRequest, context: StatusOnlyCallContext) -> EventLoopFuture<Common__Empty>
 
-  /// Returns the length of a leaderboard in terms of ID count. 
+  /// Returns the length of a leaderboard in terms of ID count.
   func getLeaderboardLength(request: Leaderboard__GetLeaderboardLengthRequest, context: StatusOnlyCallContext) -> EventLoopFuture<Leaderboard__GetLeaderboardLengthResponse>
 
   /// Get a range of elements.
@@ -663,7 +663,7 @@ extension Leaderboard_LeaderboardProvider {
       return UnaryServerHandler(
         context: context,
         requestDeserializer: ProtobufDeserializer<Leaderboard__DeleteLeaderboardRequest>(),
-        responseSerializer: ProtobufSerializer<Leaderboard__Empty>(),
+        responseSerializer: ProtobufSerializer<Common__Empty>(),
         interceptors: self.interceptors?.makeDeleteLeaderboardInterceptors() ?? [],
         userFunction: self.deleteLeaderboard(request:context:)
       )
@@ -672,7 +672,7 @@ extension Leaderboard_LeaderboardProvider {
       return UnaryServerHandler(
         context: context,
         requestDeserializer: ProtobufDeserializer<Leaderboard__UpsertElementsRequest>(),
-        responseSerializer: ProtobufSerializer<Leaderboard__Empty>(),
+        responseSerializer: ProtobufSerializer<Common__Empty>(),
         interceptors: self.interceptors?.makeUpsertElementsInterceptors() ?? [],
         userFunction: self.upsertElements(request:context:)
       )
@@ -681,7 +681,7 @@ extension Leaderboard_LeaderboardProvider {
       return UnaryServerHandler(
         context: context,
         requestDeserializer: ProtobufDeserializer<Leaderboard__RemoveElementsRequest>(),
-        responseSerializer: ProtobufSerializer<Leaderboard__Empty>(),
+        responseSerializer: ProtobufSerializer<Common__Empty>(),
         interceptors: self.interceptors?.makeRemoveElementsInterceptors() ?? [],
         userFunction: self.removeElements(request:context:)
       )
@@ -751,22 +751,22 @@ public protocol Leaderboard_LeaderboardAsyncProvider: CallHandlerProvider, Senda
   func deleteLeaderboard(
     request: Leaderboard__DeleteLeaderboardRequest,
     context: GRPCAsyncServerCallContext
-  ) async throws -> Leaderboard__Empty
+  ) async throws -> Common__Empty
 
   /// Insert or update elements in a leaderboard. You can do up to 8192 elements per call.
   /// There is no partial failure: Upsert succeeds or fails.
   func upsertElements(
     request: Leaderboard__UpsertElementsRequest,
     context: GRPCAsyncServerCallContext
-  ) async throws -> Leaderboard__Empty
+  ) async throws -> Common__Empty
 
   /// Remove up to 8192 elements at a time from a leaderboard. Elements are removed by id.
   func removeElements(
     request: Leaderboard__RemoveElementsRequest,
     context: GRPCAsyncServerCallContext
-  ) async throws -> Leaderboard__Empty
+  ) async throws -> Common__Empty
 
-  /// Returns the length of a leaderboard in terms of ID count. 
+  /// Returns the length of a leaderboard in terms of ID count.
   func getLeaderboardLength(
     request: Leaderboard__GetLeaderboardLengthRequest,
     context: GRPCAsyncServerCallContext
@@ -822,7 +822,7 @@ extension Leaderboard_LeaderboardAsyncProvider {
       return GRPCAsyncServerHandler(
         context: context,
         requestDeserializer: ProtobufDeserializer<Leaderboard__DeleteLeaderboardRequest>(),
-        responseSerializer: ProtobufSerializer<Leaderboard__Empty>(),
+        responseSerializer: ProtobufSerializer<Common__Empty>(),
         interceptors: self.interceptors?.makeDeleteLeaderboardInterceptors() ?? [],
         wrapping: { try await self.deleteLeaderboard(request: $0, context: $1) }
       )
@@ -831,7 +831,7 @@ extension Leaderboard_LeaderboardAsyncProvider {
       return GRPCAsyncServerHandler(
         context: context,
         requestDeserializer: ProtobufDeserializer<Leaderboard__UpsertElementsRequest>(),
-        responseSerializer: ProtobufSerializer<Leaderboard__Empty>(),
+        responseSerializer: ProtobufSerializer<Common__Empty>(),
         interceptors: self.interceptors?.makeUpsertElementsInterceptors() ?? [],
         wrapping: { try await self.upsertElements(request: $0, context: $1) }
       )
@@ -840,7 +840,7 @@ extension Leaderboard_LeaderboardAsyncProvider {
       return GRPCAsyncServerHandler(
         context: context,
         requestDeserializer: ProtobufDeserializer<Leaderboard__RemoveElementsRequest>(),
-        responseSerializer: ProtobufSerializer<Leaderboard__Empty>(),
+        responseSerializer: ProtobufSerializer<Common__Empty>(),
         interceptors: self.interceptors?.makeRemoveElementsInterceptors() ?? [],
         wrapping: { try await self.removeElements(request: $0, context: $1) }
       )
@@ -891,15 +891,15 @@ public protocol Leaderboard_LeaderboardServerInterceptorFactoryProtocol: Sendabl
 
   /// - Returns: Interceptors to use when handling 'deleteLeaderboard'.
   ///   Defaults to calling `self.makeInterceptors()`.
-  func makeDeleteLeaderboardInterceptors() -> [ServerInterceptor<Leaderboard__DeleteLeaderboardRequest, Leaderboard__Empty>]
+  func makeDeleteLeaderboardInterceptors() -> [ServerInterceptor<Leaderboard__DeleteLeaderboardRequest, Common__Empty>]
 
   /// - Returns: Interceptors to use when handling 'upsertElements'.
   ///   Defaults to calling `self.makeInterceptors()`.
-  func makeUpsertElementsInterceptors() -> [ServerInterceptor<Leaderboard__UpsertElementsRequest, Leaderboard__Empty>]
+  func makeUpsertElementsInterceptors() -> [ServerInterceptor<Leaderboard__UpsertElementsRequest, Common__Empty>]
 
   /// - Returns: Interceptors to use when handling 'removeElements'.
   ///   Defaults to calling `self.makeInterceptors()`.
-  func makeRemoveElementsInterceptors() -> [ServerInterceptor<Leaderboard__RemoveElementsRequest, Leaderboard__Empty>]
+  func makeRemoveElementsInterceptors() -> [ServerInterceptor<Leaderboard__RemoveElementsRequest, Common__Empty>]
 
   /// - Returns: Interceptors to use when handling 'getLeaderboardLength'.
   ///   Defaults to calling `self.makeInterceptors()`.

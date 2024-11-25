@@ -31,12 +31,14 @@ let package = Package(
                 "internal/protos/cacheclient.proto",
                 "internal/protos/cacheping.proto",
                 "internal/protos/cachepubsub.proto",
+                "internal/protos/common.proto",
                 "internal/protos/controlclient.proto",
                 "internal/protos/extensions.proto",
+                "internal/protos/global_admin.proto",
                 "internal/protos/leaderboard.proto",
                 "internal/protos/permissionmessages.proto",
+                "internal/protos/store.proto",
                 "internal/protos/token.proto",
-                "internal/protos/vectorindex.proto",
                 "internal/protos/webhook.proto"
             ]
         ),

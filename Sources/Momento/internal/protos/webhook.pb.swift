@@ -156,6 +156,36 @@ public struct Webhook__ListWebhooksResponse {
   public init() {}
 }
 
+public struct Webhook__GetWebhookSecretRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var cacheName: String = String()
+
+  public var webhookName: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct Webhook__GetWebhookSecretResponse {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var cacheName: String = String()
+
+  public var webhookName: String = String()
+
+  public var secretString: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 public struct Webhook__WebhookDestination {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -194,6 +224,39 @@ public struct Webhook__WebhookDestination {
   public init() {}
 }
 
+public struct Webhook__RotateWebhookSecretRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var webhookID: Webhook__WebhookId {
+    get {return _webhookID ?? Webhook__WebhookId()}
+    set {_webhookID = newValue}
+  }
+  /// Returns true if `webhookID` has been explicitly set.
+  public var hasWebhookID: Bool {return self._webhookID != nil}
+  /// Clears the value of `webhookID`. Subsequent reads from it will return its default value.
+  public mutating func clearWebhookID() {self._webhookID = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _webhookID: Webhook__WebhookId? = nil
+}
+
+public struct Webhook__RotateWebhookSecretResponse {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var secretString: String = String()
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 #if swift(>=5.5) && canImport(_Concurrency)
 extension Webhook__WebhookId: @unchecked Sendable {}
 extension Webhook__Webhook: @unchecked Sendable {}
@@ -203,8 +266,12 @@ extension Webhook__DeleteWebhookRequest: @unchecked Sendable {}
 extension Webhook__DeleteWebhookResponse: @unchecked Sendable {}
 extension Webhook__ListWebhookRequest: @unchecked Sendable {}
 extension Webhook__ListWebhooksResponse: @unchecked Sendable {}
+extension Webhook__GetWebhookSecretRequest: @unchecked Sendable {}
+extension Webhook__GetWebhookSecretResponse: @unchecked Sendable {}
 extension Webhook__WebhookDestination: @unchecked Sendable {}
 extension Webhook__WebhookDestination.OneOf_Kind: @unchecked Sendable {}
+extension Webhook__RotateWebhookSecretRequest: @unchecked Sendable {}
+extension Webhook__RotateWebhookSecretResponse: @unchecked Sendable {}
 #endif  // swift(>=5.5) && canImport(_Concurrency)
 
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
@@ -484,6 +551,88 @@ extension Webhook__ListWebhooksResponse: SwiftProtobuf.Message, SwiftProtobuf._M
   }
 }
 
+extension Webhook__GetWebhookSecretRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + "._GetWebhookSecretRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "cache_name"),
+    2: .standard(proto: "webhook_name"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.cacheName) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.webhookName) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.cacheName.isEmpty {
+      try visitor.visitSingularStringField(value: self.cacheName, fieldNumber: 1)
+    }
+    if !self.webhookName.isEmpty {
+      try visitor.visitSingularStringField(value: self.webhookName, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Webhook__GetWebhookSecretRequest, rhs: Webhook__GetWebhookSecretRequest) -> Bool {
+    if lhs.cacheName != rhs.cacheName {return false}
+    if lhs.webhookName != rhs.webhookName {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Webhook__GetWebhookSecretResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + "._GetWebhookSecretResponse"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "cache_name"),
+    2: .standard(proto: "webhook_name"),
+    3: .standard(proto: "secret_string"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.cacheName) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self.webhookName) }()
+      case 3: try { try decoder.decodeSingularStringField(value: &self.secretString) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.cacheName.isEmpty {
+      try visitor.visitSingularStringField(value: self.cacheName, fieldNumber: 1)
+    }
+    if !self.webhookName.isEmpty {
+      try visitor.visitSingularStringField(value: self.webhookName, fieldNumber: 2)
+    }
+    if !self.secretString.isEmpty {
+      try visitor.visitSingularStringField(value: self.secretString, fieldNumber: 3)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Webhook__GetWebhookSecretResponse, rhs: Webhook__GetWebhookSecretResponse) -> Bool {
+    if lhs.cacheName != rhs.cacheName {return false}
+    if lhs.webhookName != rhs.webhookName {return false}
+    if lhs.secretString != rhs.secretString {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
 extension Webhook__WebhookDestination: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + "._WebhookDestination"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -522,6 +671,74 @@ extension Webhook__WebhookDestination: SwiftProtobuf.Message, SwiftProtobuf._Mes
 
   public static func ==(lhs: Webhook__WebhookDestination, rhs: Webhook__WebhookDestination) -> Bool {
     if lhs.kind != rhs.kind {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Webhook__RotateWebhookSecretRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + "._RotateWebhookSecretRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "webhook_id"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularMessageField(value: &self._webhookID) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    try { if let v = self._webhookID {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    } }()
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Webhook__RotateWebhookSecretRequest, rhs: Webhook__RotateWebhookSecretRequest) -> Bool {
+    if lhs._webhookID != rhs._webhookID {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Webhook__RotateWebhookSecretResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + "._RotateWebhookSecretResponse"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "secret_string"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self.secretString) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.secretString.isEmpty {
+      try visitor.visitSingularStringField(value: self.secretString, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Webhook__RotateWebhookSecretResponse, rhs: Webhook__RotateWebhookSecretResponse) -> Bool {
+    if lhs.secretString != rhs.secretString {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

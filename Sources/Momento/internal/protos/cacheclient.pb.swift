@@ -96,6 +96,18 @@ public struct CacheClient__GetResponse {
   public init() {}
 }
 
+public struct CacheClient__GetBatchRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var items: [CacheClient__GetRequest] = []
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
 public struct CacheClient__DeleteRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -144,6 +156,200 @@ public struct CacheClient__SetResponse {
   public var message: String = String()
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct CacheClient__SetBatchRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var items: [CacheClient__SetRequest] = []
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct CacheClient__SetIfRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var cacheKey: Data = Data()
+
+  public var cacheBody: Data = Data()
+
+  public var ttlMilliseconds: UInt64 = 0
+
+  public var condition: CacheClient__SetIfRequest.OneOf_Condition? = nil
+
+  public var present: Common_Present {
+    get {
+      if case .present(let v)? = condition {return v}
+      return Common_Present()
+    }
+    set {condition = .present(newValue)}
+  }
+
+  public var presentAndNotEqual: Common_PresentAndNotEqual {
+    get {
+      if case .presentAndNotEqual(let v)? = condition {return v}
+      return Common_PresentAndNotEqual()
+    }
+    set {condition = .presentAndNotEqual(newValue)}
+  }
+
+  public var absent: Common_Absent {
+    get {
+      if case .absent(let v)? = condition {return v}
+      return Common_Absent()
+    }
+    set {condition = .absent(newValue)}
+  }
+
+  public var equal: Common_Equal {
+    get {
+      if case .equal(let v)? = condition {return v}
+      return Common_Equal()
+    }
+    set {condition = .equal(newValue)}
+  }
+
+  public var absentOrEqual: Common_AbsentOrEqual {
+    get {
+      if case .absentOrEqual(let v)? = condition {return v}
+      return Common_AbsentOrEqual()
+    }
+    set {condition = .absentOrEqual(newValue)}
+  }
+
+  public var notEqual: Common_NotEqual {
+    get {
+      if case .notEqual(let v)? = condition {return v}
+      return Common_NotEqual()
+    }
+    set {condition = .notEqual(newValue)}
+  }
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public enum OneOf_Condition: Equatable {
+    case present(Common_Present)
+    case presentAndNotEqual(Common_PresentAndNotEqual)
+    case absent(Common_Absent)
+    case equal(Common_Equal)
+    case absentOrEqual(Common_AbsentOrEqual)
+    case notEqual(Common_NotEqual)
+
+  #if !swift(>=4.1)
+    public static func ==(lhs: CacheClient__SetIfRequest.OneOf_Condition, rhs: CacheClient__SetIfRequest.OneOf_Condition) -> Bool {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch (lhs, rhs) {
+      case (.present, .present): return {
+        guard case .present(let l) = lhs, case .present(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.presentAndNotEqual, .presentAndNotEqual): return {
+        guard case .presentAndNotEqual(let l) = lhs, case .presentAndNotEqual(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.absent, .absent): return {
+        guard case .absent(let l) = lhs, case .absent(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.equal, .equal): return {
+        guard case .equal(let l) = lhs, case .equal(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.absentOrEqual, .absentOrEqual): return {
+        guard case .absentOrEqual(let l) = lhs, case .absentOrEqual(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.notEqual, .notEqual): return {
+        guard case .notEqual(let l) = lhs, case .notEqual(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      default: return false
+      }
+    }
+  #endif
+  }
+
+  public init() {}
+}
+
+public struct CacheClient__SetIfResponse {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var result: CacheClient__SetIfResponse.OneOf_Result? = nil
+
+  public var stored: CacheClient__SetIfResponse._Stored {
+    get {
+      if case .stored(let v)? = result {return v}
+      return CacheClient__SetIfResponse._Stored()
+    }
+    set {result = .stored(newValue)}
+  }
+
+  public var notStored: CacheClient__SetIfResponse._NotStored {
+    get {
+      if case .notStored(let v)? = result {return v}
+      return CacheClient__SetIfResponse._NotStored()
+    }
+    set {result = .notStored(newValue)}
+  }
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public enum OneOf_Result: Equatable {
+    case stored(CacheClient__SetIfResponse._Stored)
+    case notStored(CacheClient__SetIfResponse._NotStored)
+
+  #if !swift(>=4.1)
+    public static func ==(lhs: CacheClient__SetIfResponse.OneOf_Result, rhs: CacheClient__SetIfResponse.OneOf_Result) -> Bool {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch (lhs, rhs) {
+      case (.stored, .stored): return {
+        guard case .stored(let l) = lhs, case .stored(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.notStored, .notStored): return {
+        guard case .notStored(let l) = lhs, case .notStored(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      default: return false
+      }
+    }
+  #endif
+  }
+
+  public struct _Stored {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    public init() {}
+  }
+
+  public struct _NotStored {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    public init() {}
+  }
 
   public init() {}
 }
@@ -1163,6 +1369,94 @@ public struct CacheClient__SetFetchResponse {
 
   #if !swift(>=4.1)
     public static func ==(lhs: CacheClient__SetFetchResponse.OneOf_Set, rhs: CacheClient__SetFetchResponse.OneOf_Set) -> Bool {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch (lhs, rhs) {
+      case (.found, .found): return {
+        guard case .found(let l) = lhs, case .found(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      case (.missing, .missing): return {
+        guard case .missing(let l) = lhs, case .missing(let r) = rhs else { preconditionFailure() }
+        return l == r
+      }()
+      default: return false
+      }
+    }
+  #endif
+  }
+
+  public struct _Found {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    public var elements: [Data] = []
+
+    public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    public init() {}
+  }
+
+  public struct _Missing {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    public init() {}
+  }
+
+  public init() {}
+}
+
+public struct CacheClient__SetSampleRequest {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var setName: Data = Data()
+
+  public var limit: UInt64 = 0
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+}
+
+public struct CacheClient__SetSampleResponse {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var set: CacheClient__SetSampleResponse.OneOf_Set? = nil
+
+  public var found: CacheClient__SetSampleResponse._Found {
+    get {
+      if case .found(let v)? = set {return v}
+      return CacheClient__SetSampleResponse._Found()
+    }
+    set {set = .found(newValue)}
+  }
+
+  public var missing: CacheClient__SetSampleResponse._Missing {
+    get {
+      if case .missing(let v)? = set {return v}
+      return CacheClient__SetSampleResponse._Missing()
+    }
+    set {set = .missing(newValue)}
+  }
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public enum OneOf_Set: Equatable {
+    case found(CacheClient__SetSampleResponse._Found)
+    case missing(CacheClient__SetSampleResponse._Missing)
+
+  #if !swift(>=4.1)
+    public static func ==(lhs: CacheClient__SetSampleResponse.OneOf_Set, rhs: CacheClient__SetSampleResponse.OneOf_Set) -> Bool {
       // The use of inline closures is to circumvent an issue where the compiler
       // allocates stack space for every case branch when no optimizations are
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
@@ -2310,16 +2604,6 @@ public struct CacheClient__ListRemoveResponse {
   public init() {}
 }
 
-public struct CacheClient__Unbounded {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-}
-
 public struct CacheClient__ListFetchRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
@@ -2332,10 +2616,10 @@ public struct CacheClient__ListFetchRequest {
   /// A negative index counts from the end of the list
   public var startIndex: CacheClient__ListFetchRequest.OneOf_StartIndex? = nil
 
-  public var unboundedStart: CacheClient__Unbounded {
+  public var unboundedStart: Common__Unbounded {
     get {
       if case .unboundedStart(let v)? = startIndex {return v}
-      return CacheClient__Unbounded()
+      return Common__Unbounded()
     }
     set {startIndex = .unboundedStart(newValue)}
   }
@@ -2354,10 +2638,10 @@ public struct CacheClient__ListFetchRequest {
   /// A negative index counts from the end of the list
   public var endIndex: CacheClient__ListFetchRequest.OneOf_EndIndex? = nil
 
-  public var unboundedEnd: CacheClient__Unbounded {
+  public var unboundedEnd: Common__Unbounded {
     get {
       if case .unboundedEnd(let v)? = endIndex {return v}
-      return CacheClient__Unbounded()
+      return Common__Unbounded()
     }
     set {endIndex = .unboundedEnd(newValue)}
   }
@@ -2376,7 +2660,7 @@ public struct CacheClient__ListFetchRequest {
   /// If unbounded, 0 (start of list) by default
   /// A negative index counts from the end of the list
   public enum OneOf_StartIndex: Equatable {
-    case unboundedStart(CacheClient__Unbounded)
+    case unboundedStart(Common__Unbounded)
     case inclusiveStart(Int32)
 
   #if !swift(>=4.1)
@@ -2404,7 +2688,7 @@ public struct CacheClient__ListFetchRequest {
   /// If end_index is > the number of elements to return, return as much as you can
   /// A negative index counts from the end of the list
   public enum OneOf_EndIndex: Equatable {
-    case unboundedEnd(CacheClient__Unbounded)
+    case unboundedEnd(Common__Unbounded)
     case exclusiveEnd(Int32)
 
   #if !swift(>=4.1)
@@ -2439,10 +2723,10 @@ public struct CacheClient__ListRetainRequest {
 
   public var startIndex: CacheClient__ListRetainRequest.OneOf_StartIndex? = nil
 
-  public var unboundedStart: CacheClient__Unbounded {
+  public var unboundedStart: Common__Unbounded {
     get {
       if case .unboundedStart(let v)? = startIndex {return v}
-      return CacheClient__Unbounded()
+      return Common__Unbounded()
     }
     set {startIndex = .unboundedStart(newValue)}
   }
@@ -2457,10 +2741,10 @@ public struct CacheClient__ListRetainRequest {
 
   public var endIndex: CacheClient__ListRetainRequest.OneOf_EndIndex? = nil
 
-  public var unboundedEnd: CacheClient__Unbounded {
+  public var unboundedEnd: Common__Unbounded {
     get {
       if case .unboundedEnd(let v)? = endIndex {return v}
-      return CacheClient__Unbounded()
+      return Common__Unbounded()
     }
     set {endIndex = .unboundedEnd(newValue)}
   }
@@ -2480,7 +2764,7 @@ public struct CacheClient__ListRetainRequest {
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public enum OneOf_StartIndex: Equatable {
-    case unboundedStart(CacheClient__Unbounded)
+    case unboundedStart(Common__Unbounded)
     case inclusiveStart(Int32)
 
   #if !swift(>=4.1)
@@ -2504,7 +2788,7 @@ public struct CacheClient__ListRetainRequest {
   }
 
   public enum OneOf_EndIndex: Equatable {
-    case unboundedEnd(CacheClient__Unbounded)
+    case unboundedEnd(Common__Unbounded)
     case exclusiveEnd(Int32)
 
   #if !swift(>=4.1)
@@ -2901,10 +3185,10 @@ public struct CacheClient__SortedSetFetchRequest {
     /// Unbounded is treated as 0.
     public var start: CacheClient__SortedSetFetchRequest._ByIndex.OneOf_Start? = nil
 
-    public var unboundedStart: CacheClient__Unbounded {
+    public var unboundedStart: Common__Unbounded {
       get {
         if case .unboundedStart(let v)? = start {return v}
-        return CacheClient__Unbounded()
+        return Common__Unbounded()
       }
       set {start = .unboundedStart(newValue)}
     }
@@ -2921,10 +3205,10 @@ public struct CacheClient__SortedSetFetchRequest {
     /// Unbounded is treated as the number of elements in the sorted set.
     public var end: CacheClient__SortedSetFetchRequest._ByIndex.OneOf_End? = nil
 
-    public var unboundedEnd: CacheClient__Unbounded {
+    public var unboundedEnd: Common__Unbounded {
       get {
         if case .unboundedEnd(let v)? = end {return v}
-        return CacheClient__Unbounded()
+        return Common__Unbounded()
       }
       set {end = .unboundedEnd(newValue)}
     }
@@ -2942,7 +3226,7 @@ public struct CacheClient__SortedSetFetchRequest {
     /// Start is inclusive.
     /// Unbounded is treated as 0.
     public enum OneOf_Start: Equatable {
-      case unboundedStart(CacheClient__Unbounded)
+      case unboundedStart(Common__Unbounded)
       case inclusiveStartIndex(Int32)
 
     #if !swift(>=4.1)
@@ -2968,7 +3252,7 @@ public struct CacheClient__SortedSetFetchRequest {
     /// End is exclusive.
     /// Unbounded is treated as the number of elements in the sorted set.
     public enum OneOf_End: Equatable {
-      case unboundedEnd(CacheClient__Unbounded)
+      case unboundedEnd(Common__Unbounded)
       case exclusiveEndIndex(Int32)
 
     #if !swift(>=4.1)
@@ -3001,10 +3285,10 @@ public struct CacheClient__SortedSetFetchRequest {
 
     public var min: CacheClient__SortedSetFetchRequest._ByScore.OneOf_Min? = nil
 
-    public var unboundedMin: CacheClient__Unbounded {
+    public var unboundedMin: Common__Unbounded {
       get {
         if case .unboundedMin(let v)? = min {return v}
-        return CacheClient__Unbounded()
+        return Common__Unbounded()
       }
       set {min = .unboundedMin(newValue)}
     }
@@ -3019,10 +3303,10 @@ public struct CacheClient__SortedSetFetchRequest {
 
     public var max: CacheClient__SortedSetFetchRequest._ByScore.OneOf_Max? = nil
 
-    public var unboundedMax: CacheClient__Unbounded {
+    public var unboundedMax: Common__Unbounded {
       get {
         if case .unboundedMax(let v)? = max {return v}
-        return CacheClient__Unbounded()
+        return Common__Unbounded()
       }
       set {max = .unboundedMax(newValue)}
     }
@@ -3046,7 +3330,7 @@ public struct CacheClient__SortedSetFetchRequest {
     public var unknownFields = SwiftProtobuf.UnknownStorage()
 
     public enum OneOf_Min: Equatable {
-      case unboundedMin(CacheClient__Unbounded)
+      case unboundedMin(Common__Unbounded)
       case minScore(CacheClient__SortedSetFetchRequest._ByScore._Score)
 
     #if !swift(>=4.1)
@@ -3070,7 +3354,7 @@ public struct CacheClient__SortedSetFetchRequest {
     }
 
     public enum OneOf_Max: Equatable {
-      case unboundedMax(CacheClient__Unbounded)
+      case unboundedMax(Common__Unbounded)
       case maxScore(CacheClient__SortedSetFetchRequest._ByScore._Score)
 
     #if !swift(>=4.1)
@@ -3738,10 +4022,10 @@ public struct CacheClient__SortedSetLengthByScoreRequest {
     set {min = .exclusiveMin(newValue)}
   }
 
-  public var unboundedMin: CacheClient__Unbounded {
+  public var unboundedMin: Common__Unbounded {
     get {
       if case .unboundedMin(let v)? = min {return v}
-      return CacheClient__Unbounded()
+      return Common__Unbounded()
     }
     set {min = .unboundedMin(newValue)}
   }
@@ -3764,10 +4048,10 @@ public struct CacheClient__SortedSetLengthByScoreRequest {
     set {max = .exclusiveMax(newValue)}
   }
 
-  public var unboundedMax: CacheClient__Unbounded {
+  public var unboundedMax: Common__Unbounded {
     get {
       if case .unboundedMax(let v)? = max {return v}
-      return CacheClient__Unbounded()
+      return Common__Unbounded()
     }
     set {max = .unboundedMax(newValue)}
   }
@@ -3777,7 +4061,7 @@ public struct CacheClient__SortedSetLengthByScoreRequest {
   public enum OneOf_Min: Equatable {
     case inclusiveMin(Double)
     case exclusiveMin(Double)
-    case unboundedMin(CacheClient__Unbounded)
+    case unboundedMin(Common__Unbounded)
 
   #if !swift(>=4.1)
     public static func ==(lhs: CacheClient__SortedSetLengthByScoreRequest.OneOf_Min, rhs: CacheClient__SortedSetLengthByScoreRequest.OneOf_Min) -> Bool {
@@ -3806,7 +4090,7 @@ public struct CacheClient__SortedSetLengthByScoreRequest {
   public enum OneOf_Max: Equatable {
     case inclusiveMax(Double)
     case exclusiveMax(Double)
-    case unboundedMax(CacheClient__Unbounded)
+    case unboundedMax(Common__Unbounded)
 
   #if !swift(>=4.1)
     public static func ==(lhs: CacheClient__SortedSetLengthByScoreRequest.OneOf_Max, rhs: CacheClient__SortedSetLengthByScoreRequest.OneOf_Max) -> Bool {
@@ -3913,10 +4197,18 @@ public struct CacheClient__SortedSetLengthByScoreResponse {
 extension CacheClient_ECacheResult: @unchecked Sendable {}
 extension CacheClient__GetRequest: @unchecked Sendable {}
 extension CacheClient__GetResponse: @unchecked Sendable {}
+extension CacheClient__GetBatchRequest: @unchecked Sendable {}
 extension CacheClient__DeleteRequest: @unchecked Sendable {}
 extension CacheClient__DeleteResponse: @unchecked Sendable {}
 extension CacheClient__SetRequest: @unchecked Sendable {}
 extension CacheClient__SetResponse: @unchecked Sendable {}
+extension CacheClient__SetBatchRequest: @unchecked Sendable {}
+extension CacheClient__SetIfRequest: @unchecked Sendable {}
+extension CacheClient__SetIfRequest.OneOf_Condition: @unchecked Sendable {}
+extension CacheClient__SetIfResponse: @unchecked Sendable {}
+extension CacheClient__SetIfResponse.OneOf_Result: @unchecked Sendable {}
+extension CacheClient__SetIfResponse._Stored: @unchecked Sendable {}
+extension CacheClient__SetIfResponse._NotStored: @unchecked Sendable {}
 extension CacheClient__SetIfNotExistsRequest: @unchecked Sendable {}
 extension CacheClient__SetIfNotExistsResponse: @unchecked Sendable {}
 extension CacheClient__SetIfNotExistsResponse.OneOf_Result: @unchecked Sendable {}
@@ -3975,6 +4267,11 @@ extension CacheClient__SetFetchResponse: @unchecked Sendable {}
 extension CacheClient__SetFetchResponse.OneOf_Set: @unchecked Sendable {}
 extension CacheClient__SetFetchResponse._Found: @unchecked Sendable {}
 extension CacheClient__SetFetchResponse._Missing: @unchecked Sendable {}
+extension CacheClient__SetSampleRequest: @unchecked Sendable {}
+extension CacheClient__SetSampleResponse: @unchecked Sendable {}
+extension CacheClient__SetSampleResponse.OneOf_Set: @unchecked Sendable {}
+extension CacheClient__SetSampleResponse._Found: @unchecked Sendable {}
+extension CacheClient__SetSampleResponse._Missing: @unchecked Sendable {}
 extension CacheClient__SetUnionRequest: @unchecked Sendable {}
 extension CacheClient__SetUnionResponse: @unchecked Sendable {}
 extension CacheClient__SetDifferenceRequest: @unchecked Sendable {}
@@ -4036,7 +4333,6 @@ extension CacheClient__ListRemoveResponse: @unchecked Sendable {}
 extension CacheClient__ListRemoveResponse.OneOf_List: @unchecked Sendable {}
 extension CacheClient__ListRemoveResponse._Found: @unchecked Sendable {}
 extension CacheClient__ListRemoveResponse._Missing: @unchecked Sendable {}
-extension CacheClient__Unbounded: @unchecked Sendable {}
 extension CacheClient__ListFetchRequest: @unchecked Sendable {}
 extension CacheClient__ListFetchRequest.OneOf_StartIndex: @unchecked Sendable {}
 extension CacheClient__ListFetchRequest.OneOf_EndIndex: @unchecked Sendable {}
@@ -4198,6 +4494,38 @@ extension CacheClient__GetResponse: SwiftProtobuf.Message, SwiftProtobuf._Messag
   }
 }
 
+extension CacheClient__GetBatchRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + "._GetBatchRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "items"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeRepeatedMessageField(value: &self.items) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.items.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.items, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: CacheClient__GetBatchRequest, rhs: CacheClient__GetBatchRequest) -> Bool {
+    if lhs.items != rhs.items {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
 extension CacheClient__DeleteRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + "._DeleteRequest"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -4326,6 +4654,306 @@ extension CacheClient__SetResponse: SwiftProtobuf.Message, SwiftProtobuf._Messag
   public static func ==(lhs: CacheClient__SetResponse, rhs: CacheClient__SetResponse) -> Bool {
     if lhs.result != rhs.result {return false}
     if lhs.message != rhs.message {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension CacheClient__SetBatchRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + "._SetBatchRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "items"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeRepeatedMessageField(value: &self.items) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.items.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.items, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: CacheClient__SetBatchRequest, rhs: CacheClient__SetBatchRequest) -> Bool {
+    if lhs.items != rhs.items {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension CacheClient__SetIfRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + "._SetIfRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "cache_key"),
+    2: .standard(proto: "cache_body"),
+    3: .standard(proto: "ttl_milliseconds"),
+    4: .same(proto: "present"),
+    5: .standard(proto: "present_and_not_equal"),
+    6: .same(proto: "absent"),
+    7: .same(proto: "equal"),
+    8: .standard(proto: "absent_or_equal"),
+    9: .standard(proto: "not_equal"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularBytesField(value: &self.cacheKey) }()
+      case 2: try { try decoder.decodeSingularBytesField(value: &self.cacheBody) }()
+      case 3: try { try decoder.decodeSingularUInt64Field(value: &self.ttlMilliseconds) }()
+      case 4: try {
+        var v: Common_Present?
+        var hadOneofValue = false
+        if let current = self.condition {
+          hadOneofValue = true
+          if case .present(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.condition = .present(v)
+        }
+      }()
+      case 5: try {
+        var v: Common_PresentAndNotEqual?
+        var hadOneofValue = false
+        if let current = self.condition {
+          hadOneofValue = true
+          if case .presentAndNotEqual(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.condition = .presentAndNotEqual(v)
+        }
+      }()
+      case 6: try {
+        var v: Common_Absent?
+        var hadOneofValue = false
+        if let current = self.condition {
+          hadOneofValue = true
+          if case .absent(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.condition = .absent(v)
+        }
+      }()
+      case 7: try {
+        var v: Common_Equal?
+        var hadOneofValue = false
+        if let current = self.condition {
+          hadOneofValue = true
+          if case .equal(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.condition = .equal(v)
+        }
+      }()
+      case 8: try {
+        var v: Common_AbsentOrEqual?
+        var hadOneofValue = false
+        if let current = self.condition {
+          hadOneofValue = true
+          if case .absentOrEqual(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.condition = .absentOrEqual(v)
+        }
+      }()
+      case 9: try {
+        var v: Common_NotEqual?
+        var hadOneofValue = false
+        if let current = self.condition {
+          hadOneofValue = true
+          if case .notEqual(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.condition = .notEqual(v)
+        }
+      }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    if !self.cacheKey.isEmpty {
+      try visitor.visitSingularBytesField(value: self.cacheKey, fieldNumber: 1)
+    }
+    if !self.cacheBody.isEmpty {
+      try visitor.visitSingularBytesField(value: self.cacheBody, fieldNumber: 2)
+    }
+    if self.ttlMilliseconds != 0 {
+      try visitor.visitSingularUInt64Field(value: self.ttlMilliseconds, fieldNumber: 3)
+    }
+    switch self.condition {
+    case .present?: try {
+      guard case .present(let v)? = self.condition else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+    }()
+    case .presentAndNotEqual?: try {
+      guard case .presentAndNotEqual(let v)? = self.condition else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 5)
+    }()
+    case .absent?: try {
+      guard case .absent(let v)? = self.condition else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 6)
+    }()
+    case .equal?: try {
+      guard case .equal(let v)? = self.condition else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 7)
+    }()
+    case .absentOrEqual?: try {
+      guard case .absentOrEqual(let v)? = self.condition else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 8)
+    }()
+    case .notEqual?: try {
+      guard case .notEqual(let v)? = self.condition else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 9)
+    }()
+    case nil: break
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: CacheClient__SetIfRequest, rhs: CacheClient__SetIfRequest) -> Bool {
+    if lhs.cacheKey != rhs.cacheKey {return false}
+    if lhs.cacheBody != rhs.cacheBody {return false}
+    if lhs.ttlMilliseconds != rhs.ttlMilliseconds {return false}
+    if lhs.condition != rhs.condition {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension CacheClient__SetIfResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + "._SetIfResponse"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "stored"),
+    2: .standard(proto: "not_stored"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try {
+        var v: CacheClient__SetIfResponse._Stored?
+        var hadOneofValue = false
+        if let current = self.result {
+          hadOneofValue = true
+          if case .stored(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.result = .stored(v)
+        }
+      }()
+      case 2: try {
+        var v: CacheClient__SetIfResponse._NotStored?
+        var hadOneofValue = false
+        if let current = self.result {
+          hadOneofValue = true
+          if case .notStored(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.result = .notStored(v)
+        }
+      }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    switch self.result {
+    case .stored?: try {
+      guard case .stored(let v)? = self.result else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    }()
+    case .notStored?: try {
+      guard case .notStored(let v)? = self.result else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    }()
+    case nil: break
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: CacheClient__SetIfResponse, rhs: CacheClient__SetIfResponse) -> Bool {
+    if lhs.result != rhs.result {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension CacheClient__SetIfResponse._Stored: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = CacheClient__SetIfResponse.protoMessageName + "._Stored"
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: CacheClient__SetIfResponse._Stored, rhs: CacheClient__SetIfResponse._Stored) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension CacheClient__SetIfResponse._NotStored: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = CacheClient__SetIfResponse.protoMessageName + "._NotStored"
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: CacheClient__SetIfResponse._NotStored, rhs: CacheClient__SetIfResponse._NotStored) -> Bool {
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -6155,6 +6783,165 @@ extension CacheClient__SetFetchResponse._Missing: SwiftProtobuf.Message, SwiftPr
   }
 
   public static func ==(lhs: CacheClient__SetFetchResponse._Missing, rhs: CacheClient__SetFetchResponse._Missing) -> Bool {
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension CacheClient__SetSampleRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + "._SetSampleRequest"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "set_name"),
+    2: .same(proto: "limit"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularBytesField(value: &self.setName) }()
+      case 2: try { try decoder.decodeSingularUInt64Field(value: &self.limit) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.setName.isEmpty {
+      try visitor.visitSingularBytesField(value: self.setName, fieldNumber: 1)
+    }
+    if self.limit != 0 {
+      try visitor.visitSingularUInt64Field(value: self.limit, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: CacheClient__SetSampleRequest, rhs: CacheClient__SetSampleRequest) -> Bool {
+    if lhs.setName != rhs.setName {return false}
+    if lhs.limit != rhs.limit {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension CacheClient__SetSampleResponse: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = _protobuf_package + "._SetSampleResponse"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "found"),
+    2: .same(proto: "missing"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try {
+        var v: CacheClient__SetSampleResponse._Found?
+        var hadOneofValue = false
+        if let current = self.set {
+          hadOneofValue = true
+          if case .found(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.set = .found(v)
+        }
+      }()
+      case 2: try {
+        var v: CacheClient__SetSampleResponse._Missing?
+        var hadOneofValue = false
+        if let current = self.set {
+          hadOneofValue = true
+          if case .missing(let m) = current {v = m}
+        }
+        try decoder.decodeSingularMessageField(value: &v)
+        if let v = v {
+          if hadOneofValue {try decoder.handleConflictingOneOf()}
+          self.set = .missing(v)
+        }
+      }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    // The use of inline closures is to circumvent an issue where the compiler
+    // allocates stack space for every if/case branch local when no optimizations
+    // are enabled. https://github.com/apple/swift-protobuf/issues/1034 and
+    // https://github.com/apple/swift-protobuf/issues/1182
+    switch self.set {
+    case .found?: try {
+      guard case .found(let v)? = self.set else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+    }()
+    case .missing?: try {
+      guard case .missing(let v)? = self.set else { preconditionFailure() }
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+    }()
+    case nil: break
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: CacheClient__SetSampleResponse, rhs: CacheClient__SetSampleResponse) -> Bool {
+    if lhs.set != rhs.set {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension CacheClient__SetSampleResponse._Found: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = CacheClient__SetSampleResponse.protoMessageName + "._Found"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "elements"),
+  ]
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeRepeatedBytesField(value: &self.elements) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.elements.isEmpty {
+      try visitor.visitRepeatedBytesField(value: self.elements, fieldNumber: 1)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: CacheClient__SetSampleResponse._Found, rhs: CacheClient__SetSampleResponse._Found) -> Bool {
+    if lhs.elements != rhs.elements {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension CacheClient__SetSampleResponse._Missing: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = CacheClient__SetSampleResponse.protoMessageName + "._Missing"
+  public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let _ = try decoder.nextFieldNumber() {
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: CacheClient__SetSampleResponse._Missing, rhs: CacheClient__SetSampleResponse._Missing) -> Bool {
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -8163,25 +8950,6 @@ extension CacheClient__ListRemoveResponse._Missing: SwiftProtobuf.Message, Swift
   }
 }
 
-extension CacheClient__Unbounded: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + "._Unbounded"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let _ = try decoder.nextFieldNumber() {
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: CacheClient__Unbounded, rhs: CacheClient__Unbounded) -> Bool {
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
-
 extension CacheClient__ListFetchRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + "._ListFetchRequest"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -8200,7 +8968,7 @@ extension CacheClient__ListFetchRequest: SwiftProtobuf.Message, SwiftProtobuf._M
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularBytesField(value: &self.listName) }()
       case 2: try {
-        var v: CacheClient__Unbounded?
+        var v: Common__Unbounded?
         var hadOneofValue = false
         if let current = self.startIndex {
           hadOneofValue = true
@@ -8221,7 +8989,7 @@ extension CacheClient__ListFetchRequest: SwiftProtobuf.Message, SwiftProtobuf._M
         }
       }()
       case 4: try {
-        var v: CacheClient__Unbounded?
+        var v: Common__Unbounded?
         var hadOneofValue = false
         if let current = self.endIndex {
           hadOneofValue = true
@@ -8308,7 +9076,7 @@ extension CacheClient__ListRetainRequest: SwiftProtobuf.Message, SwiftProtobuf._
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularBytesField(value: &self.listName) }()
       case 2: try {
-        var v: CacheClient__Unbounded?
+        var v: Common__Unbounded?
         var hadOneofValue = false
         if let current = self.startIndex {
           hadOneofValue = true
@@ -8329,7 +9097,7 @@ extension CacheClient__ListRetainRequest: SwiftProtobuf.Message, SwiftProtobuf._
         }
       }()
       case 4: try {
-        var v: CacheClient__Unbounded?
+        var v: Common__Unbounded?
         var hadOneofValue = false
         if let current = self.endIndex {
           hadOneofValue = true
@@ -9019,7 +9787,7 @@ extension CacheClient__SortedSetFetchRequest._ByIndex: SwiftProtobuf.Message, Sw
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try {
-        var v: CacheClient__Unbounded?
+        var v: Common__Unbounded?
         var hadOneofValue = false
         if let current = self.start {
           hadOneofValue = true
@@ -9040,7 +9808,7 @@ extension CacheClient__SortedSetFetchRequest._ByIndex: SwiftProtobuf.Message, Sw
         }
       }()
       case 3: try {
-        var v: CacheClient__Unbounded?
+        var v: Common__Unbounded?
         var hadOneofValue = false
         if let current = self.end {
           hadOneofValue = true
@@ -9121,7 +9889,7 @@ extension CacheClient__SortedSetFetchRequest._ByScore: SwiftProtobuf.Message, Sw
       // enabled. https://github.com/apple/swift-protobuf/issues/1034
       switch fieldNumber {
       case 1: try {
-        var v: CacheClient__Unbounded?
+        var v: Common__Unbounded?
         var hadOneofValue = false
         if let current = self.min {
           hadOneofValue = true
@@ -9147,7 +9915,7 @@ extension CacheClient__SortedSetFetchRequest._ByScore: SwiftProtobuf.Message, Sw
         }
       }()
       case 3: try {
-        var v: CacheClient__Unbounded?
+        var v: Common__Unbounded?
         var hadOneofValue = false
         if let current = self.max {
           hadOneofValue = true
@@ -10284,7 +11052,7 @@ extension CacheClient__SortedSetLengthByScoreRequest: SwiftProtobuf.Message, Swi
         }
       }()
       case 4: try {
-        var v: CacheClient__Unbounded?
+        var v: Common__Unbounded?
         var hadOneofValue = false
         if let current = self.min {
           hadOneofValue = true
@@ -10313,7 +11081,7 @@ extension CacheClient__SortedSetLengthByScoreRequest: SwiftProtobuf.Message, Swi
         }
       }()
       case 7: try {
-        var v: CacheClient__Unbounded?
+        var v: Common__Unbounded?
         var hadOneofValue = false
         if let current = self.max {
           hadOneofValue = true

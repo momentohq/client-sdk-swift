@@ -19,6 +19,14 @@ public protocol TopicClientProtocol {
         topicName: String
     ) async -> TopicSubscribeResponse
     
+    func subscribe(
+        cacheName: String,
+        topicName: String,
+        resumeAtTopicSequenceNumber: UInt64?,
+        resumeAtTopicSequencePage: UInt64?
+    ) async -> TopicSubscribeResponse
+
+
     func close()
 }
 
@@ -148,7 +156,7 @@ public class TopicClient: TopicClientProtocol {
         - cacheName: name of the cache containing the topic
         - topicName: name of the topic
      - Returns: TopicSubscribeResponse representing the result of the subscribe operation.
-     
+
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch subscribeResponse {
@@ -160,6 +168,39 @@ public class TopicClient: TopicClientProtocol {
      ```
      */
     public func subscribe(cacheName: String, topicName: String) async -> TopicSubscribeResponse {
+        return await self.doSubscribe(cacheName: cacheName, topicName: topicName, resumeAtTopicSequenceNumber: nil, resumeAtTopicSequencePage: nil)
+    }
+
+    /**
+     Subscribe to a topic. The returned value can be used to iterate over newly published messages on the topic.
+     - Parameters:
+        - cacheName: name of the cache containing the topic
+          topicName: name of the topic
+          resumeAtTopicSequenceNumber: sequence number to resume at. Use nil or 0 to start at the latest messages.
+          resumeAtTopicSequenceNumber: page number to resume at. Use nil or 0 to start at the latest messages.
+     - Returns: TopicSubscribeResponse representing the result of the subscribe operation.
+
+     Pattern matching can be used to operate on the appropriate subtype.
+     ```swift
+      switch subscribeResponse {
+      case .error(let err):
+          print("Error: \(err)")
+      case .subscription(let sub):
+          for try await item in sub.stream {...}
+      }
+     ```
+     */
+    public func subscribe(
+        cacheName: String, topicName: String, resumeAtTopicSequenceNumber: UInt64?, resumeAtTopicSequencePage: UInt64?
+    ) async -> TopicSubscribeResponse {
+        return await doSubscribe(
+            cacheName: cacheName, topicName: topicName, resumeAtTopicSequenceNumber: resumeAtTopicSequenceNumber, resumeAtTopicSequencePage: resumeAtTopicSequencePage
+        )
+    }
+
+    internal func doSubscribe(
+        cacheName: String, topicName: String, resumeAtTopicSequenceNumber: UInt64?, resumeAtTopicSequencePage: UInt64?
+    ) async -> TopicSubscribeResponse {
         do {
             try validateCacheName(cacheName: cacheName)
             try validateTopicName(topicName: topicName)
@@ -170,12 +211,13 @@ public class TopicClient: TopicClientProtocol {
                 TopicSubscribeError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
             )
         }
-        
+
         do {
             let result = try await self.pubsubClient.subscribe(
-                cacheName: cacheName, 
-                topicName: topicName, 
-                resumeAtTopicSequenceNumber: nil
+                cacheName: cacheName,
+                topicName: topicName,
+                resumeAtTopicSequenceNumber: resumeAtTopicSequenceNumber,
+                resumeAtTopicSequencePage: resumeAtTopicSequencePage
             )
             return result
         } catch let err as TopicSubscribeError {
@@ -189,7 +231,7 @@ public class TopicClient: TopicClientProtocol {
             ))
         }
     }
-    
+
     public func close() {
         self.pubsubClient.close()
     }

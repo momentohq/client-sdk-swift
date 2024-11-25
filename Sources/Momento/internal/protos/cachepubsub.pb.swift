@@ -20,16 +20,6 @@ fileprivate struct _GeneratedWithProtocGenSwiftVersion: SwiftProtobuf.ProtobufAP
   typealias Version = _2
 }
 
-public struct CacheClient_Pubsub__Empty {
-  // SwiftProtobuf.Message conformance is added in an extension below. See the
-  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
-  // methods supported on all messages.
-
-  public var unknownFields = SwiftProtobuf.UnknownStorage()
-
-  public init() {}
-}
-
 /// A value to publish through a topic.
 public struct CacheClient_Pubsub__PublishRequest {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
@@ -72,13 +62,20 @@ public struct CacheClient_Pubsub__SubscriptionRequest {
   /// The literal topic name to which you want to subscribe.
   public var topic: String = String()
 
-  /// --> Providing this is not required. <--
-  ///
   /// If provided, attempt to reconnect to the topic and replay messages starting from
   /// the provided sequence number. You may get a discontinuity if some (or all) of the
   /// messages are not available.
+  /// If provided at 1, you may receive some messages leading up to whatever the
+  /// newest message is. The exact amount is unspecified and subject to change.
   /// If not provided (or 0), the subscription will begin with the latest messages.
   public var resumeAtTopicSequenceNumber: UInt64 = 0
+
+  /// Determined by the service when a topic is created. This clarifies the intent of
+  /// a subscription, and ensures the right messages are sent for a given
+  /// `resume_at_topic_sequence_number`.
+  /// Include this in your Subscribe() calls when you are reconnecting. The right value
+  /// is the last sequence_page you received.
+  public var sequencePage: UInt64 = 0
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -173,14 +170,8 @@ public struct CacheClient_Pubsub__TopicItem {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
-  /// Topic sequence numbers are **best-effort** and **informational**.
-  /// They are not transactional.
-  /// They exist:
-  /// * to help reconnect to an existing topic while trying to avoid missing items.
-  /// * to facilitate richer monitoring and logging.
-  /// * to provide a best-effort awareness of stream contiguity, or lack thereof,
-  ///   in case you need to know.
-  /// You can safely ignore them if none of that matters to you!
+  /// Topic sequence numbers give an order of messages per-topic.
+  /// All subscribers to a topic will receive messages in the same order, with the same sequence numbers.
   public var topicSequenceNumber: UInt64 = 0
 
   /// The value you previously published to this topic.
@@ -195,6 +186,13 @@ public struct CacheClient_Pubsub__TopicItem {
 
   /// Authenticated id from Publisher's disposable token
   public var publisherID: String = String()
+
+  /// Sequence pages exist to determine which sequence number range a message belongs to. On a topic reset,
+  /// the sequence numbers reset and a new sequence_page is given.
+  /// For a given sequence_page, the next message in a topic is topic_sequence_number + 1.
+  ///
+  /// Later sequence pages are numbered greater than earlier pages, but they don't go one-by-one.
+  public var sequencePage: UInt64 = 0
 
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
@@ -276,6 +274,12 @@ public struct CacheClient_Pubsub__Discontinuity {
   /// The new topic sequence number after which TopicItems will ostensibly resume.
   public var newTopicSequence: UInt64 = 0
 
+  /// The new topic sequence_page. If you had one before and this one is different, then your topic reset.
+  /// If you didn't have one, then this is just telling you what the sequence page is expected to be.
+  /// If you had one before, and this one is the same, then it's just telling you that you missed some messages
+  /// in the topic. Probably your client is consuming messages a little too slowly in this case!
+  public var newSequencePage: UInt64 = 0
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
@@ -299,7 +303,6 @@ public struct CacheClient_Pubsub__Heartbeat {
 }
 
 #if swift(>=5.5) && canImport(_Concurrency)
-extension CacheClient_Pubsub__Empty: @unchecked Sendable {}
 extension CacheClient_Pubsub__PublishRequest: @unchecked Sendable {}
 extension CacheClient_Pubsub__SubscriptionRequest: @unchecked Sendable {}
 extension CacheClient_Pubsub__SubscriptionItem: @unchecked Sendable {}
@@ -314,25 +317,6 @@ extension CacheClient_Pubsub__Heartbeat: @unchecked Sendable {}
 // MARK: - Code below here is support for the SwiftProtobuf runtime.
 
 fileprivate let _protobuf_package = "cache_client.pubsub"
-
-extension CacheClient_Pubsub__Empty: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
-  public static let protoMessageName: String = _protobuf_package + "._Empty"
-  public static let _protobuf_nameMap = SwiftProtobuf._NameMap()
-
-  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
-    while let _ = try decoder.nextFieldNumber() {
-    }
-  }
-
-  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
-    try unknownFields.traverse(visitor: &visitor)
-  }
-
-  public static func ==(lhs: CacheClient_Pubsub__Empty, rhs: CacheClient_Pubsub__Empty) -> Bool {
-    if lhs.unknownFields != rhs.unknownFields {return false}
-    return true
-  }
-}
 
 extension CacheClient_Pubsub__PublishRequest: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = _protobuf_package + "._PublishRequest"
@@ -388,6 +372,7 @@ extension CacheClient_Pubsub__SubscriptionRequest: SwiftProtobuf.Message, SwiftP
     1: .standard(proto: "cache_name"),
     2: .same(proto: "topic"),
     3: .standard(proto: "resume_at_topic_sequence_number"),
+    4: .standard(proto: "sequence_page"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -399,6 +384,7 @@ extension CacheClient_Pubsub__SubscriptionRequest: SwiftProtobuf.Message, SwiftP
       case 1: try { try decoder.decodeSingularStringField(value: &self.cacheName) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self.topic) }()
       case 3: try { try decoder.decodeSingularUInt64Field(value: &self.resumeAtTopicSequenceNumber) }()
+      case 4: try { try decoder.decodeSingularUInt64Field(value: &self.sequencePage) }()
       default: break
       }
     }
@@ -414,6 +400,9 @@ extension CacheClient_Pubsub__SubscriptionRequest: SwiftProtobuf.Message, SwiftP
     if self.resumeAtTopicSequenceNumber != 0 {
       try visitor.visitSingularUInt64Field(value: self.resumeAtTopicSequenceNumber, fieldNumber: 3)
     }
+    if self.sequencePage != 0 {
+      try visitor.visitSingularUInt64Field(value: self.sequencePage, fieldNumber: 4)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -421,6 +410,7 @@ extension CacheClient_Pubsub__SubscriptionRequest: SwiftProtobuf.Message, SwiftP
     if lhs.cacheName != rhs.cacheName {return false}
     if lhs.topic != rhs.topic {return false}
     if lhs.resumeAtTopicSequenceNumber != rhs.resumeAtTopicSequenceNumber {return false}
+    if lhs.sequencePage != rhs.sequencePage {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -520,6 +510,7 @@ extension CacheClient_Pubsub__TopicItem: SwiftProtobuf.Message, SwiftProtobuf._M
     1: .standard(proto: "topic_sequence_number"),
     2: .same(proto: "value"),
     3: .standard(proto: "publisher_id"),
+    4: .standard(proto: "sequence_page"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -531,6 +522,7 @@ extension CacheClient_Pubsub__TopicItem: SwiftProtobuf.Message, SwiftProtobuf._M
       case 1: try { try decoder.decodeSingularUInt64Field(value: &self.topicSequenceNumber) }()
       case 2: try { try decoder.decodeSingularMessageField(value: &self._value) }()
       case 3: try { try decoder.decodeSingularStringField(value: &self.publisherID) }()
+      case 4: try { try decoder.decodeSingularUInt64Field(value: &self.sequencePage) }()
       default: break
       }
     }
@@ -550,6 +542,9 @@ extension CacheClient_Pubsub__TopicItem: SwiftProtobuf.Message, SwiftProtobuf._M
     if !self.publisherID.isEmpty {
       try visitor.visitSingularStringField(value: self.publisherID, fieldNumber: 3)
     }
+    if self.sequencePage != 0 {
+      try visitor.visitSingularUInt64Field(value: self.sequencePage, fieldNumber: 4)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -557,6 +552,7 @@ extension CacheClient_Pubsub__TopicItem: SwiftProtobuf.Message, SwiftProtobuf._M
     if lhs.topicSequenceNumber != rhs.topicSequenceNumber {return false}
     if lhs._value != rhs._value {return false}
     if lhs.publisherID != rhs.publisherID {return false}
+    if lhs.sequencePage != rhs.sequencePage {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -627,6 +623,7 @@ extension CacheClient_Pubsub__Discontinuity: SwiftProtobuf.Message, SwiftProtobu
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "last_topic_sequence"),
     2: .standard(proto: "new_topic_sequence"),
+    3: .standard(proto: "new_sequence_page"),
   ]
 
   public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
@@ -637,6 +634,7 @@ extension CacheClient_Pubsub__Discontinuity: SwiftProtobuf.Message, SwiftProtobu
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularUInt64Field(value: &self.lastTopicSequence) }()
       case 2: try { try decoder.decodeSingularUInt64Field(value: &self.newTopicSequence) }()
+      case 3: try { try decoder.decodeSingularUInt64Field(value: &self.newSequencePage) }()
       default: break
       }
     }
@@ -649,12 +647,16 @@ extension CacheClient_Pubsub__Discontinuity: SwiftProtobuf.Message, SwiftProtobu
     if self.newTopicSequence != 0 {
       try visitor.visitSingularUInt64Field(value: self.newTopicSequence, fieldNumber: 2)
     }
+    if self.newSequencePage != 0 {
+      try visitor.visitSingularUInt64Field(value: self.newSequencePage, fieldNumber: 3)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: CacheClient_Pubsub__Discontinuity, rhs: CacheClient_Pubsub__Discontinuity) -> Bool {
     if lhs.lastTopicSequence != rhs.lastTopicSequence {return false}
     if lhs.newTopicSequence != rhs.newTopicSequence {return false}
+    if lhs.newSequencePage != rhs.newSequencePage {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }

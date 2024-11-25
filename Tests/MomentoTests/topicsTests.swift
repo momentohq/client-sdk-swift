@@ -92,8 +92,7 @@ final class topicsTests: XCTestCase {
         switch subResp {
         case .error(let err):
             XCTFail("expected subscription but got \(err)")
-        case .subscription(let sub):
-            print("got subscription: \(sub)")
+        case .subscription:
             XCTAssertTrue(true)
         }
     }
@@ -124,6 +123,95 @@ final class topicsTests: XCTestCase {
             XCTFail("expected success but got \(err)")
         case .success(_):
             XCTAssertTrue(true)
+        }
+
+        for try await item in subscription.stream {
+            switch item {
+            case .error(let err):
+                XCTFail("expected itemText but got \(err)")
+            case .itemBinary(let bin):
+                XCTFail("expected itemText but got \(bin)")
+            case .itemText(let itemText):
+                XCTAssertEqual(itemText.value, topicValue)
+            }
+            break
+        }
+    }
+
+    func testTopicClientPublishesAndSubscribesResumeAtSequence() async throws {
+        let topicName = generateStringWithUuid(prefix: "test-topic")
+        let topicValue = "publishing and subscribing!"
+        let values = ["1", topicValue, "3"]
+
+        for (value) in values {
+            let pubResp = await self.topicClient.publish(
+                cacheName: self.integrationTestCacheName,
+                topicName: topicName,
+                value: value
+            )
+            switch pubResp {
+            case .error(let err):
+                XCTFail("expected success but got \(err)")
+            case .success(_):
+                XCTAssertTrue(true)
+            }
+        }
+
+        let subResp = await self.topicClient.subscribe(
+            cacheName: self.integrationTestCacheName,
+            topicName: topicName,
+            resumeAtTopicSequenceNumber: 2,
+            resumeAtTopicSequencePage: nil
+        )
+        var subscription: TopicSubscription! = nil
+        switch subResp {
+        case .error(let err):
+            XCTFail("expected subscription but got \(err)")
+        case .subscription(let sub):
+            subscription = sub
+        }
+
+        for try await item in subscription.stream {
+            switch item {
+            case .error(let err):
+                XCTFail("expected itemText but got \(err)")
+            case .itemBinary(let bin):
+                XCTFail("expected itemText but got \(bin)")
+            case .itemText(let itemText):
+                XCTAssertEqual(itemText.value, topicValue)
+            }
+            break
+        }
+    }
+
+    func testTopicClientPublishesAndSubscribesResumeAtInvalidSequence() async throws {
+        let topicName = generateStringWithUuid(prefix: "test-topic")
+        let topicValue = "publishing and subscribing!"
+
+        let pubResp = await self.topicClient.publish(
+            cacheName: self.integrationTestCacheName,
+            topicName: topicName,
+            value: topicValue
+        )
+        switch pubResp {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        case .success(_):
+            XCTAssertTrue(true)
+        }
+
+        let subResp = await self.topicClient.subscribe(
+            cacheName: self.integrationTestCacheName,
+            topicName: topicName,
+            resumeAtTopicSequenceNumber: 5434,
+            resumeAtTopicSequencePage: 95764
+        )
+        var subscription: TopicSubscription! = nil
+        switch subResp {
+        case .error(let err):
+            XCTFail("expected subscription but got \(err)")
+        case .subscription(let sub):
+            subscription = sub
         }
 
         for try await item in subscription.stream {
