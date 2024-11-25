@@ -1,22 +1,22 @@
 <head>
-  <meta name="Momento Swift Client Library Documentation" content="Swift client software development kit for Momento Cache">
+  <meta name="Momento Client Library Documentation for Swift" content="Momento client software development kit for Swift">
 </head>
 <img src="https://docs.momentohq.com/img/momento-logo-forest.svg" alt="logo" width="400"/>
 
 [![project status](https://momentohq.github.io/standards-and-practices/badges/project-status-official.svg)](https://github.com/momentohq/standards-and-practices/blob/main/docs/momento-on-github.md)
 [![project stability](https://momentohq.github.io/standards-and-practices/badges/project-stability-beta.svg)](https://github.com/momentohq/standards-and-practices/blob/main/docs/momento-on-github.md)
 
-# Momento Swift Client Library
+# Momento Client Library for Swift
 
 Momento Cache is a fast, simple, pay-as-you-go caching solution without any of the operational overhead
-required by traditional caching solutions.  This repo contains the source code for the Momento Swift client library.
+required by traditional caching solutions.  This repo contains the source code for the Momento client library for Swift.
 
 To get started with Momento you will need a Momento Auth Token. You can get one from the [Momento Console](https://console.gomomento.com).
 
 * Website: [https://www.gomomento.com/](https://www.gomomento.com/)
 * Momento Documentation: [https://docs.momentohq.com/](https://docs.momentohq.com/)
 * Getting Started: [https://docs.momentohq.com/getting-started](https://docs.momentohq.com/getting-started)
-* Swift SDK Documentation: [https://docs.momentohq.com/sdks/swift](https://docs.momentohq.com/sdks/swift)
+* Momento SDK Documentation for Swift: [https://docs.momentohq.com/sdks/swift](https://docs.momentohq.com/sdks/swift)
 * Discuss: [Momento Discord](https://discord.gg/3HkAKjUZGq)
 
 # Momento Swift SDK
