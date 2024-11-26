@@ -16,7 +16,8 @@ protocol PubsubClientProtocol {
     func subscribe(
         cacheName: String,
         topicName: String,
-        resumeAtTopicSequenceNumber: UInt64?
+        resumeAtTopicSequenceNumber: UInt64?,
+        resumeAtTopicSequencePage: UInt64?
     ) async throws -> TopicSubscribeResponse
 
     func close()
@@ -91,12 +92,14 @@ class PubsubClient: PubsubClientProtocol {
         }
     }
 
-    func subscribe(cacheName: String, topicName: String, resumeAtTopicSequenceNumber: UInt64?) async throws -> TopicSubscribeResponse {
+    func subscribe(
+        cacheName: String, topicName: String, resumeAtTopicSequenceNumber: UInt64?, resumeAtTopicSequencePage: UInt64?
+    ) async throws -> TopicSubscribeResponse {
         var request = CacheClient_Pubsub__SubscriptionRequest()
         request.cacheName = cacheName
         request.topic = topicName
         request.resumeAtTopicSequenceNumber = UInt64(resumeAtTopicSequenceNumber ?? 0)
-
+        request.sequencePage = UInt64(resumeAtTopicSequencePage ?? 0)
 
         let result = self.client.makeSubscribeCall(
             request,
@@ -117,6 +120,7 @@ class PubsubClient: PubsubClientProtocol {
                             subscribeCallResponse: result,
                             messageIterator: messageIterator,
                             lastSequenceNumber: request.resumeAtTopicSequenceNumber,
+                            lastSequencePage: request.sequencePage,
                             pubsubClient: self,
                             cacheName: cacheName,
                             topicName: topicName

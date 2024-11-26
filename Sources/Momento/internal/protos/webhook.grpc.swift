@@ -36,6 +36,16 @@ public protocol Webhook_WebhookClientProtocol: GRPCClient {
     _ request: Webhook__ListWebhookRequest,
     callOptions: CallOptions?
   ) -> UnaryCall<Webhook__ListWebhookRequest, Webhook__ListWebhooksResponse>
+
+  func getWebhookSecret(
+    _ request: Webhook__GetWebhookSecretRequest,
+    callOptions: CallOptions?
+  ) -> UnaryCall<Webhook__GetWebhookSecretRequest, Webhook__GetWebhookSecretResponse>
+
+  func rotateWebhookSecret(
+    _ request: Webhook__RotateWebhookSecretRequest,
+    callOptions: CallOptions?
+  ) -> UnaryCall<Webhook__RotateWebhookSecretRequest, Webhook__RotateWebhookSecretResponse>
 }
 
 extension Webhook_WebhookClientProtocol {
@@ -94,6 +104,42 @@ extension Webhook_WebhookClientProtocol {
       request: request,
       callOptions: callOptions ?? self.defaultCallOptions,
       interceptors: self.interceptors?.makeListWebhooksInterceptors() ?? []
+    )
+  }
+
+  /// Unary call to GetWebhookSecret
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to GetWebhookSecret.
+  ///   - callOptions: Call options.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  public func getWebhookSecret(
+    _ request: Webhook__GetWebhookSecretRequest,
+    callOptions: CallOptions? = nil
+  ) -> UnaryCall<Webhook__GetWebhookSecretRequest, Webhook__GetWebhookSecretResponse> {
+    return self.makeUnaryCall(
+      path: Webhook_WebhookClientMetadata.Methods.getWebhookSecret.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeGetWebhookSecretInterceptors() ?? []
+    )
+  }
+
+  /// Unary call to RotateWebhookSecret
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to RotateWebhookSecret.
+  ///   - callOptions: Call options.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  public func rotateWebhookSecret(
+    _ request: Webhook__RotateWebhookSecretRequest,
+    callOptions: CallOptions? = nil
+  ) -> UnaryCall<Webhook__RotateWebhookSecretRequest, Webhook__RotateWebhookSecretResponse> {
+    return self.makeUnaryCall(
+      path: Webhook_WebhookClientMetadata.Methods.rotateWebhookSecret.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeRotateWebhookSecretInterceptors() ?? []
     )
   }
 }
@@ -179,6 +225,16 @@ public protocol Webhook_WebhookAsyncClientProtocol: GRPCClient {
     _ request: Webhook__ListWebhookRequest,
     callOptions: CallOptions?
   ) -> GRPCAsyncUnaryCall<Webhook__ListWebhookRequest, Webhook__ListWebhooksResponse>
+
+  func makeGetWebhookSecretCall(
+    _ request: Webhook__GetWebhookSecretRequest,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<Webhook__GetWebhookSecretRequest, Webhook__GetWebhookSecretResponse>
+
+  func makeRotateWebhookSecretCall(
+    _ request: Webhook__RotateWebhookSecretRequest,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<Webhook__RotateWebhookSecretRequest, Webhook__RotateWebhookSecretResponse>
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
@@ -226,6 +282,30 @@ extension Webhook_WebhookAsyncClientProtocol {
       interceptors: self.interceptors?.makeListWebhooksInterceptors() ?? []
     )
   }
+
+  public func makeGetWebhookSecretCall(
+    _ request: Webhook__GetWebhookSecretRequest,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<Webhook__GetWebhookSecretRequest, Webhook__GetWebhookSecretResponse> {
+    return self.makeAsyncUnaryCall(
+      path: Webhook_WebhookClientMetadata.Methods.getWebhookSecret.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeGetWebhookSecretInterceptors() ?? []
+    )
+  }
+
+  public func makeRotateWebhookSecretCall(
+    _ request: Webhook__RotateWebhookSecretRequest,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<Webhook__RotateWebhookSecretRequest, Webhook__RotateWebhookSecretResponse> {
+    return self.makeAsyncUnaryCall(
+      path: Webhook_WebhookClientMetadata.Methods.rotateWebhookSecret.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeRotateWebhookSecretInterceptors() ?? []
+    )
+  }
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
@@ -265,6 +345,30 @@ extension Webhook_WebhookAsyncClientProtocol {
       interceptors: self.interceptors?.makeListWebhooksInterceptors() ?? []
     )
   }
+
+  public func getWebhookSecret(
+    _ request: Webhook__GetWebhookSecretRequest,
+    callOptions: CallOptions? = nil
+  ) async throws -> Webhook__GetWebhookSecretResponse {
+    return try await self.performAsyncUnaryCall(
+      path: Webhook_WebhookClientMetadata.Methods.getWebhookSecret.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeGetWebhookSecretInterceptors() ?? []
+    )
+  }
+
+  public func rotateWebhookSecret(
+    _ request: Webhook__RotateWebhookSecretRequest,
+    callOptions: CallOptions? = nil
+  ) async throws -> Webhook__RotateWebhookSecretResponse {
+    return try await self.performAsyncUnaryCall(
+      path: Webhook_WebhookClientMetadata.Methods.rotateWebhookSecret.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeRotateWebhookSecretInterceptors() ?? []
+    )
+  }
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
@@ -294,6 +398,12 @@ public protocol Webhook_WebhookClientInterceptorFactoryProtocol: Sendable {
 
   /// - Returns: Interceptors to use when invoking 'listWebhooks'.
   func makeListWebhooksInterceptors() -> [ClientInterceptor<Webhook__ListWebhookRequest, Webhook__ListWebhooksResponse>]
+
+  /// - Returns: Interceptors to use when invoking 'getWebhookSecret'.
+  func makeGetWebhookSecretInterceptors() -> [ClientInterceptor<Webhook__GetWebhookSecretRequest, Webhook__GetWebhookSecretResponse>]
+
+  /// - Returns: Interceptors to use when invoking 'rotateWebhookSecret'.
+  func makeRotateWebhookSecretInterceptors() -> [ClientInterceptor<Webhook__RotateWebhookSecretRequest, Webhook__RotateWebhookSecretResponse>]
 }
 
 public enum Webhook_WebhookClientMetadata {
@@ -304,6 +414,8 @@ public enum Webhook_WebhookClientMetadata {
       Webhook_WebhookClientMetadata.Methods.putWebhook,
       Webhook_WebhookClientMetadata.Methods.deleteWebhook,
       Webhook_WebhookClientMetadata.Methods.listWebhooks,
+      Webhook_WebhookClientMetadata.Methods.getWebhookSecret,
+      Webhook_WebhookClientMetadata.Methods.rotateWebhookSecret,
     ]
   )
 
@@ -325,6 +437,18 @@ public enum Webhook_WebhookClientMetadata {
       path: "/webhook.Webhook/ListWebhooks",
       type: GRPCCallType.unary
     )
+
+    public static let getWebhookSecret = GRPCMethodDescriptor(
+      name: "GetWebhookSecret",
+      path: "/webhook.Webhook/GetWebhookSecret",
+      type: GRPCCallType.unary
+    )
+
+    public static let rotateWebhookSecret = GRPCMethodDescriptor(
+      name: "RotateWebhookSecret",
+      path: "/webhook.Webhook/RotateWebhookSecret",
+      type: GRPCCallType.unary
+    )
   }
 }
 
@@ -343,6 +467,10 @@ public protocol Webhook_WebhookProvider: CallHandlerProvider {
   func deleteWebhook(request: Webhook__DeleteWebhookRequest, context: StatusOnlyCallContext) -> EventLoopFuture<Webhook__DeleteWebhookResponse>
 
   func listWebhooks(request: Webhook__ListWebhookRequest, context: StatusOnlyCallContext) -> EventLoopFuture<Webhook__ListWebhooksResponse>
+
+  func getWebhookSecret(request: Webhook__GetWebhookSecretRequest, context: StatusOnlyCallContext) -> EventLoopFuture<Webhook__GetWebhookSecretResponse>
+
+  func rotateWebhookSecret(request: Webhook__RotateWebhookSecretRequest, context: StatusOnlyCallContext) -> EventLoopFuture<Webhook__RotateWebhookSecretResponse>
 }
 
 extension Webhook_WebhookProvider {
@@ -384,6 +512,24 @@ extension Webhook_WebhookProvider {
         userFunction: self.listWebhooks(request:context:)
       )
 
+    case "GetWebhookSecret":
+      return UnaryServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<Webhook__GetWebhookSecretRequest>(),
+        responseSerializer: ProtobufSerializer<Webhook__GetWebhookSecretResponse>(),
+        interceptors: self.interceptors?.makeGetWebhookSecretInterceptors() ?? [],
+        userFunction: self.getWebhookSecret(request:context:)
+      )
+
+    case "RotateWebhookSecret":
+      return UnaryServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<Webhook__RotateWebhookSecretRequest>(),
+        responseSerializer: ProtobufSerializer<Webhook__RotateWebhookSecretResponse>(),
+        interceptors: self.interceptors?.makeRotateWebhookSecretInterceptors() ?? [],
+        userFunction: self.rotateWebhookSecret(request:context:)
+      )
+
     default:
       return nil
     }
@@ -416,6 +562,16 @@ public protocol Webhook_WebhookAsyncProvider: CallHandlerProvider, Sendable {
     request: Webhook__ListWebhookRequest,
     context: GRPCAsyncServerCallContext
   ) async throws -> Webhook__ListWebhooksResponse
+
+  func getWebhookSecret(
+    request: Webhook__GetWebhookSecretRequest,
+    context: GRPCAsyncServerCallContext
+  ) async throws -> Webhook__GetWebhookSecretResponse
+
+  func rotateWebhookSecret(
+    request: Webhook__RotateWebhookSecretRequest,
+    context: GRPCAsyncServerCallContext
+  ) async throws -> Webhook__RotateWebhookSecretResponse
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
@@ -464,6 +620,24 @@ extension Webhook_WebhookAsyncProvider {
         wrapping: { try await self.listWebhooks(request: $0, context: $1) }
       )
 
+    case "GetWebhookSecret":
+      return GRPCAsyncServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<Webhook__GetWebhookSecretRequest>(),
+        responseSerializer: ProtobufSerializer<Webhook__GetWebhookSecretResponse>(),
+        interceptors: self.interceptors?.makeGetWebhookSecretInterceptors() ?? [],
+        wrapping: { try await self.getWebhookSecret(request: $0, context: $1) }
+      )
+
+    case "RotateWebhookSecret":
+      return GRPCAsyncServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<Webhook__RotateWebhookSecretRequest>(),
+        responseSerializer: ProtobufSerializer<Webhook__RotateWebhookSecretResponse>(),
+        interceptors: self.interceptors?.makeRotateWebhookSecretInterceptors() ?? [],
+        wrapping: { try await self.rotateWebhookSecret(request: $0, context: $1) }
+      )
+
     default:
       return nil
     }
@@ -483,6 +657,14 @@ public protocol Webhook_WebhookServerInterceptorFactoryProtocol: Sendable {
   /// - Returns: Interceptors to use when handling 'listWebhooks'.
   ///   Defaults to calling `self.makeInterceptors()`.
   func makeListWebhooksInterceptors() -> [ServerInterceptor<Webhook__ListWebhookRequest, Webhook__ListWebhooksResponse>]
+
+  /// - Returns: Interceptors to use when handling 'getWebhookSecret'.
+  ///   Defaults to calling `self.makeInterceptors()`.
+  func makeGetWebhookSecretInterceptors() -> [ServerInterceptor<Webhook__GetWebhookSecretRequest, Webhook__GetWebhookSecretResponse>]
+
+  /// - Returns: Interceptors to use when handling 'rotateWebhookSecret'.
+  ///   Defaults to calling `self.makeInterceptors()`.
+  func makeRotateWebhookSecretInterceptors() -> [ServerInterceptor<Webhook__RotateWebhookSecretRequest, Webhook__RotateWebhookSecretResponse>]
 }
 
 public enum Webhook_WebhookServerMetadata {
@@ -493,6 +675,8 @@ public enum Webhook_WebhookServerMetadata {
       Webhook_WebhookServerMetadata.Methods.putWebhook,
       Webhook_WebhookServerMetadata.Methods.deleteWebhook,
       Webhook_WebhookServerMetadata.Methods.listWebhooks,
+      Webhook_WebhookServerMetadata.Methods.getWebhookSecret,
+      Webhook_WebhookServerMetadata.Methods.rotateWebhookSecret,
     ]
   )
 
@@ -512,6 +696,18 @@ public enum Webhook_WebhookServerMetadata {
     public static let listWebhooks = GRPCMethodDescriptor(
       name: "ListWebhooks",
       path: "/webhook.Webhook/ListWebhooks",
+      type: GRPCCallType.unary
+    )
+
+    public static let getWebhookSecret = GRPCMethodDescriptor(
+      name: "GetWebhookSecret",
+      path: "/webhook.Webhook/GetWebhookSecret",
+      type: GRPCCallType.unary
+    )
+
+    public static let rotateWebhookSecret = GRPCMethodDescriptor(
+      name: "RotateWebhookSecret",
+      path: "/webhook.Webhook/RotateWebhookSecret",
       type: GRPCCallType.unary
     )
   }

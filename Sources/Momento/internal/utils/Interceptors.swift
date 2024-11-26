@@ -34,7 +34,7 @@ final class PubsubClientInterceptorFactory: CacheClient_Pubsub_PubsubClientInter
         self.apiKey = apiKey
     }
     
-    func makePublishInterceptors() -> [ClientInterceptor<CacheClient_Pubsub__PublishRequest, CacheClient_Pubsub__Empty>] {
+    func makePublishInterceptors() -> [ClientInterceptor<CacheClient_Pubsub__PublishRequest, Common__Empty>] {
         [AuthHeaderInterceptor(apiKey: apiKey)]
     }
 
@@ -45,13 +45,25 @@ final class PubsubClientInterceptorFactory: CacheClient_Pubsub_PubsubClientInter
 
 // Interceptor factory class for the CacheControlClient
 final class ControlClientInterceptorFactory: ControlClient_ScsControlClientInterceptorFactoryProtocol {
-    
+
     private let apiKey: String
-    
+
     init(apiKey: String) {
         self.apiKey = apiKey
     }
-    
+
+    func makeCreateStoreInterceptors() -> [GRPC.ClientInterceptor<ControlClient__CreateStoreRequest, ControlClient__CreateStoreResponse>] {
+        [AuthHeaderInterceptor(apiKey: apiKey)]
+    }
+
+    func makeDeleteStoreInterceptors() -> [GRPC.ClientInterceptor<ControlClient__DeleteStoreRequest, ControlClient__DeleteStoreResponse>] {
+        [AuthHeaderInterceptor(apiKey: apiKey)]
+    }
+
+    func makeListStoresInterceptors() -> [GRPC.ClientInterceptor<ControlClient__ListStoresRequest, ControlClient__ListStoresResponse>] {
+        [AuthHeaderInterceptor(apiKey: apiKey)]
+    }
+
     func makeCreateCacheInterceptors() -> [ClientInterceptor<ControlClient__CreateCacheRequest, ControlClient__CreateCacheResponse>] {
         [AuthHeaderInterceptor(apiKey: apiKey)]
     }
@@ -95,12 +107,29 @@ final class ControlClientInterceptorFactory: ControlClient_ScsControlClientInter
 
 // Interceptor factory class for the CacheDataClient
 final class DataClientInterceptorFactory: CacheClient_ScsClientInterceptorFactoryProtocol {
+
     private let apiKey: String
-    
+
     init(apiKey: String) {
         self.apiKey = apiKey
     }
-    
+
+    func makeGetBatchInterceptors() -> [GRPC.ClientInterceptor<CacheClient__GetBatchRequest, CacheClient__GetResponse>] {
+        [AuthHeaderInterceptor(apiKey: apiKey)]
+    }
+
+    func makeSetBatchInterceptors() -> [GRPC.ClientInterceptor<CacheClient__SetBatchRequest, CacheClient__SetResponse>] {
+        [AuthHeaderInterceptor(apiKey: apiKey)]
+    }
+
+    func makeSetIfInterceptors() -> [GRPC.ClientInterceptor<CacheClient__SetIfRequest, CacheClient__SetIfResponse>] {
+        [AuthHeaderInterceptor(apiKey: apiKey)]
+    }
+
+    func makeSetSampleInterceptors() -> [GRPC.ClientInterceptor<CacheClient__SetSampleRequest, CacheClient__SetSampleResponse>] {
+        [AuthHeaderInterceptor(apiKey: apiKey)]
+    }
+
     func makeGetInterceptors() -> [ClientInterceptor<CacheClient__GetRequest, CacheClient__GetResponse>] {
         [AuthHeaderInterceptor(apiKey: apiKey)]
     }

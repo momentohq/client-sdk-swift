@@ -32,7 +32,7 @@ public protocol CacheClient_Pubsub_PubsubClientProtocol: GRPCClient {
   func publish(
     _ request: CacheClient_Pubsub__PublishRequest,
     callOptions: CallOptions?
-  ) -> UnaryCall<CacheClient_Pubsub__PublishRequest, CacheClient_Pubsub__Empty>
+  ) -> UnaryCall<CacheClient_Pubsub__PublishRequest, Common__Empty>
 
   func subscribe(
     _ request: CacheClient_Pubsub__SubscriptionRequest,
@@ -66,7 +66,7 @@ extension CacheClient_Pubsub_PubsubClientProtocol {
   public func publish(
     _ request: CacheClient_Pubsub__PublishRequest,
     callOptions: CallOptions? = nil
-  ) -> UnaryCall<CacheClient_Pubsub__PublishRequest, CacheClient_Pubsub__Empty> {
+  ) -> UnaryCall<CacheClient_Pubsub__PublishRequest, Common__Empty> {
     return self.makeUnaryCall(
       path: CacheClient_Pubsub_PubsubClientMetadata.Methods.publish.path,
       request: request,
@@ -179,7 +179,7 @@ public protocol CacheClient_Pubsub_PubsubAsyncClientProtocol: GRPCClient {
   func makePublishCall(
     _ request: CacheClient_Pubsub__PublishRequest,
     callOptions: CallOptions?
-  ) -> GRPCAsyncUnaryCall<CacheClient_Pubsub__PublishRequest, CacheClient_Pubsub__Empty>
+  ) -> GRPCAsyncUnaryCall<CacheClient_Pubsub__PublishRequest, Common__Empty>
 
   func makeSubscribeCall(
     _ request: CacheClient_Pubsub__SubscriptionRequest,
@@ -200,7 +200,7 @@ extension CacheClient_Pubsub_PubsubAsyncClientProtocol {
   public func makePublishCall(
     _ request: CacheClient_Pubsub__PublishRequest,
     callOptions: CallOptions? = nil
-  ) -> GRPCAsyncUnaryCall<CacheClient_Pubsub__PublishRequest, CacheClient_Pubsub__Empty> {
+  ) -> GRPCAsyncUnaryCall<CacheClient_Pubsub__PublishRequest, Common__Empty> {
     return self.makeAsyncUnaryCall(
       path: CacheClient_Pubsub_PubsubClientMetadata.Methods.publish.path,
       request: request,
@@ -227,7 +227,7 @@ extension CacheClient_Pubsub_PubsubAsyncClientProtocol {
   public func publish(
     _ request: CacheClient_Pubsub__PublishRequest,
     callOptions: CallOptions? = nil
-  ) async throws -> CacheClient_Pubsub__Empty {
+  ) async throws -> Common__Empty {
     return try await self.performAsyncUnaryCall(
       path: CacheClient_Pubsub_PubsubClientMetadata.Methods.publish.path,
       request: request,
@@ -269,7 +269,7 @@ public struct CacheClient_Pubsub_PubsubAsyncClient: CacheClient_Pubsub_PubsubAsy
 public protocol CacheClient_Pubsub_PubsubClientInterceptorFactoryProtocol: Sendable {
 
   /// - Returns: Interceptors to use when invoking 'publish'.
-  func makePublishInterceptors() -> [ClientInterceptor<CacheClient_Pubsub__PublishRequest, CacheClient_Pubsub__Empty>]
+  func makePublishInterceptors() -> [ClientInterceptor<CacheClient_Pubsub__PublishRequest, Common__Empty>]
 
   /// - Returns: Interceptors to use when invoking 'subscribe'.
   func makeSubscribeInterceptors() -> [ClientInterceptor<CacheClient_Pubsub__SubscriptionRequest, CacheClient_Pubsub__SubscriptionItem>]
@@ -329,7 +329,7 @@ public protocol CacheClient_Pubsub_PubsubProvider: CallHandlerProvider {
   /// practice it should almost always deliver to subscribers.
   ///
   /// REQUIRES HEADER authorization: Momento auth token
-  func publish(request: CacheClient_Pubsub__PublishRequest, context: StatusOnlyCallContext) -> EventLoopFuture<CacheClient_Pubsub__Empty>
+  func publish(request: CacheClient_Pubsub__PublishRequest, context: StatusOnlyCallContext) -> EventLoopFuture<Common__Empty>
 
   /// Subscribe to notifications from a topic.
   ///
@@ -356,7 +356,7 @@ extension CacheClient_Pubsub_PubsubProvider {
       return UnaryServerHandler(
         context: context,
         requestDeserializer: ProtobufDeserializer<CacheClient_Pubsub__PublishRequest>(),
-        responseSerializer: ProtobufSerializer<CacheClient_Pubsub__Empty>(),
+        responseSerializer: ProtobufSerializer<Common__Empty>(),
         interceptors: self.interceptors?.makePublishInterceptors() ?? [],
         userFunction: self.publish(request:context:)
       )
@@ -410,7 +410,7 @@ public protocol CacheClient_Pubsub_PubsubAsyncProvider: CallHandlerProvider, Sen
   func publish(
     request: CacheClient_Pubsub__PublishRequest,
     context: GRPCAsyncServerCallContext
-  ) async throws -> CacheClient_Pubsub__Empty
+  ) async throws -> Common__Empty
 
   /// Subscribe to notifications from a topic.
   ///
@@ -448,7 +448,7 @@ extension CacheClient_Pubsub_PubsubAsyncProvider {
       return GRPCAsyncServerHandler(
         context: context,
         requestDeserializer: ProtobufDeserializer<CacheClient_Pubsub__PublishRequest>(),
-        responseSerializer: ProtobufSerializer<CacheClient_Pubsub__Empty>(),
+        responseSerializer: ProtobufSerializer<Common__Empty>(),
         interceptors: self.interceptors?.makePublishInterceptors() ?? [],
         wrapping: { try await self.publish(request: $0, context: $1) }
       )
@@ -472,7 +472,7 @@ public protocol CacheClient_Pubsub_PubsubServerInterceptorFactoryProtocol: Senda
 
   /// - Returns: Interceptors to use when handling 'publish'.
   ///   Defaults to calling `self.makeInterceptors()`.
-  func makePublishInterceptors() -> [ServerInterceptor<CacheClient_Pubsub__PublishRequest, CacheClient_Pubsub__Empty>]
+  func makePublishInterceptors() -> [ServerInterceptor<CacheClient_Pubsub__PublishRequest, Common__Empty>]
 
   /// - Returns: Interceptors to use when handling 'subscribe'.
   ///   Defaults to calling `self.makeInterceptors()`.

@@ -65,6 +65,21 @@ public protocol ControlClient_ScsControlClientProtocol: GRPCClient {
     _ request: ControlClient__ListIndexesRequest,
     callOptions: CallOptions?
   ) -> UnaryCall<ControlClient__ListIndexesRequest, ControlClient__ListIndexesResponse>
+
+  func createStore(
+    _ request: ControlClient__CreateStoreRequest,
+    callOptions: CallOptions?
+  ) -> UnaryCall<ControlClient__CreateStoreRequest, ControlClient__CreateStoreResponse>
+
+  func deleteStore(
+    _ request: ControlClient__DeleteStoreRequest,
+    callOptions: CallOptions?
+  ) -> UnaryCall<ControlClient__DeleteStoreRequest, ControlClient__DeleteStoreResponse>
+
+  func listStores(
+    _ request: ControlClient__ListStoresRequest,
+    callOptions: CallOptions?
+  ) -> UnaryCall<ControlClient__ListStoresRequest, ControlClient__ListStoresResponse>
 }
 
 extension ControlClient_ScsControlClientProtocol {
@@ -251,6 +266,60 @@ extension ControlClient_ScsControlClientProtocol {
       interceptors: self.interceptors?.makeListIndexesInterceptors() ?? []
     )
   }
+
+  /// Unary call to CreateStore
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to CreateStore.
+  ///   - callOptions: Call options.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  public func createStore(
+    _ request: ControlClient__CreateStoreRequest,
+    callOptions: CallOptions? = nil
+  ) -> UnaryCall<ControlClient__CreateStoreRequest, ControlClient__CreateStoreResponse> {
+    return self.makeUnaryCall(
+      path: ControlClient_ScsControlClientMetadata.Methods.createStore.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeCreateStoreInterceptors() ?? []
+    )
+  }
+
+  /// Unary call to DeleteStore
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to DeleteStore.
+  ///   - callOptions: Call options.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  public func deleteStore(
+    _ request: ControlClient__DeleteStoreRequest,
+    callOptions: CallOptions? = nil
+  ) -> UnaryCall<ControlClient__DeleteStoreRequest, ControlClient__DeleteStoreResponse> {
+    return self.makeUnaryCall(
+      path: ControlClient_ScsControlClientMetadata.Methods.deleteStore.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeDeleteStoreInterceptors() ?? []
+    )
+  }
+
+  /// Unary call to ListStores
+  ///
+  /// - Parameters:
+  ///   - request: Request to send to ListStores.
+  ///   - callOptions: Call options.
+  /// - Returns: A `UnaryCall` with futures for the metadata, status and response.
+  public func listStores(
+    _ request: ControlClient__ListStoresRequest,
+    callOptions: CallOptions? = nil
+  ) -> UnaryCall<ControlClient__ListStoresRequest, ControlClient__ListStoresResponse> {
+    return self.makeUnaryCall(
+      path: ControlClient_ScsControlClientMetadata.Methods.listStores.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeListStoresInterceptors() ?? []
+    )
+  }
 }
 
 @available(*, deprecated)
@@ -364,6 +433,21 @@ public protocol ControlClient_ScsControlAsyncClientProtocol: GRPCClient {
     _ request: ControlClient__ListIndexesRequest,
     callOptions: CallOptions?
   ) -> GRPCAsyncUnaryCall<ControlClient__ListIndexesRequest, ControlClient__ListIndexesResponse>
+
+  func makeCreateStoreCall(
+    _ request: ControlClient__CreateStoreRequest,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<ControlClient__CreateStoreRequest, ControlClient__CreateStoreResponse>
+
+  func makeDeleteStoreCall(
+    _ request: ControlClient__DeleteStoreRequest,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<ControlClient__DeleteStoreRequest, ControlClient__DeleteStoreResponse>
+
+  func makeListStoresCall(
+    _ request: ControlClient__ListStoresRequest,
+    callOptions: CallOptions?
+  ) -> GRPCAsyncUnaryCall<ControlClient__ListStoresRequest, ControlClient__ListStoresResponse>
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
@@ -495,6 +579,42 @@ extension ControlClient_ScsControlAsyncClientProtocol {
       interceptors: self.interceptors?.makeListIndexesInterceptors() ?? []
     )
   }
+
+  public func makeCreateStoreCall(
+    _ request: ControlClient__CreateStoreRequest,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<ControlClient__CreateStoreRequest, ControlClient__CreateStoreResponse> {
+    return self.makeAsyncUnaryCall(
+      path: ControlClient_ScsControlClientMetadata.Methods.createStore.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeCreateStoreInterceptors() ?? []
+    )
+  }
+
+  public func makeDeleteStoreCall(
+    _ request: ControlClient__DeleteStoreRequest,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<ControlClient__DeleteStoreRequest, ControlClient__DeleteStoreResponse> {
+    return self.makeAsyncUnaryCall(
+      path: ControlClient_ScsControlClientMetadata.Methods.deleteStore.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeDeleteStoreInterceptors() ?? []
+    )
+  }
+
+  public func makeListStoresCall(
+    _ request: ControlClient__ListStoresRequest,
+    callOptions: CallOptions? = nil
+  ) -> GRPCAsyncUnaryCall<ControlClient__ListStoresRequest, ControlClient__ListStoresResponse> {
+    return self.makeAsyncUnaryCall(
+      path: ControlClient_ScsControlClientMetadata.Methods.listStores.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeListStoresInterceptors() ?? []
+    )
+  }
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
@@ -618,6 +738,42 @@ extension ControlClient_ScsControlAsyncClientProtocol {
       interceptors: self.interceptors?.makeListIndexesInterceptors() ?? []
     )
   }
+
+  public func createStore(
+    _ request: ControlClient__CreateStoreRequest,
+    callOptions: CallOptions? = nil
+  ) async throws -> ControlClient__CreateStoreResponse {
+    return try await self.performAsyncUnaryCall(
+      path: ControlClient_ScsControlClientMetadata.Methods.createStore.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeCreateStoreInterceptors() ?? []
+    )
+  }
+
+  public func deleteStore(
+    _ request: ControlClient__DeleteStoreRequest,
+    callOptions: CallOptions? = nil
+  ) async throws -> ControlClient__DeleteStoreResponse {
+    return try await self.performAsyncUnaryCall(
+      path: ControlClient_ScsControlClientMetadata.Methods.deleteStore.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeDeleteStoreInterceptors() ?? []
+    )
+  }
+
+  public func listStores(
+    _ request: ControlClient__ListStoresRequest,
+    callOptions: CallOptions? = nil
+  ) async throws -> ControlClient__ListStoresResponse {
+    return try await self.performAsyncUnaryCall(
+      path: ControlClient_ScsControlClientMetadata.Methods.listStores.path,
+      request: request,
+      callOptions: callOptions ?? self.defaultCallOptions,
+      interceptors: self.interceptors?.makeListStoresInterceptors() ?? []
+    )
+  }
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
@@ -668,6 +824,15 @@ public protocol ControlClient_ScsControlClientInterceptorFactoryProtocol: Sendab
 
   /// - Returns: Interceptors to use when invoking 'listIndexes'.
   func makeListIndexesInterceptors() -> [ClientInterceptor<ControlClient__ListIndexesRequest, ControlClient__ListIndexesResponse>]
+
+  /// - Returns: Interceptors to use when invoking 'createStore'.
+  func makeCreateStoreInterceptors() -> [ClientInterceptor<ControlClient__CreateStoreRequest, ControlClient__CreateStoreResponse>]
+
+  /// - Returns: Interceptors to use when invoking 'deleteStore'.
+  func makeDeleteStoreInterceptors() -> [ClientInterceptor<ControlClient__DeleteStoreRequest, ControlClient__DeleteStoreResponse>]
+
+  /// - Returns: Interceptors to use when invoking 'listStores'.
+  func makeListStoresInterceptors() -> [ClientInterceptor<ControlClient__ListStoresRequest, ControlClient__ListStoresResponse>]
 }
 
 public enum ControlClient_ScsControlClientMetadata {
@@ -685,6 +850,9 @@ public enum ControlClient_ScsControlClientMetadata {
       ControlClient_ScsControlClientMetadata.Methods.createIndex,
       ControlClient_ScsControlClientMetadata.Methods.deleteIndex,
       ControlClient_ScsControlClientMetadata.Methods.listIndexes,
+      ControlClient_ScsControlClientMetadata.Methods.createStore,
+      ControlClient_ScsControlClientMetadata.Methods.deleteStore,
+      ControlClient_ScsControlClientMetadata.Methods.listStores,
     ]
   )
 
@@ -748,6 +916,24 @@ public enum ControlClient_ScsControlClientMetadata {
       path: "/control_client.ScsControl/ListIndexes",
       type: GRPCCallType.unary
     )
+
+    public static let createStore = GRPCMethodDescriptor(
+      name: "CreateStore",
+      path: "/control_client.ScsControl/CreateStore",
+      type: GRPCCallType.unary
+    )
+
+    public static let deleteStore = GRPCMethodDescriptor(
+      name: "DeleteStore",
+      path: "/control_client.ScsControl/DeleteStore",
+      type: GRPCCallType.unary
+    )
+
+    public static let listStores = GRPCMethodDescriptor(
+      name: "ListStores",
+      path: "/control_client.ScsControl/ListStores",
+      type: GRPCCallType.unary
+    )
   }
 }
 
@@ -774,6 +960,12 @@ public protocol ControlClient_ScsControlProvider: CallHandlerProvider {
   func deleteIndex(request: ControlClient__DeleteIndexRequest, context: StatusOnlyCallContext) -> EventLoopFuture<ControlClient__DeleteIndexResponse>
 
   func listIndexes(request: ControlClient__ListIndexesRequest, context: StatusOnlyCallContext) -> EventLoopFuture<ControlClient__ListIndexesResponse>
+
+  func createStore(request: ControlClient__CreateStoreRequest, context: StatusOnlyCallContext) -> EventLoopFuture<ControlClient__CreateStoreResponse>
+
+  func deleteStore(request: ControlClient__DeleteStoreRequest, context: StatusOnlyCallContext) -> EventLoopFuture<ControlClient__DeleteStoreResponse>
+
+  func listStores(request: ControlClient__ListStoresRequest, context: StatusOnlyCallContext) -> EventLoopFuture<ControlClient__ListStoresResponse>
 }
 
 extension ControlClient_ScsControlProvider {
@@ -878,6 +1070,33 @@ extension ControlClient_ScsControlProvider {
         userFunction: self.listIndexes(request:context:)
       )
 
+    case "CreateStore":
+      return UnaryServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<ControlClient__CreateStoreRequest>(),
+        responseSerializer: ProtobufSerializer<ControlClient__CreateStoreResponse>(),
+        interceptors: self.interceptors?.makeCreateStoreInterceptors() ?? [],
+        userFunction: self.createStore(request:context:)
+      )
+
+    case "DeleteStore":
+      return UnaryServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<ControlClient__DeleteStoreRequest>(),
+        responseSerializer: ProtobufSerializer<ControlClient__DeleteStoreResponse>(),
+        interceptors: self.interceptors?.makeDeleteStoreInterceptors() ?? [],
+        userFunction: self.deleteStore(request:context:)
+      )
+
+    case "ListStores":
+      return UnaryServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<ControlClient__ListStoresRequest>(),
+        responseSerializer: ProtobufSerializer<ControlClient__ListStoresResponse>(),
+        interceptors: self.interceptors?.makeListStoresInterceptors() ?? [],
+        userFunction: self.listStores(request:context:)
+      )
+
     default:
       return nil
     }
@@ -939,6 +1158,21 @@ public protocol ControlClient_ScsControlAsyncProvider: CallHandlerProvider, Send
     request: ControlClient__ListIndexesRequest,
     context: GRPCAsyncServerCallContext
   ) async throws -> ControlClient__ListIndexesResponse
+
+  func createStore(
+    request: ControlClient__CreateStoreRequest,
+    context: GRPCAsyncServerCallContext
+  ) async throws -> ControlClient__CreateStoreResponse
+
+  func deleteStore(
+    request: ControlClient__DeleteStoreRequest,
+    context: GRPCAsyncServerCallContext
+  ) async throws -> ControlClient__DeleteStoreResponse
+
+  func listStores(
+    request: ControlClient__ListStoresRequest,
+    context: GRPCAsyncServerCallContext
+  ) async throws -> ControlClient__ListStoresResponse
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *)
@@ -1050,6 +1284,33 @@ extension ControlClient_ScsControlAsyncProvider {
         wrapping: { try await self.listIndexes(request: $0, context: $1) }
       )
 
+    case "CreateStore":
+      return GRPCAsyncServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<ControlClient__CreateStoreRequest>(),
+        responseSerializer: ProtobufSerializer<ControlClient__CreateStoreResponse>(),
+        interceptors: self.interceptors?.makeCreateStoreInterceptors() ?? [],
+        wrapping: { try await self.createStore(request: $0, context: $1) }
+      )
+
+    case "DeleteStore":
+      return GRPCAsyncServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<ControlClient__DeleteStoreRequest>(),
+        responseSerializer: ProtobufSerializer<ControlClient__DeleteStoreResponse>(),
+        interceptors: self.interceptors?.makeDeleteStoreInterceptors() ?? [],
+        wrapping: { try await self.deleteStore(request: $0, context: $1) }
+      )
+
+    case "ListStores":
+      return GRPCAsyncServerHandler(
+        context: context,
+        requestDeserializer: ProtobufDeserializer<ControlClient__ListStoresRequest>(),
+        responseSerializer: ProtobufSerializer<ControlClient__ListStoresResponse>(),
+        interceptors: self.interceptors?.makeListStoresInterceptors() ?? [],
+        wrapping: { try await self.listStores(request: $0, context: $1) }
+      )
+
     default:
       return nil
     }
@@ -1097,6 +1358,18 @@ public protocol ControlClient_ScsControlServerInterceptorFactoryProtocol: Sendab
   /// - Returns: Interceptors to use when handling 'listIndexes'.
   ///   Defaults to calling `self.makeInterceptors()`.
   func makeListIndexesInterceptors() -> [ServerInterceptor<ControlClient__ListIndexesRequest, ControlClient__ListIndexesResponse>]
+
+  /// - Returns: Interceptors to use when handling 'createStore'.
+  ///   Defaults to calling `self.makeInterceptors()`.
+  func makeCreateStoreInterceptors() -> [ServerInterceptor<ControlClient__CreateStoreRequest, ControlClient__CreateStoreResponse>]
+
+  /// - Returns: Interceptors to use when handling 'deleteStore'.
+  ///   Defaults to calling `self.makeInterceptors()`.
+  func makeDeleteStoreInterceptors() -> [ServerInterceptor<ControlClient__DeleteStoreRequest, ControlClient__DeleteStoreResponse>]
+
+  /// - Returns: Interceptors to use when handling 'listStores'.
+  ///   Defaults to calling `self.makeInterceptors()`.
+  func makeListStoresInterceptors() -> [ServerInterceptor<ControlClient__ListStoresRequest, ControlClient__ListStoresResponse>]
 }
 
 public enum ControlClient_ScsControlServerMetadata {
@@ -1114,6 +1387,9 @@ public enum ControlClient_ScsControlServerMetadata {
       ControlClient_ScsControlServerMetadata.Methods.createIndex,
       ControlClient_ScsControlServerMetadata.Methods.deleteIndex,
       ControlClient_ScsControlServerMetadata.Methods.listIndexes,
+      ControlClient_ScsControlServerMetadata.Methods.createStore,
+      ControlClient_ScsControlServerMetadata.Methods.deleteStore,
+      ControlClient_ScsControlServerMetadata.Methods.listStores,
     ]
   )
 
@@ -1175,6 +1451,24 @@ public enum ControlClient_ScsControlServerMetadata {
     public static let listIndexes = GRPCMethodDescriptor(
       name: "ListIndexes",
       path: "/control_client.ScsControl/ListIndexes",
+      type: GRPCCallType.unary
+    )
+
+    public static let createStore = GRPCMethodDescriptor(
+      name: "CreateStore",
+      path: "/control_client.ScsControl/CreateStore",
+      type: GRPCCallType.unary
+    )
+
+    public static let deleteStore = GRPCMethodDescriptor(
+      name: "DeleteStore",
+      path: "/control_client.ScsControl/DeleteStore",
+      type: GRPCCallType.unary
+    )
+
+    public static let listStores = GRPCMethodDescriptor(
+      name: "ListStores",
+      path: "/control_client.ScsControl/ListStores",
       type: GRPCCallType.unary
     )
   }
