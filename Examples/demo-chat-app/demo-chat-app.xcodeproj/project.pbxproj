@@ -12,7 +12,7 @@
 		0809ED562B0E9CE000EF52B2 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0809ED552B0E9CE000EF52B2 /* Assets.xcassets */; };
 		0809ED592B0E9CE000EF52B2 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0809ED582B0E9CE000EF52B2 /* Preview Assets.xcassets */; };
 		0809ED5E2B0E9CE000EF52B2 /* demo_chat_app.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 0809ED5C2B0E9CE000EF52B2 /* demo_chat_app.xcdatamodeld */; };
-		0813A0592B2A50CF005FBD17 /* Momento in Frameworks */ = {isa = PBXBuildFile; productRef = 0813A0582B2A50CF005FBD17 /* Momento */; };
+		083856472CF67C860090B718 /* Momento in Frameworks */ = {isa = PBXBuildFile; productRef = 083856462CF67C860090B718 /* Momento */; };
 		08D78C9D2B1536C700539D4B /* MessageStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08D78C9C2B1536C700539D4B /* MessageStore.swift */; };
 		08D78C9F2B15471200539D4B /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 08D78C9E2B15471200539D4B /* README.md */; };
 /* End PBXBuildFile section */
@@ -33,7 +33,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0813A0592B2A50CF005FBD17 /* Momento in Frameworks */,
+				083856472CF67C860090B718 /* Momento in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -103,7 +103,7 @@
 			);
 			name = "demo-chat-app";
 			packageProductDependencies = (
-				0813A0582B2A50CF005FBD17 /* Momento */,
+				083856462CF67C860090B718 /* Momento */,
 			);
 			productName = "demo-chat-app";
 			productReference = 0809ED4E2B0E9CDF00EF52B2 /* demo-chat-app.app */;
@@ -134,7 +134,7 @@
 			);
 			mainGroup = 0809ED452B0E9CDF00EF52B2;
 			packageReferences = (
-				0809ED802B0EAD1100EF52B2 /* XCRemoteSwiftPackageReference "client-sdk-swift" */,
+				083856452CF67C860090B718 /* XCRemoteSwiftPackageReference "client-sdk-swift" */,
 			);
 			productRefGroup = 0809ED4F2B0E9CDF00EF52B2 /* Products */;
 			projectDirPath = "";
@@ -374,20 +374,20 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		0809ED802B0EAD1100EF52B2 /* XCRemoteSwiftPackageReference "client-sdk-swift" */ = {
+		083856452CF67C860090B718 /* XCRemoteSwiftPackageReference "client-sdk-swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/momentohq/client-sdk-swift";
 			requirement = {
 				kind = exactVersion;
-				version = 0.4.0;
+				version = 0.7.1;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		0813A0582B2A50CF005FBD17 /* Momento */ = {
+		083856462CF67C860090B718 /* Momento */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 0809ED802B0EAD1100EF52B2 /* XCRemoteSwiftPackageReference "client-sdk-swift" */;
+			package = 083856452CF67C860090B718 /* XCRemoteSwiftPackageReference "client-sdk-swift" */;
 			productName = Momento;
 		};
 /* End XCSwiftPackageProductDependency section */

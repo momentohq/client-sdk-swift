@@ -49,13 +49,6 @@
             ReferencedContainer = "container:demo-chat-app.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "MOMENTO_API_KEY"
-            value = "eyJlbmRwb2ludCI6ImNlbGwtYWxwaGEtZGV2LnByZXByb2QuYS5tb21lbnRvaHEuY29tIiwiYXBpX2tleSI6ImV5SmhiR2NpT2lKSVV6STFOaUo5LmV5SnpkV0lpT2lKaGJtbDBZVUJ0YjIxbGJuUnZhSEV1WTI5dElpd2lkbVZ5SWpveExDSndJam9pUTBGQlBTSXNJbVY0Y0NJNk1UY3dOVGcyTXpRNE0zMC5rellHNHNScFNxQVNEUV9hNWpTb2Z0ZmQyaGFmcnZtLWM2czdHckg3cE40In0="
-            isEnabled = "YES">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"

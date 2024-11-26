@@ -1,12 +1,13 @@
 {
+  "originHash" : "361bf8f97ff38b7caa71fdf51e85e601e7e9274352b1d5d873f8601d2260b5f3",
   "pins" : [
     {
       "identity" : "client-sdk-swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/momentohq/client-sdk-swift",
       "state" : {
-        "revision" : "19087b69bc283727a72f552e28df5743de7584f8",
-        "version" : "0.4.0"
+        "revision" : "71048be91984c5117f02045aa8ee011638cb1493",
+        "version" : "0.7.1"
       }
     },
     {
@@ -109,5 +110,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
