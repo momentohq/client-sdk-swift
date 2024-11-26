@@ -70,19 +70,34 @@ class PubsubClient: PubsubClientProtocol {
             request.value.binary = b
         }
 
-        do {
-            let result = try await self.client.publish(
-                request,
-                callOptions: .init(
-                    customMetadata: .init(makeHeaders().map { ($0, $1) }),
-                    timeLimit: .timeout(.seconds(Int64(self.configuration.transportStrategy.getClientTimeout())))
-                )
+        let call = self.client.makePublishCall(
+            request,
+            callOptions: .init(
+                customMetadata: .init(makeHeaders().map { ($0, $1) }),
+                timeLimit: .timeout(.seconds(Int64(self.configuration.transportStrategy.getClientTimeout())))
             )
+        )
+        
+        do {
+            let result = try await call.response
             // Successful publish returns client_sdk_swift.CacheClient_Pubsub__Empty
             self.logger.debug("Publish response: \(result)")
             return TopicPublishResponse.success(TopicPublishSuccess())
         } catch let err as GRPCStatus {
-            return TopicPublishResponse.error(TopicPublishError(error: grpcStatusToSdkError(grpcStatus: err)))
+            // The result is of type GRPCAsyncUnaryCall instead of UnaryCall so we manually extract
+            // the trailers here instead before constructing the SdkError.
+            //
+            // We could use a pubsub client of type CacheClient_Pubsub_PubsubNIOClient instead
+            // to use a publish method that returns UnaryCall, but it seems like that would require
+            // nontrivial changes to the subscribe method below, so we put it in the backlog for now.
+            do {
+                let trailers = try await call.trailingMetadata
+                return TopicPublishResponse.error(
+                    TopicPublishError(error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
+                )
+            } catch {
+                return TopicPublishResponse.error(TopicPublishError(error: grpcStatusToSdkError(grpcStatus: err)))
+            }
         } catch let err as GRPCConnectionPoolError {
             return TopicPublishResponse.error(TopicPublishError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())))
         } catch {
@@ -132,7 +147,16 @@ class PubsubClient: PubsubClientProtocol {
             }
             return TopicSubscribeResponse.error(TopicSubscribeError(error: InternalServerError(message: "Expected heartbeat message for topic \(topicName) on cache \(cacheName), got \(String(describing: firstElement))")))
         } catch let err as GRPCStatus {
-            return TopicSubscribeResponse.error(TopicSubscribeError(error: grpcStatusToSdkError(grpcStatus: err)))
+            // The result is of type GRPCAsyncServerStreamingCall instead of UnaryCall so we
+            // manually extract the trailers here instead before constructing the SdkError.
+            do {
+                let trailers = try await result.trailingMetadata
+                return TopicSubscribeResponse.error(
+                    TopicSubscribeError(error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
+                )
+            } catch {
+                return TopicSubscribeResponse.error(TopicSubscribeError(error: grpcStatusToSdkError(grpcStatus: err)))
+            }
         } catch let err as GRPCConnectionPoolError {
             return TopicSubscribeResponse.error(TopicSubscribeError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())))
         } catch {
