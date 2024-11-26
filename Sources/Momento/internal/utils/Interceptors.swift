@@ -3,7 +3,7 @@ import NIO
 import NIOHPACK
 
 // Adds the `authorization` header to outgoing requests
-final class AuthHeaderInterceptor<Request, Response>: ClientInterceptor<Request, Response> {
+final class AuthHeaderInterceptor<Request, Response>: ClientInterceptor<Request, Response>, @unchecked Sendable {
 
     private let apiKey: String
 

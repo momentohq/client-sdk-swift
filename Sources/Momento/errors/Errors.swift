@@ -1,4 +1,6 @@
 import GRPC
+import NIOHPACK
+import SwiftProtobuf
 
 public enum MomentoErrorCode: String {
     /// Invalid argument passed to Momento client
@@ -177,15 +179,70 @@ public class InvalidArgumentError: SdkError {
 
 /// Request rate, bandwidth, or object size exceeded the limits for the account
 public class LimitExceededError: SdkError {
-    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil, metadata: HPACKHeaders? = nil) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.LIMIT_EXCEEDED_ERROR,
             innerException: innerException,
             transportDetails: transportDetails,
-            messageWrapper: "Request rate, bandwidth, or object size exceeded the limits for this account. To resolve this error, reduce your usage as appropriate or contact us at support@momentohq.com to request a limit increase"
+            messageWrapper: generateMessageFromMetadata(metadata: metadata, message: message)
         )
     }
+}
+
+func generateMessageFromMetadata(metadata: HPACKHeaders?, message: String) -> String {
+    if let nonNilMetadata = metadata {
+        let errMetadata = nonNilMetadata.first(name: "err") ?? ""
+        return fromErrorCause(errorCause: errMetadata, message: message).rawValue
+    }
+    return fromErrorString(message: message).rawValue
+}
+
+func fromErrorCause(errorCause: String, message: String) -> LimitExceededMessageWrapper {
+    switch errorCause {
+    case "topic_subscriptions_limit_exceeded":
+        return LimitExceededMessageWrapper.TOPIC_SUBSCRIPTIONS_LIMIT_EXCEEDED;
+    case "operations_rate_limit_exceeded":
+        return LimitExceededMessageWrapper.OPERATIONS_RATE_LIMIT_EXCEEDED;
+    case "throughput_rate_limit_exceeded":
+        return LimitExceededMessageWrapper.THROUGHPUT_RATE_LIMIT_EXCEEDED;
+    case "request_size_limit_exceeded":
+        return LimitExceededMessageWrapper.REQUEST_SIZE_LIMIT_EXCEEDED;
+    case "item_size_limit_exceeded":
+        return LimitExceededMessageWrapper.ITEM_SIZE_LIMIT_EXCEEDED;
+    case "element_size_limit_exceeded":
+        return LimitExceededMessageWrapper.ELEMENT_SIZE_LIMIT_EXCEEDED;
+    default:
+        return fromErrorString(message: message)
+    }
+}
+
+func fromErrorString(message: String) -> LimitExceededMessageWrapper {
+    let lowerCasedMessage: String = message.lowercased();
+    if (lowerCasedMessage.contains("subscribers")) {
+      return LimitExceededMessageWrapper.TOPIC_SUBSCRIPTIONS_LIMIT_EXCEEDED;
+    } else if (lowerCasedMessage.contains("operations")) {
+      return LimitExceededMessageWrapper.OPERATIONS_RATE_LIMIT_EXCEEDED;
+    } else if (lowerCasedMessage.contains("throughput")) {
+      return LimitExceededMessageWrapper.THROUGHPUT_RATE_LIMIT_EXCEEDED;
+    } else if (lowerCasedMessage.contains("request limit")) {
+      return LimitExceededMessageWrapper.REQUEST_SIZE_LIMIT_EXCEEDED;
+    } else if (lowerCasedMessage.contains("item size")) {
+      return LimitExceededMessageWrapper.ITEM_SIZE_LIMIT_EXCEEDED;
+    } else if (lowerCasedMessage.contains("element size")) {
+      return LimitExceededMessageWrapper.ELEMENT_SIZE_LIMIT_EXCEEDED;
+    }
+    return LimitExceededMessageWrapper.UNKNOWN_LIMIT_EXCEEDED;
+}
+
+enum LimitExceededMessageWrapper: String {
+    case TOPIC_SUBSCRIPTIONS_LIMIT_EXCEEDED = "Topic subscriptions limit exceeded for this account"
+    case OPERATIONS_RATE_LIMIT_EXCEEDED = "Request rate limit exceeded for this account"
+    case THROUGHPUT_RATE_LIMIT_EXCEEDED = "Bandwidth limit exceeded for this account"
+    case REQUEST_SIZE_LIMIT_EXCEEDED = "Request size limit exceeded for this account"
+    case ITEM_SIZE_LIMIT_EXCEEDED = "Item size limit exceeded for this account"
+    case ELEMENT_SIZE_LIMIT_EXCEEDED = "Element size limit exceeded for this account"
+    case UNKNOWN_LIMIT_EXCEEDED = "Limit exceeded for this account"
 }
 
 /// Cache with specified name doesn't exist
@@ -266,7 +323,7 @@ public class UnknownServiceError: SdkError {
     }
 }
 
-internal func grpcStatusToSdkError(grpcStatus: GRPCStatus) -> SdkError {
+func grpcStatusToSdkError(grpcStatus: GRPCStatus, metadata: HPACKHeaders? = nil) -> SdkError {
     let message = grpcStatus.message ?? "No message"
     switch grpcStatus.code {
     case .aborted:
@@ -292,7 +349,7 @@ internal func grpcStatusToSdkError(grpcStatus: GRPCStatus) -> SdkError {
     case .permissionDenied:
         return PermissionDeniedError(message:message, innerException: grpcStatus)
     case .resourceExhausted:
-        return LimitExceededError(message: message, innerException: grpcStatus)
+        return LimitExceededError(message: message, innerException: grpcStatus, metadata: metadata)
     case .unauthenticated:
         return AuthenticationError(message: message, innerException: grpcStatus)
     case .unavailable:
@@ -303,5 +360,21 @@ internal func grpcStatusToSdkError(grpcStatus: GRPCStatus) -> SdkError {
         return UnknownServiceError(message: message, innerException: grpcStatus)
     default:
         return UnknownError(message: "Unknown error", innerException: grpcStatus)
+    }
+}
+
+func processError<Request: Message & Sendable, Response: Message & Sendable>(
+    err: GRPCStatus,
+    call: UnaryCall<Request, Response>
+) async -> SdkError {
+    if #available(macOS 10.15, *) {
+        do {
+            let trailers = try await call.trailingMetadata.get()
+            return grpcStatusToSdkError(grpcStatus: err, metadata: trailers)
+        } catch {
+            return grpcStatusToSdkError(grpcStatus: err)
+        }
+    } else {
+        return grpcStatusToSdkError(grpcStatus: err)
     }
 }
