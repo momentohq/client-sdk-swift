@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/momentohq/client-sdk-swift/compare/v0.7.0...v0.7.1) (2024-11-26)
+
+
+### Bug Fixes
+
+* use [@available](https://github.com/available) tag instead of if statement in processError ([#143](https://github.com/momentohq/client-sdk-swift/issues/143)) ([a87e465](https://github.com/momentohq/client-sdk-swift/commit/a87e465401be38fc502da1d04f8d32cf70a250f7))
+
 ## [0.7.0](https://github.com/momentohq/client-sdk-swift/compare/v0.6.0...v0.7.0) (2024-11-26)
 
 
