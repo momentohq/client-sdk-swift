@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.7.0](https://github.com/momentohq/client-sdk-swift/compare/v0.6.0...v0.7.0) (2024-11-26)
+
+
+### Features
+
+* add topic sequence page ([#142](https://github.com/momentohq/client-sdk-swift/issues/142)) ([2a868be](https://github.com/momentohq/client-sdk-swift/commit/2a868be00f39af4dc370741699411e916357cf0c))
+
+
+### Miscellaneous
+
+* improve resource exhausted error message ([#139](https://github.com/momentohq/client-sdk-swift/issues/139)) ([aa63dec](https://github.com/momentohq/client-sdk-swift/commit/aa63dec407eada6decd941285097fd103292f83f))
+* update license file ([#140](https://github.com/momentohq/client-sdk-swift/issues/140)) ([fc6862d](https://github.com/momentohq/client-sdk-swift/commit/fc6862dfc471d17c46aa4a120ba00a1676520147))
+
 ## [0.6.0](https://github.com/momentohq/client-sdk-swift/compare/v0.5.1...v0.6.0) (2024-06-20)
 
 
