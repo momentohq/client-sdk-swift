@@ -363,18 +363,15 @@ func grpcStatusToSdkError(grpcStatus: GRPCStatus, metadata: HPACKHeaders? = nil)
     }
 }
 
+@available(macOS 10.15, iOS 13, *)
 func processError<Request: Message & Sendable, Response: Message & Sendable>(
     err: GRPCStatus,
     call: UnaryCall<Request, Response>
 ) async -> SdkError {
-    if #available(macOS 10.15, *) {
-        do {
-            let trailers = try await call.trailingMetadata.get()
-            return grpcStatusToSdkError(grpcStatus: err, metadata: trailers)
-        } catch {
-            return grpcStatusToSdkError(grpcStatus: err)
-        }
-    } else {
+    do {
+        let trailers = try await call.trailingMetadata.get()
+        return grpcStatusToSdkError(grpcStatus: err, metadata: trailers)
+    } catch {
         return grpcStatusToSdkError(grpcStatus: err)
     }
 }
