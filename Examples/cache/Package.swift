@@ -24,8 +24,7 @@ let package = Package(
         .executableTarget(
             name: "momento-cache-example",
             dependencies: [
-                // .product(name: "Momento", package: "client-sdk-swift"),
-                "Momento"
+                .product(name: "Momento", package: "client-sdk-swift")
             ],
             path: "Sources"
         )
