@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.7.2](https://github.com/momentohq/client-sdk-swift/compare/v0.7.1...v0.7.2) (2025-11-04)
+
+
+### Bug Fixes
+
+* specify platforms in package.swift instead of tags everywhere ([#147](https://github.com/momentohq/client-sdk-swift/issues/147)) ([2b977f9](https://github.com/momentohq/client-sdk-swift/commit/2b977f9ea005708f68c8ec35c7706113bfaf4f67))
+
+
+### Miscellaneous
+
+* upgrade momento dep in demo chat app example ([#145](https://github.com/momentohq/client-sdk-swift/issues/145)) ([5542cb7](https://github.com/momentohq/client-sdk-swift/commit/5542cb7b2a70d0ebf31893c10f436768ad80a666))
+
 ## [0.7.1](https://github.com/momentohq/client-sdk-swift/compare/v0.7.0...v0.7.1) (2024-11-26)
 
 
