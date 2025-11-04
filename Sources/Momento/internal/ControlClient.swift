@@ -1,9 +1,8 @@
 import GRPC
+import Logging
 import NIO
 import NIOHPACK
-import Logging
 
-@available(macOS 10.15, iOS 13, *)
 protocol ControlClientProtocol {
     func createCache(cacheName: String) async -> CreateCacheResponse
 
@@ -14,7 +13,6 @@ protocol ControlClientProtocol {
     func close()
 }
 
-@available(macOS 10.15, iOS 13, *)
 class ControlClient: ControlClientProtocol {
     internal let logger: Logger
     private let credentialProvider: CredentialProviderProtocol
@@ -39,14 +37,14 @@ class ControlClient: ControlClientProtocol {
                     GRPCTLSConfiguration.makeClientDefault(compatibleWith: eventLoopGroup)
                 ),
                 eventLoopGroup: self.eventLoopGroup
-                ) { configuration in
-                    // Additional configuration, like keepalive.
-                    // Note: Keepalive should in most circumstances not be necessary.
-                    configuration.keepalive = ClientConnectionKeepalive(
-                        interval: .seconds(15),
-                        timeout: .seconds(10)
-                    )
-                }
+            ) { configuration in
+                // Additional configuration, like keepalive.
+                // Note: Keepalive should in most circumstances not be necessary.
+                configuration.keepalive = ClientConnectionKeepalive(
+                    interval: .seconds(15),
+                    timeout: .seconds(10)
+                )
+            }
         } catch {
             fatalError("Failed to open GRPC channel")
         }
@@ -54,13 +52,14 @@ class ControlClient: ControlClientProtocol {
         self.client = ControlClient_ScsControlNIOClient(
             channel: self.grpcChannel,
             defaultCallOptions: .init(
-                timeLimit: .timeout(.seconds(Int64(self.configuration.transportStrategy.getClientTimeout())))
+                timeLimit: .timeout(
+                    .seconds(Int64(self.configuration.transportStrategy.getClientTimeout())))
             ),
             interceptors: ControlClientInterceptorFactory(apiKey: credentialProvider.apiKey)
         )
     }
 
-    func makeHeaders() -> [String:String] {
+    func makeHeaders() -> [String: String] {
         let headers = constructHeaders(firstRequest: self.firstRequest, clientType: "cache")
         if self.firstRequest {
             self.firstRequest = false
@@ -71,9 +70,11 @@ class ControlClient: ControlClientProtocol {
     func createCache(cacheName: String) async -> CreateCacheResponse {
         var request = ControlClient__CreateCacheRequest()
         request.cacheName = cacheName
-        let call = self.client.createCache(request, callOptions: .init(
-            customMetadata: .init(makeHeaders().map { ($0, $1) })
-        ))
+        let call = self.client.createCache(
+            request,
+            callOptions: .init(
+                customMetadata: .init(makeHeaders().map { ($0, $1) })
+            ))
         do {
             _ = try await call.response.get()
             // Successful creation returns ControlClient__CreateCacheResponse
@@ -90,7 +91,9 @@ class ControlClient: ControlClientProtocol {
             )
         } catch {
             return CreateCacheResponse.error(
-                CreateCacheError(error: UnknownError(message: "unknown cache create error: '\(error)'", innerException: error))
+                CreateCacheError(
+                    error: UnknownError(
+                        message: "unknown cache create error: '\(error)'", innerException: error))
             )
         }
     }
@@ -98,9 +101,11 @@ class ControlClient: ControlClientProtocol {
     func deleteCache(cacheName: String) async -> DeleteCacheResponse {
         var request = ControlClient__DeleteCacheRequest()
         request.cacheName = cacheName
-        let call = self.client.deleteCache(request, callOptions: .init(
-            customMetadata: .init(makeHeaders().map { ($0, $1) })
-        ))
+        let call = self.client.deleteCache(
+            request,
+            callOptions: .init(
+                customMetadata: .init(makeHeaders().map { ($0, $1) })
+            ))
         do {
             _ = try await call.response.get()
             // Successful creation returns ControlClient__DeleteCacheResponse
@@ -114,15 +119,19 @@ class ControlClient: ControlClientProtocol {
             )
         } catch {
             return DeleteCacheResponse.error(
-                DeleteCacheError(error: UnknownError(message: "unknown cache delete error: '\(error)'", innerException: error))
+                DeleteCacheError(
+                    error: UnknownError(
+                        message: "unknown cache delete error: '\(error)'", innerException: error))
             )
         }
     }
 
     func listCaches() async -> ListCachesResponse {
-        let call = self.client.listCaches(ControlClient__ListCachesRequest(), callOptions: .init(
-            customMetadata: .init(makeHeaders().map { ($0, $1) })
-        ))
+        let call = self.client.listCaches(
+            ControlClient__ListCachesRequest(),
+            callOptions: .init(
+                customMetadata: .init(makeHeaders().map { ($0, $1) })
+            ))
         do {
             let result = try await call.response.get()
             // Successful creation returns ControlClient__ListCachesResponse
@@ -137,7 +146,9 @@ class ControlClient: ControlClientProtocol {
             )
         } catch {
             return ListCachesResponse.error(
-                ListCachesError(error: UnknownError(message: "unknown list caches error: '\(error)'", innerException: error))
+                ListCachesError(
+                    error: UnknownError(
+                        message: "unknown list caches error: '\(error)'", innerException: error))
             )
         }
     }

@@ -8,19 +8,18 @@ enum ScalarType {
 // The CacheClient class provides user-friendly, public-facing methods
 // with default values for non-required parameters and overloaded functions
 // that accept String and Data values directly rather than ScalarTypes
-@available(macOS 10.15, iOS 13, *)
+
 protocol CacheClientProtocol: ControlClientProtocol & DataClientProtocol {}
 
-@available(macOS 10.15, iOS 13, *)
 extension CacheClientProtocol {
     public func get(cacheName: String, key: String) async -> GetResponse {
         return await self.get(cacheName: cacheName, key: ScalarType.string(key))
     }
-    
+
     public func get(cacheName: String, key: Data) async -> GetResponse {
         return await self.get(cacheName: cacheName, key: ScalarType.data(key))
     }
-    
+
     public func set(
         cacheName: String,
         key: String,
@@ -34,7 +33,7 @@ extension CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     public func set(
         cacheName: String,
         key: String,
@@ -48,7 +47,7 @@ extension CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     public func set(
         cacheName: String,
         key: Data,
@@ -62,7 +61,7 @@ extension CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     public func set(
         cacheName: String,
         key: Data,
@@ -76,7 +75,7 @@ extension CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     public func delete(cacheName: String, key: String) async -> DeleteResponse {
         return await delete(cacheName: cacheName, key: ScalarType.string(key))
     }
@@ -90,7 +89,7 @@ extension CacheClientProtocol {
         listName: String,
         values: [String],
         truncateFrontToSize: Int? = nil,
-        ttl: CollectionTtl? =  nil
+        ttl: CollectionTtl? = nil
     ) async -> ListConcatenateBackResponse {
         return await listConcatenateBack(
             cacheName: cacheName,
@@ -100,13 +99,13 @@ extension CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     public func listConcatenateBack(
         cacheName: String,
         listName: String,
         values: [Data],
         truncateFrontToSize: Int? = nil,
-        ttl: CollectionTtl? =  nil
+        ttl: CollectionTtl? = nil
     ) async -> ListConcatenateBackResponse {
         return await listConcatenateBack(
             cacheName: cacheName,
@@ -116,7 +115,7 @@ extension CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     public func listConcatenateFront(
         cacheName: String,
         listName: String,
@@ -132,7 +131,7 @@ extension CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     public func listConcatenateFront(
         cacheName: String,
         listName: String,
@@ -148,7 +147,7 @@ extension CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     public func listFetch(
         cacheName: String,
         listName: String,
@@ -162,7 +161,7 @@ extension CacheClientProtocol {
             endIndex: endIndex
         )
     }
-    
+
     public func listPushBack(
         cacheName: String,
         listName: String,
@@ -178,7 +177,7 @@ extension CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     public func listPushBack(
         cacheName: String,
         listName: String,
@@ -194,7 +193,7 @@ extension CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     public func listPushFront(
         cacheName: String,
         listName: String,
@@ -210,7 +209,7 @@ extension CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     public func listPushFront(
         cacheName: String,
         listName: String,
@@ -226,23 +225,25 @@ extension CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     public func listRemoveValue(
         cacheName: String,
         listName: String,
         value: String
     ) async -> ListRemoveValueResponse {
-        return await listRemoveValue(cacheName: cacheName, listName: listName, value: ScalarType.string(value))
+        return await listRemoveValue(
+            cacheName: cacheName, listName: listName, value: ScalarType.string(value))
     }
-    
+
     public func listRemoveValue(
         cacheName: String,
         listName: String,
         value: Data
     ) async -> ListRemoveValueResponse {
-        return await listRemoveValue(cacheName: cacheName, listName: listName, value: ScalarType.data(value))
+        return await listRemoveValue(
+            cacheName: cacheName, listName: listName, value: ScalarType.data(value))
     }
-    
+
     public func listRetain(
         cacheName: String,
         listName: String,
@@ -264,20 +265,20 @@ extension CacheClientProtocol {
  Client to perform operations against Momento Serverless Cache.
  To learn more, see the [Momento Cache developer documentation](https://docs.momentohq.com/cache)
  */
-@available(macOS 10.15, iOS 13, *)
+
 public class CacheClient: CacheClientProtocol {
     private let credentialProvider: CredentialProviderProtocol
     private let configuration: CacheClientConfigurationProtocol
     private let controlClient: ControlClientProtocol
     private let dataClient: DataClientProtocol
-    
+
     /**
      Constructs the client to perform operations against Momento Serverless Cache.
      - Parameters:
         - configuration: CacheClient configuration object specifying grpc transport strategy and other settings
         - credentialProvider: provides the Momento API key, which you can create in the [Momento Web Console](https://console.gomomento.com/api-keys)
         - defaultTtlSeconds: default time to live for the item in cache
-     
+    
      ```swift
      let cacheClient = CacheClient(
        configuration: CacheClientConfigurations.iOS.latest(),
@@ -294,7 +295,7 @@ public class CacheClient: CacheClientProtocol {
         self.configuration = configuration
         self.credentialProvider = credentialProvider
         self.controlClient = ControlClient(
-            configuration: configuration, 
+            configuration: configuration,
             credentialProvider: credentialProvider
         )
         self.dataClient = DataClient(
@@ -303,12 +304,12 @@ public class CacheClient: CacheClientProtocol {
             defaultTtlSeconds: defaultTtlSeconds
         )
     }
-    
+
     /**
      Creates a cache if it does not exist.
      - Parameter cacheName: name of the cache to be created
      - Returns: `CacheCreateResponse` representing the result of the create cache operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
     ```swift
      switch response {
@@ -326,17 +327,19 @@ public class CacheClient: CacheClientProtocol {
             return CreateCacheResponse.error(CreateCacheError(error: err))
         } catch {
             return CreateCacheResponse.error(
-                CreateCacheError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
+                CreateCacheError(
+                    error: UnknownError(
+                        message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.controlClient.createCache(cacheName: cacheName)
     }
-    
+
     /**
      Deletes a cache and all items in it.
      - Parameter cacheName: name of the cache to be deleted
      - Returns: `DeleteCacheResponse` representing the result of the delete cache operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -354,16 +357,18 @@ public class CacheClient: CacheClientProtocol {
             return DeleteCacheResponse.error(DeleteCacheError(error: err))
         } catch {
             return DeleteCacheResponse.error(
-                DeleteCacheError(error: UnknownError(message: "unexpected error: \(error)", innerException: error))
+                DeleteCacheError(
+                    error: UnknownError(
+                        message: "unexpected error: \(error)", innerException: error))
             )
         }
         return await self.controlClient.deleteCache(cacheName: cacheName)
     }
-    
+
     /**
      Lists all caches.
      - Returns: `ListCachesResponse` representing the result of the list caches operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -377,14 +382,14 @@ public class CacheClient: CacheClientProtocol {
     public func listCaches() async -> ListCachesResponse {
         return await self.controlClient.listCaches()
     }
-    
+
     /**
      Gets the value stored for the given key.
      - Parameters:
         - cacheName: the name of the cache to perform the lookup in
         - key: the key to look up as type String
      - Returns: `GetResponse` representing the result of the get operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -400,14 +405,14 @@ public class CacheClient: CacheClientProtocol {
     public func get(cacheName: String, key: String) async -> GetResponse {
         return await self.get(cacheName: cacheName, key: ScalarType.string(key))
     }
-    
+
     /**
      Gets the value stored for the given key.
      - Parameters:
         - cacheName: the name of the cache to perform the lookup in
         - key: the key to look up as type Data
      - Returns: `GetResponse` representing the result of the get operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -423,7 +428,7 @@ public class CacheClient: CacheClientProtocol {
     public func get(cacheName: String, key: Data) async -> GetResponse {
         return await self.get(cacheName: cacheName, key: ScalarType.data(key))
     }
-    
+
     internal func get(cacheName: String, key: ScalarType) async -> GetResponse {
         do {
             try validateCacheName(cacheName: cacheName)
@@ -432,12 +437,14 @@ public class CacheClient: CacheClientProtocol {
             return GetResponse.error(GetError(error: err))
         } catch {
             return GetResponse.error(
-                GetError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
+                GetError(
+                    error: UnknownError(
+                        message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.get(cacheName: cacheName, key: key)
     }
-    
+
     /**
      Associates the given key with the given value. If a value for the key is already present it is replaced with the new value.
      - Parameters:
@@ -446,7 +453,7 @@ public class CacheClient: CacheClientProtocol {
         - value: the value to associate with the key
         - ttl: the time to live for the item in the cache. Uses the client's default TTL if this is not supplied.
      - Returns: `SetResponse` representing the result of the set operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -470,7 +477,7 @@ public class CacheClient: CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     /**
      Associates the given key with the given value. If a value for the key is already present it is replaced with the new value.
      - Parameters:
@@ -479,7 +486,7 @@ public class CacheClient: CacheClientProtocol {
         - value: the value to associate with the key
         - ttl: the time to live for the item in the cache. Uses the client's default TTL if this is not supplied.
      - Returns: `SetResponse` representing the result of the set operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -503,7 +510,7 @@ public class CacheClient: CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     /**
      Associates the given key with the given value. If a value for the key is already present it is replaced with the new value.
      - Parameters:
@@ -512,7 +519,7 @@ public class CacheClient: CacheClientProtocol {
         - value: the value to associate with the key
         - ttl: the time to live for the item in the cache. Uses the client's default TTL if this is not supplied.
      - Returns: `SetResponse` representing the result of the set operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -536,7 +543,7 @@ public class CacheClient: CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     /**
      Associates the given key with the given value. If a value for the key is already present it is replaced with the new value.
      - Parameters:
@@ -545,7 +552,7 @@ public class CacheClient: CacheClientProtocol {
         - value: the value to associate with the key
         - ttl: the time to live for the item in the cache. Uses the client's default TTL if this is not supplied.
      - Returns: `SetResponse` representing the result of the set operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -569,7 +576,7 @@ public class CacheClient: CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     internal func set(
         cacheName: String,
         key: ScalarType,
@@ -584,7 +591,9 @@ public class CacheClient: CacheClientProtocol {
             return SetResponse.error(SetError(error: err))
         } catch {
             return SetResponse.error(
-                SetError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
+                SetError(
+                    error: UnknownError(
+                        message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.set(
@@ -594,14 +603,14 @@ public class CacheClient: CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     /**
      Deletes the given key from the cache.
      - Parameters:
         - cacheName: the name of the cache to store the value in
         - key: the key to delete as a String
      - Returns: `DeleteResponse` representing the result of the set operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -622,7 +631,7 @@ public class CacheClient: CacheClientProtocol {
         - cacheName: the name of the cache to store the value in
         - key: the key to delete as Data
      - Returns: `DeleteResponse` representing the result of the set operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -636,7 +645,7 @@ public class CacheClient: CacheClientProtocol {
     public func delete(cacheName: String, key: Data) async -> DeleteResponse {
         return await delete(cacheName: cacheName, key: ScalarType.data(key))
     }
-    
+
     internal func delete(cacheName: String, key: ScalarType) async -> DeleteResponse {
         do {
             try validateCacheName(cacheName: cacheName)
@@ -645,12 +654,14 @@ public class CacheClient: CacheClientProtocol {
             return DeleteResponse.error(DeleteError(error: err))
         } catch {
             return DeleteResponse.error(
-                DeleteError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
+                DeleteError(
+                    error: UnknownError(
+                        message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.delete(cacheName: cacheName, key: key)
     }
-    
+
     /**
      Adds multiple elements to the back of the given list. Creates the list if it does not already exist.
      - Parameters:
@@ -660,7 +671,7 @@ public class CacheClient: CacheClientProtocol {
         - truncateFrontToSize: If the list exceeds this length, remove excess from the front of the list. Must be positive.
         - ttl: refreshes the list's TTL using the client's default if this is not supplied.
      - Returns: `ListConcatenateBackResponse` representing the result of the operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -676,7 +687,7 @@ public class CacheClient: CacheClientProtocol {
         listName: String,
         values: [String],
         truncateFrontToSize: Int? = nil,
-        ttl: CollectionTtl? =  nil
+        ttl: CollectionTtl? = nil
     ) async -> ListConcatenateBackResponse {
         return await listConcatenateBack(
             cacheName: cacheName,
@@ -686,7 +697,7 @@ public class CacheClient: CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     /**
      Adds multiple elements to the back of the given list. Creates the list if it does not already exist.
      - Parameters:
@@ -696,7 +707,7 @@ public class CacheClient: CacheClientProtocol {
         - truncateFrontToSize: If the list exceeds this length, remove excess from the front of the list. Must be positive.
         - ttl: refreshes the list's TTL using the client's default if this is not supplied.
      - Returns: `ListConcatenateBackResponse` representing the result of the operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -712,7 +723,7 @@ public class CacheClient: CacheClientProtocol {
         listName: String,
         values: [Data],
         truncateFrontToSize: Int? = nil,
-        ttl: CollectionTtl? =  nil
+        ttl: CollectionTtl? = nil
     ) async -> ListConcatenateBackResponse {
         return await listConcatenateBack(
             cacheName: cacheName,
@@ -722,13 +733,13 @@ public class CacheClient: CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     internal func listConcatenateBack(
         cacheName: String,
         listName: String,
         values: [ScalarType],
         truncateFrontToSize: Int? = nil,
-        ttl: CollectionTtl? =  nil
+        ttl: CollectionTtl? = nil
     ) async -> ListConcatenateBackResponse {
         do {
             try validateCacheName(cacheName: cacheName)
@@ -740,7 +751,9 @@ public class CacheClient: CacheClientProtocol {
             return ListConcatenateBackResponse.error(ListConcatenateBackError(error: err))
         } catch {
             return ListConcatenateBackResponse.error(
-                ListConcatenateBackError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
+                ListConcatenateBackError(
+                    error: UnknownError(
+                        message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.listConcatenateBack(
@@ -751,7 +764,7 @@ public class CacheClient: CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     /**
      Adds multiple elements to the front of the given list. Creates the list if it does not already exist.
      - Parameters:
@@ -761,7 +774,7 @@ public class CacheClient: CacheClientProtocol {
         - truncateBackToSize: If the list exceeds this length, remove excess from the back of the list. Must be positive.
         - ttl: refreshes the list's TTL using the client's default if this is not supplied.
      - Returns: `ListConcatenateFrontResponse` representing the result of the operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -787,7 +800,7 @@ public class CacheClient: CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     /**
      Adds multiple elements to the front of the given list. Creates the list if it does not already exist.
      - Parameters:
@@ -797,7 +810,7 @@ public class CacheClient: CacheClientProtocol {
         - truncateBackToSize: If the list exceeds this length, remove excess from the back of the list. Must be positive.
         - ttl: refreshes the list's TTL using the client's default if this is not supplied.
      - Returns: `ListConcatenateFrontResponse` representing the result of the operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -823,7 +836,7 @@ public class CacheClient: CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     internal func listConcatenateFront(
         cacheName: String,
         listName: String,
@@ -841,7 +854,9 @@ public class CacheClient: CacheClientProtocol {
             return ListConcatenateFrontResponse.error(ListConcatenateFrontError(error: err))
         } catch {
             return ListConcatenateFrontResponse.error(
-                ListConcatenateFrontError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
+                ListConcatenateFrontError(
+                    error: UnknownError(
+                        message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.listConcatenateFront(
@@ -852,7 +867,7 @@ public class CacheClient: CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     /**
      Fetches all elements of the given list.
      - Parameters:
@@ -861,7 +876,7 @@ public class CacheClient: CacheClientProtocol {
         - startIndex: start index (inclusive) to begin fetching
         - endIndex: end index (exclusive) to stop fetching
      - Returns: `ListFetchResponse` representing the result of the operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -888,7 +903,9 @@ public class CacheClient: CacheClientProtocol {
             return ListFetchResponse.error(ListFetchError(error: err))
         } catch {
             return ListFetchResponse.error(
-                ListFetchError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
+                ListFetchError(
+                    error: UnknownError(
+                        message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.listFetch(
@@ -898,14 +915,14 @@ public class CacheClient: CacheClientProtocol {
             endIndex: endIndex
         )
     }
-    
+
     /**
      Gets the number of elements in the given list.
      - Parameters:
         - cacheName: the name of the cache containing the list
         - listName: the list to get the length of
      - Returns: `ListLengthResponse` representing the result of the operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -929,19 +946,21 @@ public class CacheClient: CacheClientProtocol {
             return ListLengthResponse.error(ListLengthError(error: err))
         } catch {
             return ListLengthResponse.error(
-                ListLengthError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
+                ListLengthError(
+                    error: UnknownError(
+                        message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.listLength(cacheName: cacheName, listName: listName)
     }
-    
+
     /**
      Gets and removes the last value from the given list.
      - Parameters:
         - cacheName: the name of the cache containing the list
         - listName: the list to get the last element from
      - Returns: `ListPopBackResponse` representing the result of the operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -965,19 +984,21 @@ public class CacheClient: CacheClientProtocol {
             return ListPopBackResponse.error(ListPopBackError(error: err))
         } catch {
             return ListPopBackResponse.error(
-                ListPopBackError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
+                ListPopBackError(
+                    error: UnknownError(
+                        message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.listPopBack(cacheName: cacheName, listName: listName)
     }
-    
+
     /**
      Gets and removes the first value from the given list.
      - Parameters:
         - cacheName: the name of the cache containing the list
         - listName: the list to get the first element from
      - Returns: `ListPopFrontResponse` representing the result of the operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -1001,12 +1022,14 @@ public class CacheClient: CacheClientProtocol {
             return ListPopFrontResponse.error(ListPopFrontError(error: err))
         } catch {
             return ListPopFrontResponse.error(
-                ListPopFrontError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
+                ListPopFrontError(
+                    error: UnknownError(
+                        message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.listPopFront(cacheName: cacheName, listName: listName)
     }
-    
+
     /**
      Adds an element to the back of the given list. Creates the list if it does not already exist.
      - Parameters:
@@ -1016,7 +1039,7 @@ public class CacheClient: CacheClientProtocol {
         - truncateFrontToSize: If the list exceeds this length, remove excess from the front of the list. Must be positive.
         - ttl: refreshes the list's TTL using the client's default if this is not supplied.
      - Returns: `ListPushBackResponse` representing the result of the operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -1042,7 +1065,7 @@ public class CacheClient: CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     /**
      Adds an element to the back of the given list. Creates the list if it does not already exist.
      - Parameters:
@@ -1052,7 +1075,7 @@ public class CacheClient: CacheClientProtocol {
         - truncateFrontToSize: If the list exceeds this length, remove excess from the front of the list. Must be positive.
         - ttl: refreshes the list's TTL using the client's default if this is not supplied.
      - Returns: `ListPushBackResponse` representing the result of the operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -1078,7 +1101,7 @@ public class CacheClient: CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     internal func listPushBack(
         cacheName: String,
         listName: String,
@@ -1095,7 +1118,9 @@ public class CacheClient: CacheClientProtocol {
             return ListPushBackResponse.error(ListPushBackError(error: err))
         } catch {
             return ListPushBackResponse.error(
-                ListPushBackError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
+                ListPushBackError(
+                    error: UnknownError(
+                        message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.listPushBack(
@@ -1106,7 +1131,7 @@ public class CacheClient: CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     /**
      Adds an element to the front of the given list. Creates the list if it does not already exist.
      - Parameters:
@@ -1116,7 +1141,7 @@ public class CacheClient: CacheClientProtocol {
         - truncateBackToSize: If the list exceeds this length, remove excess from the back of the list. Must be positive.
         - ttl: refreshes the list's TTL using the client's default if this is not supplied.
      - Returns: `ListPushFrontResponse` representing the result of the operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -1142,7 +1167,7 @@ public class CacheClient: CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     /**
      Adds an element to the front of the given list. Creates the list if it does not already exist.
      - Parameters:
@@ -1152,7 +1177,7 @@ public class CacheClient: CacheClientProtocol {
         - truncateBackToSize: If the list exceeds this length, remove excess from the back of the list. Must be positive.
         - ttl: refreshes the list's TTL using the client's default if this is not supplied.
      - Returns: `ListPushFrontResponse` representing the result of the operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -1178,7 +1203,7 @@ public class CacheClient: CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     internal func listPushFront(
         cacheName: String,
         listName: String,
@@ -1195,7 +1220,9 @@ public class CacheClient: CacheClientProtocol {
             return ListPushFrontResponse.error(ListPushFrontError(error: err))
         } catch {
             return ListPushFrontResponse.error(
-                ListPushFrontError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
+                ListPushFrontError(
+                    error: UnknownError(
+                        message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.listPushFront(
@@ -1206,7 +1233,7 @@ public class CacheClient: CacheClientProtocol {
             ttl: ttl
         )
     }
-    
+
     /**
      Removes all elements from the given list equal to the given value.
      - Parameters:
@@ -1214,7 +1241,7 @@ public class CacheClient: CacheClientProtocol {
         - listName: the list to remove values from
         - value: the value to remove as String
      - Returns: `ListRemoveValueResponse` representing the result of the operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -1230,9 +1257,10 @@ public class CacheClient: CacheClientProtocol {
         listName: String,
         value: String
     ) async -> ListRemoveValueResponse {
-        return await listRemoveValue(cacheName: cacheName, listName: listName, value: ScalarType.string(value))
+        return await listRemoveValue(
+            cacheName: cacheName, listName: listName, value: ScalarType.string(value))
     }
-    
+
     /**
      Removes all elements from the given list equal to the given value.
      - Parameters:
@@ -1240,7 +1268,7 @@ public class CacheClient: CacheClientProtocol {
         - listName: the list to remove values from
         - value: the value to remove as Data
      - Returns: `ListRemoveValueResponse` representing the result of the operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -1256,9 +1284,10 @@ public class CacheClient: CacheClientProtocol {
         listName: String,
         value: Data
     ) async -> ListRemoveValueResponse {
-        return await listRemoveValue(cacheName: cacheName, listName: listName, value: ScalarType.data(value))
+        return await listRemoveValue(
+            cacheName: cacheName, listName: listName, value: ScalarType.data(value))
     }
-    
+
     internal func listRemoveValue(
         cacheName: String,
         listName: String,
@@ -1271,7 +1300,9 @@ public class CacheClient: CacheClientProtocol {
             return ListRemoveValueResponse.error(ListRemoveValueError(error: err))
         } catch {
             return ListRemoveValueResponse.error(
-                ListRemoveValueError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
+                ListRemoveValueError(
+                    error: UnknownError(
+                        message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.listRemoveValue(
@@ -1280,7 +1311,7 @@ public class CacheClient: CacheClientProtocol {
             value: value
         )
     }
-    
+
     /**
      Retains slice of elements of a given list, deletes the rest of the list that isn't being retained.
      - Parameters:
@@ -1290,7 +1321,7 @@ public class CacheClient: CacheClientProtocol {
         - endIndex: end index (exclusive) of the slice to retain. Defaults to the end of the list.
         - ttl: refreshes the list's TTL using the client's default if this is not supplied.
      - Returns: `ListRetainResponse` representing the result of the operation.
-     
+    
      Pattern matching can be used to operate on the appropriate subtype.
      ```swift
       switch response {
@@ -1317,7 +1348,9 @@ public class CacheClient: CacheClientProtocol {
             return ListRetainResponse.error(ListRetainError(error: err))
         } catch {
             return ListRetainResponse.error(
-                ListRetainError(error: UnknownError(message: "unexpected error: '\(error)'", innerException: error))
+                ListRetainError(
+                    error: UnknownError(
+                        message: "unexpected error: '\(error)'", innerException: error))
             )
         }
         return await self.dataClient.listRetain(
@@ -1330,7 +1363,7 @@ public class CacheClient: CacheClientProtocol {
     }
 
     /** Close the client and free up all associated resources.
-     
+    
      NOTE: the client object will not be usable after calling this method.
     **/
     public func close() {
