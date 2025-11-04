@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/momentohq/client-sdk-swift",
       "state" : {
-        "revision" : "19087b69bc283727a72f552e28df5743de7584f8",
-        "version" : "0.4.0"
+        "revision" : "7396fee30df1380bf36f752f09a9198bc9655eea",
+        "version" : "0.7.2"
       }
     },
     {
