@@ -1,6 +1,6 @@
 import Foundation
 
-let packageVersion = "0.7.1" // x-release-please-version
+let packageVersion = "0.7.2" // x-release-please-version
 let osVersion = ProcessInfo.processInfo.operatingSystemVersion
 
 internal func constructHeaders(firstRequest: Bool, clientType: String, cacheName: String? = nil) -> Dictionary<String, String> {
