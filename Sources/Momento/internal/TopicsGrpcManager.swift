@@ -2,11 +2,10 @@ import GRPC
 import NIO
 import NIOHPACK
 
-@available(macOS 10.15, iOS 13, *)
 internal class TopicsGrpcManager {
     var channel: GRPCChannel
     var client: CacheClient_Pubsub_PubsubAsyncClient
-    
+
     init(
         credentialProvider: CredentialProviderProtocol,
         eventLoopGroup: EventLoopGroup
@@ -31,17 +30,17 @@ internal class TopicsGrpcManager {
         } catch {
             fatalError("Failed to open GRPC channel")
         }
-        
+
         self.client = CacheClient_Pubsub_PubsubAsyncClient(
             channel: self.channel,
             interceptors: PubsubClientInterceptorFactory(apiKey: credentialProvider.apiKey)
         )
     }
-    
+
     func getClient() -> CacheClient_Pubsub_PubsubAsyncClient {
         return self.client
     }
-    
+
     func close() {
         let _ = self.channel.close()
     }

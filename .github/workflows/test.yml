@@ -12,18 +12,12 @@ on:
 
 jobs:
   test:
-    # strategy:
-    #     matrix:
-    #         swift: ["5.4", "5.8"]
     runs-on: ubuntu-latest
-    container: swift:5.8
+    container: swift:5.9
     env:
         TEST_API_KEY: ${{ secrets.auth-token }}
         MOMENTO_API_KEY: ${{ secrets.auth-token }}
     steps:
-    #   - uses: swift-actions/setup-swift@65540b95f51493d65f5e59e97dcef9629ddf11bf
-    #     with:
-    #         swift-version: ${{ matrix.swift }}
       - name: Setup repo
         uses: actions/checkout@v3
         with:

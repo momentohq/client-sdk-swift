@@ -1,9 +1,8 @@
 import GRPC
+import Logging
 import NIO
 import NIOHPACK
-import Logging
 
-@available(macOS 10.15, iOS 13, *)
 protocol PubsubClientProtocol {
     var configuration: TopicClientConfigurationProtocol { get }
 
@@ -23,7 +22,6 @@ protocol PubsubClientProtocol {
     func close()
 }
 
-@available(macOS 10.15, iOS 13, *)
 class PubsubClient: PubsubClientProtocol {
     let logger = Logger(label: "PubsubClient")
     let configuration: TopicClientConfigurationProtocol
@@ -46,7 +44,7 @@ class PubsubClient: PubsubClientProtocol {
         self.client = self.grpcManager.getClient()
     }
 
-    func makeHeaders() -> [String:String] {
+    func makeHeaders() -> [String: String] {
         let headers = constructHeaders(firstRequest: self.firstRequest, clientType: "topic")
         if self.firstRequest {
             self.firstRequest = false
@@ -74,10 +72,11 @@ class PubsubClient: PubsubClientProtocol {
             request,
             callOptions: .init(
                 customMetadata: .init(makeHeaders().map { ($0, $1) }),
-                timeLimit: .timeout(.seconds(Int64(self.configuration.transportStrategy.getClientTimeout())))
+                timeLimit: .timeout(
+                    .seconds(Int64(self.configuration.transportStrategy.getClientTimeout())))
             )
         )
-        
+
         do {
             let result = try await call.response
             // Successful publish returns client_sdk_swift.CacheClient_Pubsub__Empty
@@ -93,22 +92,28 @@ class PubsubClient: PubsubClientProtocol {
             do {
                 let trailers = try await call.trailingMetadata
                 return TopicPublishResponse.error(
-                    TopicPublishError(error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
+                    TopicPublishError(
+                        error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
                 )
             } catch {
-                return TopicPublishResponse.error(TopicPublishError(error: grpcStatusToSdkError(grpcStatus: err)))
+                return TopicPublishResponse.error(
+                    TopicPublishError(error: grpcStatusToSdkError(grpcStatus: err)))
             }
         } catch let err as GRPCConnectionPoolError {
-            return TopicPublishResponse.error(TopicPublishError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())))
+            return TopicPublishResponse.error(
+                TopicPublishError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())))
         } catch {
             return TopicPublishResponse.error(
-                TopicPublishError(error: UnknownError(message: "unknown publish error: '\(error)'", innerException: error))
+                TopicPublishError(
+                    error: UnknownError(
+                        message: "unknown publish error: '\(error)'", innerException: error))
             )
         }
     }
 
     func subscribe(
-        cacheName: String, topicName: String, resumeAtTopicSequenceNumber: UInt64?, resumeAtTopicSequencePage: UInt64?
+        cacheName: String, topicName: String, resumeAtTopicSequenceNumber: UInt64?,
+        resumeAtTopicSequencePage: UInt64?
     ) async throws -> TopicSubscribeResponse {
         var request = CacheClient_Pubsub__SubscriptionRequest()
         request.cacheName = cacheName
@@ -142,26 +147,41 @@ class PubsubClient: PubsubClientProtocol {
                         )
                     )
                 default:
-                    return TopicSubscribeResponse.error(TopicSubscribeError(error: InternalServerError(message: "Expected heartbeat message for topic \(topicName) on cache \(cacheName), got \(String(describing: nonNilFirstElement.kind))")))
+                    return TopicSubscribeResponse.error(
+                        TopicSubscribeError(
+                            error: InternalServerError(
+                                message:
+                                    "Expected heartbeat message for topic \(topicName) on cache \(cacheName), got \(String(describing: nonNilFirstElement.kind))"
+                            )))
                 }
             }
-            return TopicSubscribeResponse.error(TopicSubscribeError(error: InternalServerError(message: "Expected heartbeat message for topic \(topicName) on cache \(cacheName), got \(String(describing: firstElement))")))
+            return TopicSubscribeResponse.error(
+                TopicSubscribeError(
+                    error: InternalServerError(
+                        message:
+                            "Expected heartbeat message for topic \(topicName) on cache \(cacheName), got \(String(describing: firstElement))"
+                    )))
         } catch let err as GRPCStatus {
             // The result is of type GRPCAsyncServerStreamingCall instead of UnaryCall so we
             // manually extract the trailers here instead before constructing the SdkError.
             do {
                 let trailers = try await result.trailingMetadata
                 return TopicSubscribeResponse.error(
-                    TopicSubscribeError(error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
+                    TopicSubscribeError(
+                        error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
                 )
             } catch {
-                return TopicSubscribeResponse.error(TopicSubscribeError(error: grpcStatusToSdkError(grpcStatus: err)))
+                return TopicSubscribeResponse.error(
+                    TopicSubscribeError(error: grpcStatusToSdkError(grpcStatus: err)))
             }
         } catch let err as GRPCConnectionPoolError {
-            return TopicSubscribeResponse.error(TopicSubscribeError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())))
+            return TopicSubscribeResponse.error(
+                TopicSubscribeError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())))
         } catch {
             return TopicSubscribeResponse.error(
-                TopicSubscribeError(error: UnknownError(message: "unknown subscribe error: '\(error)'", innerException: error))
+                TopicSubscribeError(
+                    error: UnknownError(
+                        message: "unknown subscribe error: '\(error)'", innerException: error))
             )
         }
     }

@@ -1,15 +1,21 @@
-// swift-tools-version: 5.7
+// swift-tools-version: 5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
 
 let package = Package(
     name: "Momento",
+    platforms: [
+        .macOS(.v10_15),
+        .iOS(.v13),
+        .tvOS(.v13),
+        .visionOS(.v1),
+    ],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "Momento",
-            targets: ["Momento"]),
+            targets: ["Momento"])
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-protobuf.git", from: "1.6.0"),
@@ -24,7 +30,7 @@ let package = Package(
             dependencies: [
                 .product(name: "SwiftProtobuf", package: "swift-protobuf"),
                 .product(name: "GRPC", package: "grpc-swift"),
-                .product(name: "Logging", package: "swift-log")
+                .product(name: "Logging", package: "swift-log"),
             ],
             exclude: [
                 "internal/protos/auth.proto",
@@ -39,7 +45,7 @@ let package = Package(
                 "internal/protos/permissionmessages.proto",
                 "internal/protos/store.proto",
                 "internal/protos/token.proto",
-                "internal/protos/webhook.proto"
+                "internal/protos/webhook.proto",
             ]
         ),
         .testTarget(
@@ -47,8 +53,8 @@ let package = Package(
             dependencies: [
                 "Momento",
                 .product(name: "SwiftProtobuf", package: "swift-protobuf"),
-                .product(name: "GRPC", package: "grpc-swift")
+                .product(name: "GRPC", package: "grpc-swift"),
             ]
-        )
+        ),
     ]
 )

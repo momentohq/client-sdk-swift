@@ -60,11 +60,11 @@ public class SdkError: Error, ErrorResponseBaseProtocol {
     public let innerException: Error?
     let transportDetails: MomentoErrorTransportDetails?
     let messageWrapper: String
-    
+
     var description: String {
         return "\(self.errorCode): \(self.message)"
     }
-    
+
     /**
     - Parameters:
         - message: detailed information about the error
@@ -88,20 +88,27 @@ public class SdkError: Error, ErrorResponseBaseProtocol {
 
 /// Resource with specified name already exists
 public class AlreadyExistsError: SdkError {
-    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(
+        message: String, innerException: Error? = nil,
+        transportDetails: MomentoErrorTransportDetails? = nil
+    ) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.BAD_REQUEST_ERROR,
             innerException: innerException,
             transportDetails: transportDetails,
-            messageWrapper: "A cache with the specified name already exists. To resolve this error, either delete the existing cache and make a new one, or use a different name"
+            messageWrapper:
+                "A cache with the specified name already exists. To resolve this error, either delete the existing cache and make a new one, or use a different name"
         )
     }
 }
 
 /// Invalid authentication credentials to connect to service
 public class AuthenticationError: SdkError {
-    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(
+        message: String, innerException: Error? = nil,
+        transportDetails: MomentoErrorTransportDetails? = nil
+    ) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.AUTHENTICATION_ERROR,
@@ -114,7 +121,10 @@ public class AuthenticationError: SdkError {
 
 /// Request was invalid
 public class BadRequestError: SdkError {
-    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(
+        message: String, innerException: Error? = nil,
+        transportDetails: MomentoErrorTransportDetails? = nil
+    ) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.BAD_REQUEST_ERROR,
@@ -127,20 +137,27 @@ public class BadRequestError: SdkError {
 
 /// Request was cancelled by the server
 public class CancelledError: SdkError {
-    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(
+        message: String, innerException: Error? = nil,
+        transportDetails: MomentoErrorTransportDetails? = nil
+    ) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.CANCELLED_ERROR,
             innerException: innerException,
             transportDetails: transportDetails,
-            messageWrapper: "The request was cancelled by the server; please contact us at support@momentohq.com"
+            messageWrapper:
+                "The request was cancelled by the server; please contact us at support@momentohq.com"
         )
     }
 }
 
 /// System is not in a state required for the operation's execution
 public class FailedPreconditionError: SdkError {
-    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(
+        message: String, innerException: Error? = nil,
+        transportDetails: MomentoErrorTransportDetails? = nil
+    ) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.FAILED_PRECONDITION_ERROR,
@@ -153,20 +170,27 @@ public class FailedPreconditionError: SdkError {
 
 /// An unexpected error occurred while trying to fulfill the request
 public class InternalServerError: SdkError {
-    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(
+        message: String, innerException: Error? = nil,
+        transportDetails: MomentoErrorTransportDetails? = nil
+    ) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.INTERNAL_SERVER_ERROR,
             innerException: innerException,
             transportDetails: transportDetails,
-            messageWrapper: "An unexpected error occurred while trying to fulfill the request; please contact us at support@momentohq.com"
+            messageWrapper:
+                "An unexpected error occurred while trying to fulfill the request; please contact us at support@momentohq.com"
         )
     }
 }
 
 /// Invalid argument passed to Momento client
 public class InvalidArgumentError: SdkError {
-    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(
+        message: String, innerException: Error? = nil,
+        transportDetails: MomentoErrorTransportDetails? = nil
+    ) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.INVALID_ARGUMENT_ERROR,
@@ -179,7 +203,10 @@ public class InvalidArgumentError: SdkError {
 
 /// Request rate, bandwidth, or object size exceeded the limits for the account
 public class LimitExceededError: SdkError {
-    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil, metadata: HPACKHeaders? = nil) {
+    init(
+        message: String, innerException: Error? = nil,
+        transportDetails: MomentoErrorTransportDetails? = nil, metadata: HPACKHeaders? = nil
+    ) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.LIMIT_EXCEEDED_ERROR,
@@ -201,38 +228,38 @@ func generateMessageFromMetadata(metadata: HPACKHeaders?, message: String) -> St
 func fromErrorCause(errorCause: String, message: String) -> LimitExceededMessageWrapper {
     switch errorCause {
     case "topic_subscriptions_limit_exceeded":
-        return LimitExceededMessageWrapper.TOPIC_SUBSCRIPTIONS_LIMIT_EXCEEDED;
+        return LimitExceededMessageWrapper.TOPIC_SUBSCRIPTIONS_LIMIT_EXCEEDED
     case "operations_rate_limit_exceeded":
-        return LimitExceededMessageWrapper.OPERATIONS_RATE_LIMIT_EXCEEDED;
+        return LimitExceededMessageWrapper.OPERATIONS_RATE_LIMIT_EXCEEDED
     case "throughput_rate_limit_exceeded":
-        return LimitExceededMessageWrapper.THROUGHPUT_RATE_LIMIT_EXCEEDED;
+        return LimitExceededMessageWrapper.THROUGHPUT_RATE_LIMIT_EXCEEDED
     case "request_size_limit_exceeded":
-        return LimitExceededMessageWrapper.REQUEST_SIZE_LIMIT_EXCEEDED;
+        return LimitExceededMessageWrapper.REQUEST_SIZE_LIMIT_EXCEEDED
     case "item_size_limit_exceeded":
-        return LimitExceededMessageWrapper.ITEM_SIZE_LIMIT_EXCEEDED;
+        return LimitExceededMessageWrapper.ITEM_SIZE_LIMIT_EXCEEDED
     case "element_size_limit_exceeded":
-        return LimitExceededMessageWrapper.ELEMENT_SIZE_LIMIT_EXCEEDED;
+        return LimitExceededMessageWrapper.ELEMENT_SIZE_LIMIT_EXCEEDED
     default:
         return fromErrorString(message: message)
     }
 }
 
 func fromErrorString(message: String) -> LimitExceededMessageWrapper {
-    let lowerCasedMessage: String = message.lowercased();
-    if (lowerCasedMessage.contains("subscribers")) {
-      return LimitExceededMessageWrapper.TOPIC_SUBSCRIPTIONS_LIMIT_EXCEEDED;
-    } else if (lowerCasedMessage.contains("operations")) {
-      return LimitExceededMessageWrapper.OPERATIONS_RATE_LIMIT_EXCEEDED;
-    } else if (lowerCasedMessage.contains("throughput")) {
-      return LimitExceededMessageWrapper.THROUGHPUT_RATE_LIMIT_EXCEEDED;
-    } else if (lowerCasedMessage.contains("request limit")) {
-      return LimitExceededMessageWrapper.REQUEST_SIZE_LIMIT_EXCEEDED;
-    } else if (lowerCasedMessage.contains("item size")) {
-      return LimitExceededMessageWrapper.ITEM_SIZE_LIMIT_EXCEEDED;
-    } else if (lowerCasedMessage.contains("element size")) {
-      return LimitExceededMessageWrapper.ELEMENT_SIZE_LIMIT_EXCEEDED;
+    let lowerCasedMessage: String = message.lowercased()
+    if lowerCasedMessage.contains("subscribers") {
+        return LimitExceededMessageWrapper.TOPIC_SUBSCRIPTIONS_LIMIT_EXCEEDED
+    } else if lowerCasedMessage.contains("operations") {
+        return LimitExceededMessageWrapper.OPERATIONS_RATE_LIMIT_EXCEEDED
+    } else if lowerCasedMessage.contains("throughput") {
+        return LimitExceededMessageWrapper.THROUGHPUT_RATE_LIMIT_EXCEEDED
+    } else if lowerCasedMessage.contains("request limit") {
+        return LimitExceededMessageWrapper.REQUEST_SIZE_LIMIT_EXCEEDED
+    } else if lowerCasedMessage.contains("item size") {
+        return LimitExceededMessageWrapper.ITEM_SIZE_LIMIT_EXCEEDED
+    } else if lowerCasedMessage.contains("element size") {
+        return LimitExceededMessageWrapper.ELEMENT_SIZE_LIMIT_EXCEEDED
     }
-    return LimitExceededMessageWrapper.UNKNOWN_LIMIT_EXCEEDED;
+    return LimitExceededMessageWrapper.UNKNOWN_LIMIT_EXCEEDED
 }
 
 enum LimitExceededMessageWrapper: String {
@@ -247,20 +274,27 @@ enum LimitExceededMessageWrapper: String {
 
 /// Cache with specified name doesn't exist
 public class NotFoundError: SdkError {
-    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(
+        message: String, innerException: Error? = nil,
+        transportDetails: MomentoErrorTransportDetails? = nil
+    ) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.NOT_FOUND_ERROR,
             innerException: innerException,
             transportDetails: transportDetails,
-            messageWrapper: "A cache with the specified name does not exist. To resolve this error, make sure you have created the cache before attempting to use it"
+            messageWrapper:
+                "A cache with the specified name does not exist. To resolve this error, make sure you have created the cache before attempting to use it"
         )
     }
 }
 
 /// Insufficient permissions to perform operation
 public class PermissionDeniedError: SdkError {
-    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(
+        message: String, innerException: Error? = nil,
+        transportDetails: MomentoErrorTransportDetails? = nil
+    ) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.PERMISSION_ERROR,
@@ -273,33 +307,44 @@ public class PermissionDeniedError: SdkError {
 
 /// Client's configured timeout was exceeded
 public class TimeoutError: SdkError {
-    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(
+        message: String, innerException: Error? = nil,
+        transportDetails: MomentoErrorTransportDetails? = nil
+    ) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.TIMEOUT_ERROR,
             innerException: innerException,
             transportDetails: transportDetails,
-            messageWrapper: "The client's configured timeout was exceeded; you may need to use a Configuration with more lenient timeouts"
+            messageWrapper:
+                "The client's configured timeout was exceeded; you may need to use a Configuration with more lenient timeouts"
         )
     }
 }
 
 /// Server was unable to handle the request
 public class ServerUnavailableError: SdkError {
-    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(
+        message: String, innerException: Error? = nil,
+        transportDetails: MomentoErrorTransportDetails? = nil
+    ) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.SERVER_UNAVAILABLE,
             innerException: innerException,
             transportDetails: transportDetails,
-            messageWrapper: "The server was unable to handle the request; consider retrying. If the error persists, please contact us at support@momentohq.com"
+            messageWrapper:
+                "The server was unable to handle the request; consider retrying. If the error persists, please contact us at support@momentohq.com"
         )
     }
 }
 
 /// Unknown error has occurred
 public class UnknownError: SdkError {
-    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(
+        message: String, innerException: Error? = nil,
+        transportDetails: MomentoErrorTransportDetails? = nil
+    ) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.UNKNOWN_ERROR,
@@ -312,13 +357,17 @@ public class UnknownError: SdkError {
 
 /// Service returned an unknown response
 public class UnknownServiceError: SdkError {
-    init(message: String, innerException: Error? = nil, transportDetails: MomentoErrorTransportDetails? = nil) {
+    init(
+        message: String, innerException: Error? = nil,
+        transportDetails: MomentoErrorTransportDetails? = nil
+    ) {
         super.init(
             message: message,
             errorCode: MomentoErrorCode.BAD_REQUEST_ERROR,
             innerException: innerException,
             transportDetails: transportDetails,
-            messageWrapper: "Service returned an unknown response; please contact us at support@momentohq.com"
+            messageWrapper:
+                "Service returned an unknown response; please contact us at support@momentohq.com"
         )
     }
 }
@@ -347,7 +396,7 @@ func grpcStatusToSdkError(grpcStatus: GRPCStatus, metadata: HPACKHeaders? = nil)
     case .outOfRange:
         return BadRequestError(message: message, innerException: grpcStatus)
     case .permissionDenied:
-        return PermissionDeniedError(message:message, innerException: grpcStatus)
+        return PermissionDeniedError(message: message, innerException: grpcStatus)
     case .resourceExhausted:
         return LimitExceededError(message: message, innerException: grpcStatus, metadata: metadata)
     case .unauthenticated:
@@ -363,7 +412,6 @@ func grpcStatusToSdkError(grpcStatus: GRPCStatus, metadata: HPACKHeaders? = nil)
     }
 }
 
-@available(macOS 10.15, iOS 13, *)
 func processError<Request: Message & Sendable, Response: Message & Sendable>(
     err: GRPCStatus,
     call: UnaryCall<Request, Response>
