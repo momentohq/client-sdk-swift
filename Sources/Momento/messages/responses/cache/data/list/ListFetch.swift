@@ -22,31 +22,39 @@ public enum ListFetchResponse {
 }
 
 /// Indicates that the requested list was successfully retrieved from the cache and can be accessed by the fields `valueListString` or `valueListData`.
-public class ListFetchHit: CustomStringConvertible {
+public struct ListFetchHit: CustomStringConvertible {
     /// List values as type String
     public let valueListString: [String]
     /// List values as type Data
     public let valueListData: [Data]
-    
+
     init(values: [Data]) {
         self.valueListData = values
         self.valueListString = values.map { String(decoding: $0, as: UTF8.self) }
     }
-    
+
     public var description: String {
         return "[\(type(of: self))] List length: \(self.valueListData.count)"
     }
 }
 
 /// Indicates that the requested data was not available in the cache.
-public class ListFetchMiss {}
+public struct ListFetchMiss {}
 
-/**
- Indicates that an error occurred during the list fetch request.
- 
- The response object includes the following fields you can use to determine how you want to handle the error:
- - `errorCode`: a unique Momento error code indicating the type of error that occurred
- - `message`: a human-readable description of the error
- - `innerException`: the original error that caused the failure; can be re-thrown
- */
-public class ListFetchError: ErrorResponseBase {}
+/// Indicates that an error occurred during the list fetch request.
+///
+/// The response object includes the following fields you can use to determine how you want to handle the error:
+/// - `errorCode`: a unique Momento error code indicating the type of error that occurred
+/// - `message`: a human-readable description of the error
+/// - `innerException`: the original error that caused the failure; can be re-thrown
+public struct ListFetchError: ErrorResponseBaseProtocol {
+   public let message: String
+   public let errorCode: MomentoErrorCode
+   public let innerException: Error?
+
+   init(error: SdkError) {
+      self.message = error.message
+      self.errorCode = error.errorCode
+      self.innerException = error.innerException
+   }
+}

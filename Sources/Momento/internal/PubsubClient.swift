@@ -105,8 +105,9 @@ class PubsubClient: PubsubClientProtocol {
         } catch {
             return TopicPublishResponse.error(
                 TopicPublishError(
-                    error: UnknownError(
-                        message: "unknown publish error: '\(error)'", innerException: error))
+                    error: SdkError.UnknownError(
+                        UnknownError(
+                            message: "unknown publish error: '\(error)'", innerException: error)))
             )
         }
     }
@@ -149,18 +150,20 @@ class PubsubClient: PubsubClientProtocol {
                 default:
                     return TopicSubscribeResponse.error(
                         TopicSubscribeError(
-                            error: InternalServerError(
-                                message:
-                                    "Expected heartbeat message for topic \(topicName) on cache \(cacheName), got \(String(describing: nonNilFirstElement.kind))"
-                            )))
+                            error: SdkError.InternalServerError(
+                                InternalServerError(
+                                    message:
+                                        "Expected heartbeat message for topic \(topicName) on cache \(cacheName), got \(String(describing: nonNilFirstElement.kind))"
+                                ))))
                 }
             }
             return TopicSubscribeResponse.error(
                 TopicSubscribeError(
-                    error: InternalServerError(
-                        message:
-                            "Expected heartbeat message for topic \(topicName) on cache \(cacheName), got \(String(describing: firstElement))"
-                    )))
+                    error: SdkError.InternalServerError(
+                        InternalServerError(
+                            message:
+                                "Expected heartbeat message for topic \(topicName) on cache \(cacheName), got \(String(describing: firstElement))"
+                        ))))
         } catch let err as GRPCStatus {
             // The result is of type GRPCAsyncServerStreamingCall instead of UnaryCall so we
             // manually extract the trailers here instead before constructing the SdkError.
@@ -180,8 +183,9 @@ class PubsubClient: PubsubClientProtocol {
         } catch {
             return TopicSubscribeResponse.error(
                 TopicSubscribeError(
-                    error: UnknownError(
-                        message: "unknown subscribe error: '\(error)'", innerException: error))
+                    error: SdkError.UnknownError(
+                        UnknownError(
+                            message: "unknown subscribe error: '\(error)'", innerException: error)))
             )
         }
     }

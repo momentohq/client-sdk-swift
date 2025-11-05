@@ -2,7 +2,7 @@ import GRPC
 import NIOHPACK
 import SwiftProtobuf
 
-public enum MomentoErrorCode: String {
+public enum MomentoErrorCode: String, Sendable {
     /// Invalid argument passed to Momento client
     case INVALID_ARGUMENT_ERROR = "INVALID_ARGUMENT_ERROR"
     /// Service returned an unknown response
@@ -35,185 +35,183 @@ public enum MomentoErrorCode: String {
     case UNKNOWN_ERROR = "UNKNOWN_ERROR"
 }
 
-struct MomentoGrpcErrorDetails {
+struct MomentoGrpcErrorDetails: Sendable {
     let code: GRPCStatus
     let details: String
     // TODO: metadata?
 }
 
-struct MomentoErrorTransportDetails {
+struct MomentoErrorTransportDetails: Sendable {
     let grpc: MomentoGrpcErrorDetails
 }
 
-public protocol ErrorResponseBaseProtocol {
+public protocol ErrorResponseBaseProtocol: Error, Sendable {
     /// Detailed information about the error
     var message: String { get }
     /// Error code corresponding to one of the values of `MomentoErrorCode`
     var errorCode: MomentoErrorCode { get }
     /// Original `Error`, if any, from which the `SdkError` was created
     var innerException: Error? { get }
+    /// Description of the error
+    func description() -> String
 }
 
-public class SdkError: Error, ErrorResponseBaseProtocol {
-    public let message: String
-    public let errorCode: MomentoErrorCode
-    public let innerException: Error?
-    let transportDetails: MomentoErrorTransportDetails?
-    let messageWrapper: String
-
-    var description: String {
-        return "\(self.errorCode): \(self.message)"
-    }
-
-    /**
-    - Parameters:
-        - message: detailed information about the error
-        - errorCode: error code corresponding to one of the values of `MomentoErrorCode`
-        - innerExecption: optional `Error` causing the `SdkError` to be returned
-    */
-    init(
-        message: String,
-        errorCode: MomentoErrorCode,
-        innerException: Error? = nil,
-        transportDetails: MomentoErrorTransportDetails? = nil,
-        messageWrapper: String = ""
-    ) {
-        self.message = message
-        self.errorCode = errorCode
-        self.innerException = innerException
-        self.transportDetails = transportDetails
-        self.messageWrapper = messageWrapper
+extension ErrorResponseBaseProtocol {
+    public func description() -> String {
+        return "[\(self.errorCode)] \(self.message)"
     }
 }
 
 /// Resource with specified name already exists
-public class AlreadyExistsError: SdkError {
+public struct AlreadyExistsError: ErrorResponseBaseProtocol, Sendable {
+    public var message: String
+    public var errorCode = MomentoErrorCode.BAD_REQUEST_ERROR
+    public var innerException: (any Error)?
+    public var messageWrapper =
+        "A cache with the specified name already exists. To resolve this error, either delete the existing cache and make a new one, or use a different name"
+    private var transportDetails: MomentoErrorTransportDetails?
+
     init(
         message: String, innerException: Error? = nil,
         transportDetails: MomentoErrorTransportDetails? = nil
     ) {
-        super.init(
-            message: message,
-            errorCode: MomentoErrorCode.BAD_REQUEST_ERROR,
-            innerException: innerException,
-            transportDetails: transportDetails,
-            messageWrapper:
-                "A cache with the specified name already exists. To resolve this error, either delete the existing cache and make a new one, or use a different name"
-        )
+        self.message = message
+        self.innerException = innerException
+        self.transportDetails = transportDetails
+
     }
 }
 
 /// Invalid authentication credentials to connect to service
-public class AuthenticationError: SdkError {
+public struct AuthenticationError: ErrorResponseBaseProtocol, Sendable {
+    public var message: String
+    public var errorCode = MomentoErrorCode.AUTHENTICATION_ERROR
+    public var innerException: (any Error)?
+    public var messageWrapper = "Invalid authentication credentials to connect to cache service"
+    private var transportDetails: MomentoErrorTransportDetails?
+
     init(
         message: String, innerException: Error? = nil,
         transportDetails: MomentoErrorTransportDetails? = nil
     ) {
-        super.init(
-            message: message,
-            errorCode: MomentoErrorCode.AUTHENTICATION_ERROR,
-            innerException: innerException,
-            transportDetails: transportDetails,
-            messageWrapper: "Invalid authentication credentials to connect to cache service"
-        )
+        self.message = message
+        self.innerException = innerException
+        self.transportDetails = transportDetails
     }
 }
 
 /// Request was invalid
-public class BadRequestError: SdkError {
+public struct BadRequestError: ErrorResponseBaseProtocol, Sendable {
+    public var message: String
+    public var errorCode = MomentoErrorCode.BAD_REQUEST_ERROR
+    public var innerException: (any Error)?
+    public var messageWrapper =
+        "The request was invalid; please contact us at support@momentohq.com"
+    private var transportDetails: MomentoErrorTransportDetails?
+
     init(
         message: String, innerException: Error? = nil,
         transportDetails: MomentoErrorTransportDetails? = nil
     ) {
-        super.init(
-            message: message,
-            errorCode: MomentoErrorCode.BAD_REQUEST_ERROR,
-            innerException: innerException,
-            transportDetails: transportDetails,
-            messageWrapper: "The request was invalid; please contact us at support@momentohq.com"
-        )
+        self.message = message
+        self.innerException = innerException
+        self.transportDetails = transportDetails
     }
 }
 
 /// Request was cancelled by the server
-public class CancelledError: SdkError {
+public struct CancelledError: ErrorResponseBaseProtocol, Sendable {
+    public var message: String
+    public var errorCode = MomentoErrorCode.CANCELLED_ERROR
+    public var innerException: (any Error)?
+    public var messageWrapper =
+        "The request was cancelled by the server; please contact us at support@momentohq.com"
+    private var transportDetails: MomentoErrorTransportDetails?
+
     init(
         message: String, innerException: Error? = nil,
         transportDetails: MomentoErrorTransportDetails? = nil
     ) {
-        super.init(
-            message: message,
-            errorCode: MomentoErrorCode.CANCELLED_ERROR,
-            innerException: innerException,
-            transportDetails: transportDetails,
-            messageWrapper:
-                "The request was cancelled by the server; please contact us at support@momentohq.com"
-        )
+        self.message = message
+        self.innerException = innerException
+        self.transportDetails = transportDetails
     }
 }
 
 /// System is not in a state required for the operation's execution
-public class FailedPreconditionError: SdkError {
+public struct FailedPreconditionError: ErrorResponseBaseProtocol, Sendable {
+    public var message: String
+    public var errorCode = MomentoErrorCode.FAILED_PRECONDITION_ERROR
+    public var innerException: (any Error)?
+    public var messageWrapper =
+        "System is not in a state required for the operation's execution"
+    private var transportDetails: MomentoErrorTransportDetails?
+
     init(
         message: String, innerException: Error? = nil,
         transportDetails: MomentoErrorTransportDetails? = nil
     ) {
-        super.init(
-            message: message,
-            errorCode: MomentoErrorCode.FAILED_PRECONDITION_ERROR,
-            innerException: innerException,
-            transportDetails: transportDetails,
-            messageWrapper: "System is not in a state required for the operation's execution"
-        )
+        self.message = message
+        self.innerException = innerException
+        self.transportDetails = transportDetails
     }
 }
 
 /// An unexpected error occurred while trying to fulfill the request
-public class InternalServerError: SdkError {
+public struct InternalServerError: ErrorResponseBaseProtocol, Sendable {
+    public var message: String
+    public var errorCode = MomentoErrorCode.INTERNAL_SERVER_ERROR
+    public var innerException: (any Error)?
+    public var messageWrapper =
+        "An unexpected error occurred while trying to fulfill the request; please contact us at support@momentohq.com"
+    private var transportDetails: MomentoErrorTransportDetails?
+
     init(
         message: String, innerException: Error? = nil,
         transportDetails: MomentoErrorTransportDetails? = nil
     ) {
-        super.init(
-            message: message,
-            errorCode: MomentoErrorCode.INTERNAL_SERVER_ERROR,
-            innerException: innerException,
-            transportDetails: transportDetails,
-            messageWrapper:
-                "An unexpected error occurred while trying to fulfill the request; please contact us at support@momentohq.com"
-        )
+        self.message = message
+        self.innerException = innerException
+        self.transportDetails = transportDetails
     }
 }
 
 /// Invalid argument passed to Momento client
-public class InvalidArgumentError: SdkError {
+public struct InvalidArgumentError: ErrorResponseBaseProtocol, Sendable {
+    public var message: String
+    public var errorCode = MomentoErrorCode.INVALID_ARGUMENT_ERROR
+    public var innerException: (any Error)?
+    public var messageWrapper =
+        "Invalid argument passed to Momento client"
+    private var transportDetails: MomentoErrorTransportDetails?
+
     init(
         message: String, innerException: Error? = nil,
         transportDetails: MomentoErrorTransportDetails? = nil
     ) {
-        super.init(
-            message: message,
-            errorCode: MomentoErrorCode.INVALID_ARGUMENT_ERROR,
-            innerException: innerException,
-            transportDetails: transportDetails,
-            messageWrapper: "Invalid argument passed to Momento client"
-        )
+        self.message = message
+        self.innerException = innerException
+        self.transportDetails = transportDetails
     }
 }
 
 /// Request rate, bandwidth, or object size exceeded the limits for the account
-public class LimitExceededError: SdkError {
+public struct LimitExceededError: ErrorResponseBaseProtocol, Sendable {
+    public var message: String
+    public var errorCode = MomentoErrorCode.LIMIT_EXCEEDED_ERROR
+    public var innerException: (any Error)?
+    public var messageWrapper =
+        "Invalid argument passed to Momento client"
+    private var transportDetails: MomentoErrorTransportDetails?
+
     init(
         message: String, innerException: Error? = nil,
         transportDetails: MomentoErrorTransportDetails? = nil, metadata: HPACKHeaders? = nil
     ) {
-        super.init(
-            message: message,
-            errorCode: MomentoErrorCode.LIMIT_EXCEEDED_ERROR,
-            innerException: innerException,
-            transportDetails: transportDetails,
-            messageWrapper: generateMessageFromMetadata(metadata: metadata, message: message)
-        )
+        self.message = message
+        self.innerException = innerException
+        self.transportDetails = transportDetails
+        self.messageWrapper = generateMessageFromMetadata(metadata: metadata, message: message)
     }
 }
 
@@ -273,102 +271,114 @@ enum LimitExceededMessageWrapper: String {
 }
 
 /// Cache with specified name doesn't exist
-public class NotFoundError: SdkError {
+public struct NotFoundError: ErrorResponseBaseProtocol, Sendable {
+    public var message: String
+    public var errorCode = MomentoErrorCode.NOT_FOUND_ERROR
+    public var innerException: (any Error)?
+    public var messageWrapper =
+        "A cache with the specified name does not exist. To resolve this error, make sure you have created the cache before attempting to use it"
+    private var transportDetails: MomentoErrorTransportDetails?
+
     init(
         message: String, innerException: Error? = nil,
         transportDetails: MomentoErrorTransportDetails? = nil
     ) {
-        super.init(
-            message: message,
-            errorCode: MomentoErrorCode.NOT_FOUND_ERROR,
-            innerException: innerException,
-            transportDetails: transportDetails,
-            messageWrapper:
-                "A cache with the specified name does not exist. To resolve this error, make sure you have created the cache before attempting to use it"
-        )
+        self.message = message
+        self.innerException = innerException
+        self.transportDetails = transportDetails
     }
 }
 
 /// Insufficient permissions to perform operation
-public class PermissionDeniedError: SdkError {
+public struct PermissionDeniedError: ErrorResponseBaseProtocol, Sendable {
+    public var message: String
+    public var errorCode = MomentoErrorCode.PERMISSION_ERROR
+    public var innerException: (any Error)?
+    public var messageWrapper = "Insufficient permissions to perform an operation on a cache"
+    private var transportDetails: MomentoErrorTransportDetails?
+
     init(
         message: String, innerException: Error? = nil,
         transportDetails: MomentoErrorTransportDetails? = nil
     ) {
-        super.init(
-            message: message,
-            errorCode: MomentoErrorCode.PERMISSION_ERROR,
-            innerException: innerException,
-            transportDetails: transportDetails,
-            messageWrapper: "Insufficient permissions to perform an operation on a cache"
-        )
+        self.message = message
+        self.innerException = innerException
+        self.transportDetails = transportDetails
     }
 }
 
 /// Client's configured timeout was exceeded
-public class TimeoutError: SdkError {
+public struct TimeoutError: ErrorResponseBaseProtocol, Sendable {
+    public var message: String
+    public var errorCode = MomentoErrorCode.TIMEOUT_ERROR
+    public var innerException: (any Error)?
+    public var messageWrapper =
+        "The client's configured timeout was exceeded; you may need to use a Configuration with more lenient timeouts"
+    private var transportDetails: MomentoErrorTransportDetails?
+
     init(
         message: String, innerException: Error? = nil,
         transportDetails: MomentoErrorTransportDetails? = nil
     ) {
-        super.init(
-            message: message,
-            errorCode: MomentoErrorCode.TIMEOUT_ERROR,
-            innerException: innerException,
-            transportDetails: transportDetails,
-            messageWrapper:
-                "The client's configured timeout was exceeded; you may need to use a Configuration with more lenient timeouts"
-        )
+        self.message = message
+        self.innerException = innerException
+        self.transportDetails = transportDetails
     }
 }
 
 /// Server was unable to handle the request
-public class ServerUnavailableError: SdkError {
+public struct ServerUnavailableError: ErrorResponseBaseProtocol, Sendable {
+    public var message: String
+    public var errorCode = MomentoErrorCode.SERVER_UNAVAILABLE
+    public var innerException: (any Error)?
+    public var messageWrapper =
+        "The server was unable to handle the request; consider retrying. If the error persists, please contact us at support@momentohq.com"
+    private var transportDetails: MomentoErrorTransportDetails?
+
     init(
         message: String, innerException: Error? = nil,
         transportDetails: MomentoErrorTransportDetails? = nil
     ) {
-        super.init(
-            message: message,
-            errorCode: MomentoErrorCode.SERVER_UNAVAILABLE,
-            innerException: innerException,
-            transportDetails: transportDetails,
-            messageWrapper:
-                "The server was unable to handle the request; consider retrying. If the error persists, please contact us at support@momentohq.com"
-        )
+        self.message = message
+        self.innerException = innerException
+        self.transportDetails = transportDetails
     }
 }
 
 /// Unknown error has occurred
-public class UnknownError: SdkError {
+public struct UnknownError: ErrorResponseBaseProtocol, Sendable {
+    public var message: String
+    public var errorCode = MomentoErrorCode.UNKNOWN_ERROR
+    public var innerException: (any Error)?
+    public var messageWrapper = "Unknown error has occurred"
+    private var transportDetails: MomentoErrorTransportDetails?
+
     init(
         message: String, innerException: Error? = nil,
         transportDetails: MomentoErrorTransportDetails? = nil
     ) {
-        super.init(
-            message: message,
-            errorCode: MomentoErrorCode.UNKNOWN_ERROR,
-            innerException: innerException,
-            transportDetails: transportDetails,
-            messageWrapper: "Unknown error has occurred"
-        )
+        self.message = message
+        self.innerException = innerException
+        self.transportDetails = transportDetails
     }
 }
 
 /// Service returned an unknown response
-public class UnknownServiceError: SdkError {
+public struct UnknownServiceError: ErrorResponseBaseProtocol, Sendable {
+    public var message: String
+    public var errorCode = MomentoErrorCode.UNKNOWN_SERVICE_ERROR
+    public var innerException: (any Error)?
+    public var messageWrapper =
+        "Service returned an unknown response; please contact us at support@momentohq.com"
+    private var transportDetails: MomentoErrorTransportDetails?
+
     init(
         message: String, innerException: Error? = nil,
         transportDetails: MomentoErrorTransportDetails? = nil
     ) {
-        super.init(
-            message: message,
-            errorCode: MomentoErrorCode.BAD_REQUEST_ERROR,
-            innerException: innerException,
-            transportDetails: transportDetails,
-            messageWrapper:
-                "Service returned an unknown response; please contact us at support@momentohq.com"
-        )
+        self.message = message
+        self.innerException = innerException
+        self.transportDetails = transportDetails
     }
 }
 
@@ -376,39 +386,56 @@ func grpcStatusToSdkError(grpcStatus: GRPCStatus, metadata: HPACKHeaders? = nil)
     let message = grpcStatus.message ?? "No message"
     switch grpcStatus.code {
     case .aborted:
-        return InternalServerError(message: message, innerException: grpcStatus)
+        return SdkError.InternalServerError(
+            InternalServerError(message: message, innerException: grpcStatus))
     case .alreadyExists:
-        return AlreadyExistsError(message: message, innerException: grpcStatus)
+        return SdkError.AlreadyExistsError(
+            AlreadyExistsError(message: message, innerException: grpcStatus))
     case .cancelled:
-        return CancelledError(message: message, innerException: grpcStatus)
+        return SdkError.CancelledError(
+            CancelledError(message: message, innerException: grpcStatus))
     case .dataLoss:
-        return InternalServerError(message: message, innerException: grpcStatus)
+        return SdkError.InternalServerError(
+            InternalServerError(message: message, innerException: grpcStatus))
     case .deadlineExceeded:
-        return TimeoutError(message: message, innerException: grpcStatus)
+        return SdkError.TimeoutError(
+            TimeoutError(message: message, innerException: grpcStatus))
     case .failedPrecondition:
-        return FailedPreconditionError(message: message, innerException: grpcStatus)
+        return SdkError.FailedPreconditionError(
+            FailedPreconditionError(message: message, innerException: grpcStatus))
     case .internalError:
-        return InternalServerError(message: message, innerException: grpcStatus)
+        return SdkError.InternalServerError(
+            InternalServerError(message: message, innerException: grpcStatus))
     case .invalidArgument:
-        return InvalidArgumentError(message: message, innerException: grpcStatus)
+        return SdkError.InvalidArgumentError(
+            InvalidArgumentError(message: message, innerException: grpcStatus))
     case .notFound:
-        return NotFoundError(message: message, innerException: grpcStatus)
+        return SdkError.NotFoundError(
+            NotFoundError(message: message, innerException: grpcStatus))
     case .outOfRange:
-        return BadRequestError(message: message, innerException: grpcStatus)
+        return SdkError.BadRequestError(
+            BadRequestError(message: message, innerException: grpcStatus))
     case .permissionDenied:
-        return PermissionDeniedError(message: message, innerException: grpcStatus)
+        return SdkError.PermissionDeniedError(
+            PermissionDeniedError(message: message, innerException: grpcStatus))
     case .resourceExhausted:
-        return LimitExceededError(message: message, innerException: grpcStatus, metadata: metadata)
+        return SdkError.LimitExceededError(
+            LimitExceededError(message: message, innerException: grpcStatus, metadata: metadata))
     case .unauthenticated:
-        return AuthenticationError(message: message, innerException: grpcStatus)
+        return SdkError.AuthenticationError(
+            AuthenticationError(message: message, innerException: grpcStatus))
     case .unavailable:
-        return ServerUnavailableError(message: message, innerException: grpcStatus)
+        return SdkError.ServerUnavailableError(
+            ServerUnavailableError(message: message, innerException: grpcStatus))
     case .unimplemented:
-        return BadRequestError(message: message, innerException: grpcStatus)
+        return SdkError.BadRequestError(
+            BadRequestError(message: message, innerException: grpcStatus))
     case .unknown:
-        return UnknownServiceError(message: message, innerException: grpcStatus)
+        return SdkError.UnknownServiceError(
+            UnknownServiceError(message: message, innerException: grpcStatus))
     default:
-        return UnknownError(message: "Unknown error", innerException: grpcStatus)
+        return SdkError.UnknownError(
+            UnknownError(message: "Unknown error", innerException: grpcStatus))
     }
 }
 
@@ -421,5 +448,123 @@ func processError<Request: Message & Sendable, Response: Message & Sendable>(
         return grpcStatusToSdkError(grpcStatus: err, metadata: trailers)
     } catch {
         return grpcStatusToSdkError(grpcStatus: err)
+    }
+}
+
+public enum SdkError: Error, Sendable {
+    case AlreadyExistsError(AlreadyExistsError)
+    case AuthenticationError(AuthenticationError)
+    case BadRequestError(BadRequestError)
+    case CancelledError(CancelledError)
+    case FailedPreconditionError(FailedPreconditionError)
+    case InternalServerError(InternalServerError)
+    case InvalidArgumentError(InvalidArgumentError)
+    case LimitExceededError(LimitExceededError)
+    case NotFoundError(NotFoundError)
+    case PermissionDeniedError(PermissionDeniedError)
+    case TimeoutError(TimeoutError)
+    case ServerUnavailableError(ServerUnavailableError)
+    case UnknownError(UnknownError)
+    case UnknownServiceError(UnknownServiceError)
+}
+
+extension SdkError: ErrorResponseBaseProtocol {
+    public var message: String {
+        switch self {
+        case .AlreadyExistsError(let err):
+            return err.message
+        case .AuthenticationError(let err):
+            return err.message
+        case .BadRequestError(let err):
+            return err.message
+        case .CancelledError(let err):
+            return err.message
+        case .FailedPreconditionError(let err):
+            return err.message
+        case .InternalServerError(let err):
+            return err.message
+        case .InvalidArgumentError(let err):
+            return err.message
+        case .LimitExceededError(let err):
+            return err.message
+        case .NotFoundError(let err):
+            return err.message
+        case .PermissionDeniedError(let err):
+            return err.message
+        case .TimeoutError(let err):
+            return err.message
+        case .ServerUnavailableError(let err):
+            return err.message
+        case .UnknownError(let err):
+            return err.message
+        case .UnknownServiceError(let err):
+            return err.message
+        }
+    }
+
+    public var errorCode: MomentoErrorCode {
+        switch self {
+        case .AlreadyExistsError(let err):
+            return err.errorCode
+        case .AuthenticationError(let err):
+            return err.errorCode
+        case .BadRequestError(let err):
+            return err.errorCode
+        case .CancelledError(let err):
+            return err.errorCode
+        case .FailedPreconditionError(let err):
+            return err.errorCode
+        case .InternalServerError(let err):
+            return err.errorCode
+        case .InvalidArgumentError(let err):
+            return err.errorCode
+        case .LimitExceededError(let err):
+            return err.errorCode
+        case .NotFoundError(let err):
+            return err.errorCode
+        case .PermissionDeniedError(let err):
+            return err.errorCode
+        case .TimeoutError(let err):
+            return err.errorCode
+        case .ServerUnavailableError(let err):
+            return err.errorCode
+        case .UnknownError(let err):
+            return err.errorCode
+        case .UnknownServiceError(let err):
+            return err.errorCode
+        }
+    }
+
+    public var innerException: Error? {
+        switch self {
+        case .AlreadyExistsError(let err):
+            return err.innerException
+        case .AuthenticationError(let err):
+            return err.innerException
+        case .BadRequestError(let err):
+            return err.innerException
+        case .CancelledError(let err):
+            return err.innerException
+        case .FailedPreconditionError(let err):
+            return err.innerException
+        case .InternalServerError(let err):
+            return err.innerException
+        case .InvalidArgumentError(let err):
+            return err.innerException
+        case .LimitExceededError(let err):
+            return err.innerException
+        case .NotFoundError(let err):
+            return err.innerException
+        case .PermissionDeniedError(let err):
+            return err.innerException
+        case .TimeoutError(let err):
+            return err.innerException
+        case .ServerUnavailableError(let err):
+            return err.innerException
+        case .UnknownError(let err):
+            return err.innerException
+        case .UnknownServiceError(let err):
+            return err.innerException
+        }
     }
 }

@@ -177,7 +177,8 @@ class DataClient: DataClientProtocol {
             } else {
                 return GetResponse.error(
                     GetError(
-                        error: UnknownError(message: "unknown cache get result: '\(result)'")
+                        error: SdkError.UnknownError(
+                            UnknownError(message: "unknown cache get result: '\(result)'"))
                     ))
             }
         } catch let err as GRPCStatus {
@@ -191,8 +192,9 @@ class DataClient: DataClientProtocol {
         } catch {
             return GetResponse.error(
                 GetError(
-                    error: UnknownError(
-                        message: "unknown cache get error: '\(error)'", innerException: error)
+                    error: SdkError.UnknownError(
+                        UnknownError(
+                            message: "unknown cache get error: '\(error)'", innerException: error))
                 ))
         }
     }
@@ -233,9 +235,13 @@ class DataClient: DataClientProtocol {
         } catch {
             return SetResponse.error(
                 SetError(
-                    error: UnknownError(
-                        message: "unknown cache set error: '\(error)'", innerException: error)
-                ))
+                    error: SdkError.UnknownError(
+                        UnknownError(
+                            message: "unknown cache set error: '\(error)'", innerException: error
+                        )
+                    )
+                )
+            )
         }
     }
 
@@ -266,9 +272,13 @@ class DataClient: DataClientProtocol {
         } catch {
             return DeleteResponse.error(
                 DeleteError(
-                    error: UnknownError(
-                        message: "unknown cache set error: '\(error)'", innerException: error)
-                ))
+                    error: SdkError.UnknownError(
+                        UnknownError(
+                            message: "unknown cache set error: '\(error)'",
+                            innerException: error
+                        ))
+                )
+            )
         }
     }
 
@@ -313,9 +323,13 @@ class DataClient: DataClientProtocol {
         } catch {
             return ListConcatenateBackResponse.error(
                 ListConcatenateBackError(
-                    error: UnknownError(
-                        message: "unknown list concatenate back error: '\(error)'",
-                        innerException: error))
+                    error: SdkError.UnknownError(
+                        UnknownError(
+                            message: "unknown list concatenate back error: '\(error)'",
+                            innerException: error
+                        )
+                    )
+                )
             )
         }
     }
@@ -361,9 +375,10 @@ class DataClient: DataClientProtocol {
         } catch {
             return ListConcatenateFrontResponse.error(
                 ListConcatenateFrontError(
-                    error: UnknownError(
-                        message: "unknown list concatenate front error: '\(error)'",
-                        innerException: error)
+                    error: SdkError.UnknownError(
+                        UnknownError(
+                            message: "unknown list concatenate front error: '\(error)'",
+                            innerException: error))
                 )
             )
         }
@@ -413,7 +428,8 @@ class DataClient: DataClientProtocol {
             default:
                 return ListFetchResponse.error(
                     ListFetchError(
-                        error: UnknownError(message: "unknown list fetch result: \(result)"))
+                        error: SdkError.UnknownError(
+                            UnknownError(message: "unknown list fetch result: \(result)")))
                 )
             }
         } catch let err as GRPCStatus {
@@ -426,8 +442,10 @@ class DataClient: DataClientProtocol {
         } catch {
             return ListFetchResponse.error(
                 ListFetchError(
-                    error: UnknownError(
-                        message: "unknown list fetch error: '\(error)'", innerException: error))
+                    error: SdkError.UnknownError(
+                        UnknownError(
+                            message: "unknown list fetch error: '\(error)'", innerException: error))
+                )
             )
         }
     }
@@ -459,7 +477,8 @@ class DataClient: DataClientProtocol {
             default:
                 return ListLengthResponse.error(
                     ListLengthError(
-                        error: UnknownError(message: "unknown list length result: \(result)"))
+                        error: SdkError.UnknownError(
+                            UnknownError(message: "unknown list length result: \(result)")))
                 )
             }
         } catch let err as GRPCStatus {
@@ -472,8 +491,10 @@ class DataClient: DataClientProtocol {
         } catch {
             return ListLengthResponse.error(
                 ListLengthError(
-                    error: UnknownError(
-                        message: "unknown list length error: '\(error)'", innerException: error))
+                    error: SdkError.UnknownError(
+                        UnknownError(
+                            message: "unknown list length error: '\(error)'", innerException: error)
+                    ))
             )
         }
     }
@@ -505,7 +526,8 @@ class DataClient: DataClientProtocol {
             default:
                 return ListPopBackResponse.error(
                     ListPopBackError(
-                        error: UnknownError(message: "unknown list pop back result: \(result)"))
+                        error: SdkError.UnknownError(
+                            UnknownError(message: "unknown list pop back result: \(result)")))
                 )
             }
         } catch let err as GRPCStatus {
@@ -518,8 +540,10 @@ class DataClient: DataClientProtocol {
         } catch {
             return ListPopBackResponse.error(
                 ListPopBackError(
-                    error: UnknownError(
-                        message: "unknown list pop back error: '\(error)'", innerException: error)
+                    error: SdkError.UnknownError(
+                        UnknownError(
+                            message: "unknown list pop back error: '\(error)'",
+                            innerException: error))
                 )
             )
         }
@@ -552,7 +576,8 @@ class DataClient: DataClientProtocol {
             default:
                 return ListPopFrontResponse.error(
                     ListPopFrontError(
-                        error: UnknownError(message: "unknown list pop front result: \(result)"))
+                        error: SdkError.UnknownError(
+                            UnknownError(message: "unknown list pop front result: \(result)")))
                 )
             }
         } catch let err as GRPCStatus {
@@ -565,8 +590,10 @@ class DataClient: DataClientProtocol {
         } catch {
             return ListPopFrontResponse.error(
                 ListPopFrontError(
-                    error: UnknownError(
-                        message: "unknown list pop front error: '\(error)'", innerException: error)
+                    error: SdkError.UnknownError(
+                        UnknownError(
+                            message: "unknown list pop front error: '\(error)'",
+                            innerException: error))
                 )
             )
         }
@@ -611,8 +638,10 @@ class DataClient: DataClientProtocol {
         } catch {
             return ListPushBackResponse.error(
                 ListPushBackError(
-                    error: UnknownError(
-                        message: "unknown list push back error: '\(error)'", innerException: error)
+                    error: SdkError.UnknownError(
+                        UnknownError(
+                            message: "unknown list push back error: '\(error)'",
+                            innerException: error))
                 )
             )
         }
@@ -657,8 +686,10 @@ class DataClient: DataClientProtocol {
         } catch {
             return ListPushFrontResponse.error(
                 ListPushFrontError(
-                    error: UnknownError(
-                        message: "unknown list push front error: '\(error)'", innerException: error)
+                    error: SdkError.UnknownError(
+                        UnknownError(
+                            message: "unknown list push front error: '\(error)'",
+                            innerException: error))
                 )
             )
         }
@@ -696,9 +727,10 @@ class DataClient: DataClientProtocol {
         } catch {
             return ListRemoveValueResponse.error(
                 ListRemoveValueError(
-                    error: UnknownError(
-                        message: "unknown list remove value error: '\(error)'",
-                        innerException: error)
+                    error: SdkError.UnknownError(
+                        UnknownError(
+                            message: "unknown list remove value error: '\(error)'",
+                            innerException: error))
                 )
             )
         }
@@ -756,8 +788,13 @@ class DataClient: DataClientProtocol {
         } catch {
             return ListRetainResponse.error(
                 ListRetainError(
-                    error: UnknownError(
-                        message: "unknown list retain error: '\(error)'", innerException: error))
+                    error: SdkError.UnknownError(
+                        UnknownError(
+                            message: "unknown list retain error: '\(error)'",
+                            innerException: error
+                        )
+                    )
+                )
             )
         }
     }

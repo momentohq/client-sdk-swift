@@ -1,20 +1,20 @@
 import Foundation
 
 extension String {
-  var isBlank: Bool {
-    return allSatisfy({ $0.isWhitespace })
-  }
+    var isBlank: Bool {
+        return allSatisfy({ $0.isWhitespace })
+    }
 }
 
 private func validateString(str: String, errorMessage: String) throws {
     if str.isBlank || str.isEmpty {
-        throw InvalidArgumentError(message: errorMessage)
+        throw SdkError.InvalidArgumentError(InvalidArgumentError(message: errorMessage))
     }
 }
 
 private func validateData(data: Data, errorMessage: String) throws {
     if data.isEmpty {
-        throw InvalidArgumentError(message: errorMessage)
+        throw SdkError.InvalidArgumentError(InvalidArgumentError(message: errorMessage))
     }
 }
 
@@ -40,16 +40,18 @@ internal func validateCacheKey(key: ScalarType) throws {
 }
 
 internal func validateTtl(ttl: TimeInterval?) throws {
-    if (ttl != nil) {
-        if (ttl!.isLessThanOrEqualTo(0) || ttl!.isInfinite) {
-            throw InvalidArgumentError(message: "TTL must be a non-zero positive number")
+    if ttl != nil {
+        if ttl!.isLessThanOrEqualTo(0) || ttl!.isInfinite {
+            throw SdkError.InvalidArgumentError(
+                InvalidArgumentError(message: "TTL must be a non-zero positive number"))
         }
     }
 }
 
 internal func validateTruncateSize(size: Int?) throws {
-    if (size != nil && size! < 0) {
-        throw InvalidArgumentError(message: "size to truncate to must be a positive number")
+    if size != nil && size! < 0 {
+        throw SdkError.InvalidArgumentError(
+            InvalidArgumentError(message: "size to truncate to must be a positive number"))
     }
 }
 
@@ -61,12 +63,15 @@ internal func validateListSliceStartEnd(startIndex: Int?, endIndex: Int?) throws
         return
     }
     if endIndex! <= startIndex! {
-        throw InvalidArgumentError(message: "endIndex (exclusive) must be larger than startIndex (inclusive)")
+        throw SdkError.InvalidArgumentError(
+            InvalidArgumentError(
+                message: "endIndex (exclusive) must be larger than startIndex (inclusive)"))
     }
 }
 
 internal func validateListSize(list: [ScalarType]) throws {
-    if (list.isEmpty) {
-        throw InvalidArgumentError(message: "must provide a list with at least one element")
+    if list.isEmpty {
+        throw SdkError.InvalidArgumentError(
+            InvalidArgumentError(message: "must provide a list with at least one element"))
     }
 }
