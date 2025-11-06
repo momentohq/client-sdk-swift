@@ -13,14 +13,14 @@ import Foundation
 ///      print("Binary: \(String(decoding: binary, as: UTF8.self))")
 ///  }
 /// ```
-public enum TopicSubscriptionItemResponse {
+public enum TopicSubscriptionItemResponse: Sendable {
     case itemText(TopicSubscriptionItemText)
     case itemBinary(TopicSubscriptionItemBinary)
     case error(TopicSubscriptionItemError)
 }
 
 /// Topic subscription item that was recieved as type String and can be accessed using the `value` field
-public struct TopicSubscriptionItemText: CustomStringConvertible {
+public struct TopicSubscriptionItemText: CustomStringConvertible, Sendable {
     public let value: String
     public let lastSequenceNumber: UInt64
     public let lastSequencePage: UInt64
@@ -37,7 +37,7 @@ public struct TopicSubscriptionItemText: CustomStringConvertible {
 }
 
 /// Topic subscription item that was recieved as type Data and can be accessed using the `value` field
-public struct TopicSubscriptionItemBinary: CustomStringConvertible {
+public struct TopicSubscriptionItemBinary: CustomStringConvertible, Sendable {
     public let value: Data
     public let lastSequenceNumber: UInt64
     public let lastSequencePage: UInt64
@@ -59,7 +59,7 @@ public struct TopicSubscriptionItemBinary: CustomStringConvertible {
 /// - `errorCode`: a unique Momento error code indicating the type of error that occurred
 /// - `message`: a human-readable description of the error
 /// - `innerException`: the original error that caused the failure; can be re-thrown
-public struct TopicSubscriptionItemError: ErrorResponseBaseProtocol {
+public struct TopicSubscriptionItemError: ErrorResponseBaseProtocol, Sendable {
     public let message: String
     public let errorCode: MomentoErrorCode
     public let innerException: Error?

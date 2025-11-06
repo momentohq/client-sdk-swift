@@ -154,13 +154,13 @@ public final class TopicSubscription {
 /// - `message`: a human-readable description of the error
 /// - `innerException`: the original error that caused the failure; can be re-thrown
 public struct TopicSubscribeError: ErrorResponseBaseProtocol {
-   public let message: String
-   public let errorCode: MomentoErrorCode
-   public let innerException: Error?
+    public let message: String
+    public let errorCode: MomentoErrorCode
+    public let innerException: Error?
 
-   init(error: SdkError) {
-      self.message = error.message
-      self.errorCode = error.errorCode
-      self.innerException = error.innerException
-   }
+    init(error: SdkError) {
+        self.message = error.message
+        self.errorCode = error.errorCode
+        self.innerException = error.innerException
+    }
 }
