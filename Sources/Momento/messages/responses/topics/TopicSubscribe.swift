@@ -74,6 +74,10 @@ public final class TopicSubscription {
                     self.logger.debug("Caught GRPCStatus \(err), attempting to resubscribe")
                     await self.attemptResubscribe()
                 }
+            } catch let err as CancellationError {
+                self.logger.error(
+                    "CancellationError from iterator: \(err), not resubscribing")
+                return nil
             } catch {
                 self.logger.error(
                     "Unknown error from iterator: \(error.localizedDescription), attempting to resubscribe"
