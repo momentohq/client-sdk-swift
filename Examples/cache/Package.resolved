@@ -1,12 +1,13 @@
 {
+  "originHash" : "fe430bf7ad4e269e66e9de552cac9885f59a8aec9d834d8b04a7e2c1dce525c2",
   "pins" : [
     {
       "identity" : "client-sdk-swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/momentohq/client-sdk-swift",
       "state" : {
-        "revision" : "7396fee30df1380bf36f752f09a9198bc9655eea",
-        "version" : "0.7.2"
+        "revision" : "909cd863c1255d6f6db1ea1cc0327a4ea623db1f",
+        "version" : "0.8.0"
       }
     },
     {
@@ -122,8 +123,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-nio-extras.git",
       "state" : {
-        "revision" : "b87fdbf492c8fd5ac860e642c714d2d24156990a",
-        "version" : "1.30.0"
+        "revision" : "7ee281d816fa8e5f3967a2c294035a318ea551c7",
+        "version" : "1.31.0"
       }
     },
     {
@@ -176,8 +177,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swift-server/swift-service-lifecycle.git",
       "state" : {
-        "revision" : "0fcc4c9c2d58dd98504c06f7308c86de775396ff",
-        "version" : "2.9.0"
+        "revision" : "1de37290c0ab3c5a96028e0f02911b672fd42348",
+        "version" : "2.9.1"
       }
     },
     {
@@ -190,5 +191,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

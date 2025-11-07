@@ -3,7 +3,7 @@ import Momento
 
 func main() async {
     print("Running Momento Cache example!")
-    let cacheName = "example-cache"
+    let cacheName = "cache"
 
     var creds: CredentialProviderProtocol
     do {

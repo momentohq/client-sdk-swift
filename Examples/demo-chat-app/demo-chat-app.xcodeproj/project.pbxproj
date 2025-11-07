@@ -378,8 +378,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/momentohq/client-sdk-swift";
 			requirement = {
-				kind = exactVersion;
-				version = 0.7.2;
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.8.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
