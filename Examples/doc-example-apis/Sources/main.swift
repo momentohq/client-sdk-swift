@@ -128,41 +128,41 @@ func example_API_TopicPublish(topicClient: TopicClient, cacheName: String) async
 func example_API_TopicSubscribe(topicClient: TopicClient, cacheName: String) async {
     let subscribeResponse = await topicClient.subscribe(cacheName: cacheName, topicName: "topic")
 
-    #if swift(>=5.9)
-        let subscription =
-            switch subscribeResponse {
-            case .error(let err): fatalError("Error subscribing to topic: \(err)")
-            case .subscription(let sub): sub
-            }
-    #else
-        let subscription: TopicSubscription
+    // Using nonisolated(unsafe) in this example to avoid "sending task-isolated 'subscription' into async let
+    // risks causing data races between nonisolated and task-isolated uses" errors.
+    // In production code, use proper concurrency patterns to avoid data races.
+    nonisolated(unsafe) let subscription =
         switch subscribeResponse {
-        case .error(let err):
-            fatalError("Error subscribing to topic: \(err)")
-        case .subscription(let sub):
-            subscription = sub
+        case .error(let err): fatalError("Error subscribing to topic: \(err)")
+        case .subscription(let sub): sub
         }
-    #endif
 
-    // unsubscribe in 5 seconds
-    Task {
-        try await Task.sleep(nanoseconds: 5_000_000_000)
+    // Process subscription with timeout using async let
+    async let timeout: () = Task.sleep(nanoseconds: 5_000_000_000)
+
+    async let subscriptionProcessing: () = {
+        // loop over messages as they are received
+        for try await item in subscription.stream {
+            var value: String = ""
+            switch item {
+            case .itemText(let textItem):
+                value = textItem.value
+                print("Subscriber recieved text message: \(value)")
+            case .itemBinary(let binaryItem):
+                value = String(decoding: binaryItem.value, as: UTF8.self)
+                print("Subscriber recieved binary message: \(value)")
+            case .error(let err):
+                print("Subscriber received error: \(err)")
+            }
+        }
+    }()
+
+    // Wait for timeout, then unsubscribe
+    do {
+        try await timeout
         subscription.unsubscribe()
-    }
-
-    // loop over messages as they are received
-    for try await item in subscription.stream {
-        var value: String = ""
-        switch item {
-        case .itemText(let textItem):
-            value = textItem.value
-            print("Subscriber recieved text message: \(value)")
-        case .itemBinary(let binaryItem):
-            value = String(decoding: binaryItem.value, as: UTF8.self)
-            print("Subscriber recieved binary message: \(value)")
-        case .error(let err):
-            print("Subscriber received error: \(err)")
-        }
+    } catch {
+        subscription.unsubscribe()
     }
 }
 

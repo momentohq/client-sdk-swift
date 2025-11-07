@@ -1,4 +1,4 @@
-// swift-tools-version: 5.9
+// swift-tools-version: 6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -12,15 +12,15 @@ let package = Package(
         .visionOS(.v1),
     ],
     dependencies: [
-        .package(url: "https://github.com/momentohq/client-sdk-swift", exact: "0.7.2")
+        .package(url: "https://github.com/momentohq/client-sdk-swift", exact: "0.8.0")
     ],
     targets: [
         .executableTarget(
             name: "doc-example-apis",
             dependencies: [
-                .product(name: "Momento", package: "client-sdk-swift"),
+                .product(name: "Momento", package: "client-sdk-swift")
             ],
             path: "Sources"
-        ),
+        )
     ]
 )
