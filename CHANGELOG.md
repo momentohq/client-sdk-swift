@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/momentohq/client-sdk-swift/compare/v0.7.2...v0.8.0) (2025-11-07)
+
+
+### Features
+
+* upgrade to swift 6 to support strict concurrency ([#149](https://github.com/momentohq/client-sdk-swift/issues/149)) ([332ea4b](https://github.com/momentohq/client-sdk-swift/commit/332ea4b5b5c9b9a5c86fcef4e4da305465e08cea))
+
 ## [0.7.2](https://github.com/momentohq/client-sdk-swift/compare/v0.7.1...v0.7.2) (2025-11-04)
 
 
