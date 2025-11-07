@@ -200,8 +200,7 @@ public struct LimitExceededError: ErrorResponseBaseProtocol, Sendable {
     public var message: String
     public var errorCode = MomentoErrorCode.LIMIT_EXCEEDED_ERROR
     public var innerException: (any Error)?
-    public var messageWrapper =
-        "Invalid argument passed to Momento client"
+    public var messageWrapper: String
     private var transportDetails: MomentoErrorTransportDetails?
 
     init(
