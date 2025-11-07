@@ -128,8 +128,12 @@ public class TopicClient: TopicClientProtocol {
         } catch {
             return TopicPublishResponse.error(
                 TopicPublishError(
-                    error: UnknownError(
-                        message: "unexpected error: '\(error)'", innerException: error))
+                    error: SdkError.UnknownError(
+                        UnknownError(
+                            message: "unexpected error: '\(error)'", innerException: error
+                        )
+                    )
+                )
             )
         }
 
@@ -143,10 +147,11 @@ public class TopicClient: TopicClientProtocol {
         } catch {
             return TopicPublishResponse.error(
                 TopicPublishError(
-                    error: UnknownError(
-                        message: "Unknown error from publish: '\(error)'",
-                        innerException: error
-                    )
+                    error: SdkError.UnknownError(
+                        UnknownError(
+                            message: "Unknown error from publish: '\(error)'",
+                            innerException: error
+                        ))
                 )
             )
         }
@@ -217,8 +222,9 @@ public class TopicClient: TopicClientProtocol {
         } catch {
             return TopicSubscribeResponse.error(
                 TopicSubscribeError(
-                    error: UnknownError(
-                        message: "unexpected error: '\(error)'", innerException: error))
+                    error: SdkError.UnknownError(
+                        UnknownError(
+                            message: "unexpected error: '\(error)'", innerException: error)))
             )
         }
 
@@ -235,10 +241,11 @@ public class TopicClient: TopicClientProtocol {
         } catch {
             return TopicSubscribeResponse.error(
                 TopicSubscribeError(
-                    error: UnknownError(
-                        message: "Unknown error from subscribe: '\(error)'",
-                        innerException: error
-                    )
+                    error: SdkError.UnknownError(
+                        UnknownError(
+                            message: "Unknown error from subscribe: '\(error)'",
+                            innerException: error
+                        ))
                 ))
         }
     }

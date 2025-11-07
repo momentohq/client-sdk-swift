@@ -23,7 +23,7 @@ public enum TopicSubscribeResponse {
 
 /// Encapsulates a topic subscription. Iterate over the subscription's `stream` property to retrieve `TopicSubscriptionItemResponse` objects containing data published to the topic.
 
-public class TopicSubscription {
+public final class TopicSubscription {
     private var subscribeCallResponse:
         GRPCAsyncServerStreamingCall<
             CacheClient_Pubsub__SubscriptionRequest, CacheClient_Pubsub__SubscriptionItem
@@ -153,4 +153,14 @@ public class TopicSubscription {
 /// - `errorCode`: a unique Momento error code indicating the type of error that occurred
 /// - `message`: a human-readable description of the error
 /// - `innerException`: the original error that caused the failure; can be re-thrown
-public class TopicSubscribeError: ErrorResponseBase {}
+public struct TopicSubscribeError: ErrorResponseBaseProtocol {
+    public let message: String
+    public let errorCode: MomentoErrorCode
+    public let innerException: Error?
+
+    init(error: SdkError) {
+        self.message = error.message
+        self.errorCode = error.errorCode
+        self.innerException = error.innerException
+    }
+}

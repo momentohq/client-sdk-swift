@@ -17,14 +17,22 @@ public enum ListRemoveValueResponse {
 }
 
 /// Indicates a successful list remove value request.
-public class ListRemoveValueSuccess {}
+public struct ListRemoveValueSuccess {}
 
-/**
- Indicates that an error occurred during the list remove value request.
- 
- The response object includes the following fields you can use to determine how you want to handle the error:
- - `errorCode`: a unique Momento error code indicating the type of error that occurred
- - `message`: a human-readable description of the error
- - `innerException`: the original error that caused the failure; can be re-thrown
- */
-public class ListRemoveValueError: ErrorResponseBase {}
+/// Indicates that an error occurred during the list remove value request.
+///
+/// The response object includes the following fields you can use to determine how you want to handle the error:
+/// - `errorCode`: a unique Momento error code indicating the type of error that occurred
+/// - `message`: a human-readable description of the error
+/// - `innerException`: the original error that caused the failure; can be re-thrown
+public struct ListRemoveValueError: ErrorResponseBaseProtocol {
+   public let message: String
+   public let errorCode: MomentoErrorCode
+   public let innerException: Error?
+
+   init(error: SdkError) {
+      self.message = error.message
+      self.errorCode = error.errorCode
+      self.innerException = error.innerException
+   }
+}
