@@ -1,8 +1,8 @@
-@preconcurrency import GRPC
+import Atomics
+import GRPC
 import Logging
 import NIO
 import NIOHPACK
-import Atomics
 
 protocol PubsubClientProtocol: Sendable {
     var configuration: TopicClientConfigurationProtocol { get }
