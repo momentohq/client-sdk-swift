@@ -9,7 +9,7 @@ enum CredentialProviderError: Error {
 }
 
 /// Specifies the fields that are required for a Momento client to connect to and authenticate with the Momento service.
-public protocol CredentialProviderProtocol {
+public protocol CredentialProviderProtocol: Sendable {
     /// API key provided by user, required to authenticate with the Momento service
     var apiKey: String { get }
 
@@ -125,7 +125,7 @@ public class CredentialProvider {
     }
 }
 
-public class StringMomentoTokenProvider: CredentialProviderProtocol {
+public struct StringMomentoTokenProvider: CredentialProviderProtocol {
     public let apiKey: String
     public let controlEndpoint: String
     public let cacheEndpoint: String
@@ -142,7 +142,11 @@ public class StringMomentoTokenProvider: CredentialProviderProtocol {
     }
 }
 
-public class EnvMomentoTokenProvider: StringMomentoTokenProvider {
+public struct EnvMomentoTokenProvider: CredentialProviderProtocol {
+    public let apiKey: String
+    public let controlEndpoint: String
+    public let cacheEndpoint: String
+
     init(envVarName: String = "", controlEndpoint: String? = nil, cacheEndpoint: String? = nil)
         throws
     {
@@ -153,7 +157,13 @@ public class EnvMomentoTokenProvider: StringMomentoTokenProvider {
             )
         }
         let apiKey = ProcessInfo.processInfo.environment[envVarName]
-        try super.init(
-            apiKey: apiKey ?? "", controlEndpoint: controlEndpoint, cacheEndpoint: cacheEndpoint)
+        if apiKey?.isEmpty ?? true {
+            throw CredentialProviderError.emptyApiKey()
+        }
+        let (_cacheEndpoint, _controlEndpoint, _apiKey) = try CredentialProvider.parseApiKey(
+            apiKey: apiKey!)
+        self.controlEndpoint = controlEndpoint ?? _controlEndpoint
+        self.cacheEndpoint = cacheEndpoint ?? _cacheEndpoint
+        self.apiKey = _apiKey
     }
 }

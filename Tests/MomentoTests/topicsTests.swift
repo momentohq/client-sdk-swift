@@ -1,28 +1,29 @@
 import XCTest
+
 @testable import Momento
 
 final class topicsTests: XCTestCase {
     private var integrationTestCacheName: String!
     private var topicClient: TopicClientProtocol!
     private var cacheClient: CacheClientProtocol!
-    
+
     override func setUp() async throws {
         let testSetup = await setUpIntegrationTests()
         self.integrationTestCacheName = testSetup.cacheName
         self.topicClient = testSetup.topicClient
         self.cacheClient = testSetup.cacheClient
     }
-    
+
     override func tearDown() async throws {
         await cleanUpIntegrationTests(
             cacheName: self.integrationTestCacheName,
             cacheClient: self.cacheClient
         )
     }
-    
+
     func testTopicClientPublishes() async throws {
         let topicName = generateStringWithUuid(prefix: "test-topic")
-        
+
         let invalidCacheNameResp = await self.topicClient.publish(
             cacheName: "",
             topicName: topicName,
@@ -59,10 +60,10 @@ final class topicsTests: XCTestCase {
             XCTAssertTrue(true)
         }
     }
-    
+
     func testTopicClientSubscribes() async throws {
         let topicName = generateStringWithUuid(prefix: "test-topic")
-        
+
         let invalidCacheNameResp = await self.topicClient.subscribe(
             cacheName: "",
             topicName: topicName
@@ -96,7 +97,7 @@ final class topicsTests: XCTestCase {
             XCTAssertTrue(true)
         }
     }
-    
+
     func testTopicClientPublishesAndSubscribes() async throws {
         let topicName = generateStringWithUuid(prefix: "test-topic")
         let topicValue = "publishing and subscribing!"
@@ -125,7 +126,7 @@ final class topicsTests: XCTestCase {
             XCTAssertTrue(true)
         }
 
-        for try await item in subscription.stream {
+        for try await item in await subscription.stream {
             switch item {
             case .error(let err):
                 XCTFail("expected itemText but got \(err)")
@@ -171,7 +172,7 @@ final class topicsTests: XCTestCase {
             subscription = sub
         }
 
-        for try await item in subscription.stream {
+        for try await item in await subscription.stream {
             switch item {
             case .error(let err):
                 XCTFail("expected itemText but got \(err)")
@@ -214,7 +215,7 @@ final class topicsTests: XCTestCase {
             subscription = sub
         }
 
-        for try await item in subscription.stream {
+        for try await item in await subscription.stream {
             switch item {
             case .error(let err):
                 XCTFail("expected itemText but got \(err)")
@@ -255,7 +256,7 @@ final class topicsTests: XCTestCase {
             XCTAssertTrue(true)
         }
 
-        for try await item in subscription.stream {
+        for try await item in await subscription.stream {
             switch item {
             case .error(let err):
                 XCTFail("expected itemBinary but got \(err)")
