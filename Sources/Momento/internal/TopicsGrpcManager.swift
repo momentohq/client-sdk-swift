@@ -2,9 +2,9 @@ import GRPC
 import NIO
 import NIOHPACK
 
-internal class TopicsGrpcManager {
-    var channel: GRPCChannel
-    var client: CacheClient_Pubsub_PubsubAsyncClient
+internal struct TopicsGrpcManager: Sendable {
+    let channel: GRPCChannel
+    let client: CacheClient_Pubsub_PubsubAsyncClient
 
     init(
         credentialProvider: CredentialProviderProtocol,

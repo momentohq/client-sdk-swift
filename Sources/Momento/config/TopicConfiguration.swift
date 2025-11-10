@@ -1,17 +1,18 @@
 import Foundation
 import Logging
 
-public protocol TopicClientConfigurationProtocol {
+public protocol TopicClientConfigurationProtocol: Sendable {
     /// Configures low-level options for network interactions with the Momento service
     var transportStrategy: TransportStrategyProtocol { get }
-    
+
     /**
     Copy constructor for overriding TransportStrategy
     - Parameter transportStrategy
     - Returns a new `TopicClientConfiguration` object with the specified transport strategy
     */
-    func withTransportStrategy(transportStrategy: TransportStrategyProtocol) -> TopicClientConfigurationProtocol
-    
+    func withTransportStrategy(transportStrategy: TransportStrategyProtocol)
+        -> TopicClientConfigurationProtocol
+
     /**
     Convenience copy constructor that updates the client-side timeout setting in the transport strategy
     - Parameter timeout: a `TimeInterval` respresenting the client-side timeout
@@ -20,30 +21,30 @@ public protocol TopicClientConfigurationProtocol {
     func withClientTimeout(timeout: TimeInterval) -> TopicClientConfigurationProtocol
 }
 
-/**
- Configuration options for Momento TopicClient.
- 
- The easiest way to get a `TopicClientConfiguration` object is to use one of the prebuilt TopicClientConfigurations classes.
- ```swift
- let config = TopicClientConfiguration.iOS.latest()
- ```
- */
-public class TopicClientConfiguration: TopicClientConfigurationProtocol {
-    public var transportStrategy: TransportStrategyProtocol
-    
+/// Configuration options for Momento TopicClient.
+///
+/// The easiest way to get a `TopicClientConfiguration` object is to use one of the prebuilt TopicClientConfigurations classes.
+/// ```swift
+/// let config = TopicClientConfiguration.iOS.latest()
+/// ```
+public struct TopicClientConfiguration: TopicClientConfigurationProtocol, Sendable {
+    public let transportStrategy: TransportStrategyProtocol
+
     /**
     - Parameter transportStrategy: configures low-level options for network interactions with the Momento service
     */
     public init(transportStrategy: TransportStrategyProtocol) {
         self.transportStrategy = transportStrategy
     }
-    
-    public func withTransportStrategy(transportStrategy: TransportStrategyProtocol) -> TopicClientConfigurationProtocol {
+
+    public func withTransportStrategy(transportStrategy: TransportStrategyProtocol)
+        -> TopicClientConfigurationProtocol
+    {
         return TopicClientConfiguration(
             transportStrategy: transportStrategy
         )
     }
-    
+
     public func withClientTimeout(timeout: TimeInterval) -> TopicClientConfigurationProtocol {
         return TopicClientConfiguration(
             transportStrategy: StaticTransportStrategy(
@@ -52,4 +53,3 @@ public class TopicClientConfiguration: TopicClientConfigurationProtocol {
         )
     }
 }
-

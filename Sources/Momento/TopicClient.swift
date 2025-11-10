@@ -1,6 +1,6 @@
 import Foundation
 
-public protocol TopicClientProtocol {
+public protocol TopicClientProtocol: Sendable {
     func publish(
         cacheName: String,
         topicName: String,
@@ -33,7 +33,7 @@ public protocol TopicClientProtocol {
  To learn more, see the [Momento Topics developer documentation](https://docs.momentohq.com/topics)
  */
 
-public class TopicClient: TopicClientProtocol {
+public final class TopicClient: TopicClientProtocol, Sendable {
     private let pubsubClient: PubsubClientProtocol
     private let credentialProvider: CredentialProviderProtocol
 

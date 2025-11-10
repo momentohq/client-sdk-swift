@@ -1,9 +1,10 @@
+import Atomics
 import GRPC
 import Logging
 import NIO
 import NIOHPACK
 
-protocol PubsubClientProtocol {
+protocol PubsubClientProtocol: Sendable {
     var configuration: TopicClientConfigurationProtocol { get }
 
     func publish(
@@ -19,17 +20,25 @@ protocol PubsubClientProtocol {
         resumeAtTopicSequencePage: UInt64?
     ) async throws -> TopicSubscribeResponse
 
+    // Used by TopicSubscription for resubscribing after an error
+    func subscribeRaw(
+        cacheName: String,
+        topicName: String,
+        resumeAtTopicSequenceNumber: UInt64?,
+        resumeAtTopicSequencePage: UInt64?
+    ) async throws -> Result<SubscriptionComponents, TopicSubscribeError>
+
     func close()
 }
 
-class PubsubClient: PubsubClientProtocol {
+final class PubsubClient: PubsubClientProtocol, Sendable {
     let logger = Logger(label: "PubsubClient")
     let configuration: TopicClientConfigurationProtocol
     let credentialProvider: CredentialProviderProtocol
     let eventLoopGroup = PlatformSupport.makeEventLoopGroup(loopCount: 1)
     let grpcManager: TopicsGrpcManager
     let client: CacheClient_Pubsub_PubsubAsyncClient
-    var firstRequest = true
+    let firstRequest = ManagedAtomic<Bool>(true)
 
     init(
         configuration: TopicClientConfigurationProtocol,
@@ -45,10 +54,8 @@ class PubsubClient: PubsubClientProtocol {
     }
 
     func makeHeaders() -> [String: String] {
-        let headers = constructHeaders(firstRequest: self.firstRequest, clientType: "topic")
-        if self.firstRequest {
-            self.firstRequest = false
-        }
+        let isFirstRequest = self.firstRequest.exchange(false, ordering: .acquiringAndReleasing)
+        let headers = constructHeaders(firstRequest: isFirstRequest, clientType: "topic")
         return headers
     }
 
@@ -112,22 +119,25 @@ class PubsubClient: PubsubClientProtocol {
         }
     }
 
-    func subscribe(
+    func subscribeRaw(
         cacheName: String, topicName: String, resumeAtTopicSequenceNumber: UInt64?,
         resumeAtTopicSequencePage: UInt64?
-    ) async throws -> TopicSubscribeResponse {
+    ) async throws -> Result<SubscriptionComponents, TopicSubscribeError> {
         var request = CacheClient_Pubsub__SubscriptionRequest()
         request.cacheName = cacheName
         request.topic = topicName
         request.resumeAtTopicSequenceNumber = UInt64(resumeAtTopicSequenceNumber ?? 0)
         request.sequencePage = UInt64(resumeAtTopicSequencePage ?? 0)
 
-        let result = self.client.makeSubscribeCall(
-            request,
-            callOptions: .init(
-                customMetadata: .init(makeHeaders().map { ($0, $1) })
+        let result:
+            GRPCAsyncServerStreamingCall<
+                CacheClient_Pubsub__SubscriptionRequest, CacheClient_Pubsub__SubscriptionItem
+            > = self.client.makeSubscribeCall(
+                request,
+                callOptions: .init(
+                    customMetadata: .init(makeHeaders().map { ($0, $1) })
+                )
             )
-        )
 
         do {
             var messageIterator = result.responseStream.makeAsyncIterator()
@@ -135,20 +145,18 @@ class PubsubClient: PubsubClientProtocol {
             if let nonNilFirstElement = firstElement {
                 switch nonNilFirstElement.kind {
                 case .heartbeat:
-                    logger.debug("Received heartbeat as first message, returning subscription")
-                    return TopicSubscribeResponse.subscription(
-                        TopicSubscription(
+                    logger.debug(
+                        "Received heartbeat as first message, returning subscription components")
+                    return .success(
+                        SubscriptionComponents(
                             subscribeCallResponse: result,
                             messageIterator: messageIterator,
                             lastSequenceNumber: request.resumeAtTopicSequenceNumber,
-                            lastSequencePage: request.sequencePage,
-                            pubsubClient: self,
-                            cacheName: cacheName,
-                            topicName: topicName
+                            lastSequencePage: request.sequencePage
                         )
                     )
                 default:
-                    return TopicSubscribeResponse.error(
+                    return .failure(
                         TopicSubscribeError(
                             error: SdkError.InternalServerError(
                                 InternalServerError(
@@ -157,7 +165,7 @@ class PubsubClient: PubsubClientProtocol {
                                 ))))
                 }
             }
-            return TopicSubscribeResponse.error(
+            return .failure(
                 TopicSubscribeError(
                     error: SdkError.InternalServerError(
                         InternalServerError(
@@ -169,24 +177,50 @@ class PubsubClient: PubsubClientProtocol {
             // manually extract the trailers here instead before constructing the SdkError.
             do {
                 let trailers = try await result.trailingMetadata
-                return TopicSubscribeResponse.error(
+                return .failure(
                     TopicSubscribeError(
                         error: grpcStatusToSdkError(grpcStatus: err, metadata: trailers))
                 )
             } catch {
-                return TopicSubscribeResponse.error(
+                return .failure(
                     TopicSubscribeError(error: grpcStatusToSdkError(grpcStatus: err)))
             }
         } catch let err as GRPCConnectionPoolError {
-            return TopicSubscribeResponse.error(
+            return .failure(
                 TopicSubscribeError(error: grpcStatusToSdkError(grpcStatus: err.makeGRPCStatus())))
         } catch {
-            return TopicSubscribeResponse.error(
+            return .failure(
                 TopicSubscribeError(
                     error: SdkError.UnknownError(
                         UnknownError(
                             message: "unknown subscribe error: '\(error)'", innerException: error)))
             )
+        }
+    }
+
+    func subscribe(
+        cacheName: String, topicName: String, resumeAtTopicSequenceNumber: UInt64?,
+        resumeAtTopicSequencePage: UInt64?
+    ) async throws -> TopicSubscribeResponse {
+        let result = try await subscribeRaw(
+            cacheName: cacheName,
+            topicName: topicName,
+            resumeAtTopicSequenceNumber: resumeAtTopicSequenceNumber,
+            resumeAtTopicSequencePage: resumeAtTopicSequencePage
+        )
+
+        switch result {
+        case .success(let components):
+            return TopicSubscribeResponse.subscription(
+                TopicSubscription(
+                    components: components,
+                    pubsubClient: self,
+                    cacheName: cacheName,
+                    topicName: topicName
+                )
+            )
+        case .failure(let error):
+            return TopicSubscribeResponse.error(error)
         }
     }
 
