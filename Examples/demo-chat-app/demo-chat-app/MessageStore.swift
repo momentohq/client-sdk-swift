@@ -38,7 +38,7 @@ public class MessageStore: ObservableObject {
             #endif
         }
         
-        for try await item in self.subscription!.stream {
+        for try await item in await self.subscription!.stream {
             var value: String = ""
             switch item {
             case .itemText(let textItem):

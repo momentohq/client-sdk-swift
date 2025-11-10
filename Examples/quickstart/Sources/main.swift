@@ -1,11 +1,11 @@
-import Momento
 import Foundation
+import Momento
 
 func main() async {
-  print("Running Momento Cache example!")
-  let cacheName = "example-cache"
+    print("Running Momento Cache example!")
+    let cacheName = "example-cache"
 
-  var creds: CredentialProviderProtocol
+    var creds: CredentialProviderProtocol
     do {
         creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
     } catch {
@@ -14,9 +14,9 @@ func main() async {
     }
 
     let cacheClient = CacheClient(
-      configuration: CacheClientConfigurations.iOS.latest(), 
-      credentialProvider: creds,
-      defaultTtlSeconds: 10
+        configuration: CacheClientConfigurations.iOS.latest(),
+        credentialProvider: creds,
+        defaultTtlSeconds: 10
     )
 
     let getResult = await cacheClient.get(

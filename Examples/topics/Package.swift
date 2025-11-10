@@ -1,4 +1,4 @@
-// swift-tools-version: 5.7
+// swift-tools-version: 6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -10,18 +10,18 @@ let package = Package(
         .executable(
             name: "momento-topics-example",
             targets: ["momento-topics-example"]
-        ),
+        )
     ],
     dependencies: [
-        .package(url: "https://github.com/momentohq/client-sdk-swift", exact: "0.4.0")
+        .package(url: "https://github.com/momentohq/client-sdk-swift", exact: "0.8.1")
     ],
     targets: [
         .executableTarget(
             name: "momento-topics-example",
             dependencies: [
-                .product(name: "Momento", package: "client-sdk-swift"),
+                .product(name: "Momento", package: "client-sdk-swift")
             ],
             path: "Sources"
-        ),
+        )
     ]
 )

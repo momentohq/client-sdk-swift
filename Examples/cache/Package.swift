@@ -10,18 +10,18 @@ let package = Package(
         .executable(
             name: "momento-cache-example",
             targets: ["momento-cache-example"]
-        ),
+        )
     ],
     dependencies: [
-        .package(url: "https://github.com/momentohq/client-sdk-swift", exact: "0.4.0")
+        .package(url: "https://github.com/momentohq/client-sdk-swift", exact: "0.8.1")
     ],
     targets: [
         .executableTarget(
             name: "momento-cache-example",
             dependencies: [
-                .product(name: "Momento", package: "client-sdk-swift"),
+                .product(name: "Momento", package: "client-sdk-swift")
             ],
             path: "Sources"
-        ),
+        )
     ]
 )
