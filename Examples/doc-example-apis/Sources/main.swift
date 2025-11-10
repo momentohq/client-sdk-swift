@@ -1,10 +1,10 @@
-import Momento
 import Foundation
+import Momento
 
-@available(macOS 10.15, iOS 13, *)
 func example_API_InstantiateCacheClient() {
     do {
-        let credentialProvider = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
+        let credentialProvider = try CredentialProvider.fromEnvironmentVariable(
+            envVariableName: "MOMENTO_API_KEY")
         let cacheClient = CacheClient(
             configuration: CacheClientConfigurations.iOS.latest(),
             credentialProvider: credentialProvider,
@@ -16,7 +16,6 @@ func example_API_InstantiateCacheClient() {
     }
 }
 
-@available(macOS 10.15, iOS 13, *)
 func example_API_CreateCache(cacheClient: CacheClient, cacheName: String) async {
     let result = await cacheClient.createCache(cacheName: cacheName)
     switch result {
@@ -30,7 +29,6 @@ func example_API_CreateCache(cacheClient: CacheClient, cacheName: String) async 
     }
 }
 
-@available(macOS 10.15, iOS 13, *)
 func example_API_ListCaches(cacheClient: CacheClient) async {
     let result = await cacheClient.listCaches()
     switch result {
@@ -42,7 +40,6 @@ func example_API_ListCaches(cacheClient: CacheClient) async {
     }
 }
 
-@available(macOS 10.15, iOS 13, *)
 func example_API_DeleteCache(cacheClient: CacheClient, cacheName: String) async {
     let result = await cacheClient.deleteCache(cacheName: cacheName)
     switch result {
@@ -54,7 +51,6 @@ func example_API_DeleteCache(cacheClient: CacheClient, cacheName: String) async 
     }
 }
 
-@available(macOS 10.15, iOS 13, *)
 func example_API_Set(cacheClient: CacheClient, cacheName: String) async {
     let result = await cacheClient.set(
         cacheName: cacheName,
@@ -70,7 +66,6 @@ func example_API_Set(cacheClient: CacheClient, cacheName: String) async {
     }
 }
 
-@available(macOS 10.15, iOS 13, *)
 func example_API_Get(cacheClient: CacheClient, cacheName: String) async {
     let result = await cacheClient.get(
         cacheName: cacheName,
@@ -87,7 +82,6 @@ func example_API_Get(cacheClient: CacheClient, cacheName: String) async {
     }
 }
 
-@available(macOS 10.15, iOS 13, *)
 func example_API_Delete(cacheClient: CacheClient, cacheName: String) async {
     let result = await cacheClient.delete(
         cacheName: cacheName,
@@ -102,10 +96,10 @@ func example_API_Delete(cacheClient: CacheClient, cacheName: String) async {
     }
 }
 
-@available(macOS 10.15, iOS 13, *)
 func example_API_InstantiateTopicClient() {
     do {
-        let credentialProvider = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
+        let credentialProvider = try CredentialProvider.fromEnvironmentVariable(
+            envVariableName: "MOMENTO_API_KEY")
         let topicClient = TopicClient(
             configuration: TopicClientConfigurations.iOS.latest(),
             credentialProvider: credentialProvider
@@ -116,7 +110,6 @@ func example_API_InstantiateTopicClient() {
     }
 }
 
-@available(macOS 10.15, iOS 13, *)
 func example_API_TopicPublish(topicClient: TopicClient, cacheName: String) async {
     let result = await topicClient.publish(
         cacheName: cacheName,
@@ -132,33 +125,23 @@ func example_API_TopicPublish(topicClient: TopicClient, cacheName: String) async
     }
 }
 
-@available(macOS 10.15, iOS 13, *)
 func example_API_TopicSubscribe(topicClient: TopicClient, cacheName: String) async {
     let subscribeResponse = await topicClient.subscribe(cacheName: cacheName, topicName: "topic")
 
-    #if swift(>=5.9)
-    let subscription = switch subscribeResponse {
+    let subscription =
+        switch subscribeResponse {
         case .error(let err): fatalError("Error subscribing to topic: \(err)")
         case .subscription(let sub): sub
-    }
-    #else 
-    let subscription: TopicSubscription
-    switch subscribeResponse {
-        case .error(let err):
-            fatalError("Error subscribing to topic: \(err)")
-        case .subscription(let sub):
-            subscription = sub
-    }
-    #endif
+        }
 
     // unsubscribe in 5 seconds
     Task {
         try await Task.sleep(nanoseconds: 5_000_000_000)
-        subscription.unsubscribe()
+        await subscription.unsubscribe()
     }
 
     // loop over messages as they are received
-    for try await item in subscription.stream {
+    for try await item in await subscription.stream {
         var value: String = ""
         switch item {
         case .itemText(let textItem):
@@ -173,10 +156,10 @@ func example_API_TopicSubscribe(topicClient: TopicClient, cacheName: String) asy
     }
 }
 
-@available(macOS 10.15, iOS 13, *)
 func main() async {
     do {
-        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
+        let creds = try CredentialProvider.fromEnvironmentVariable(
+            envVariableName: "MOMENTO_API_KEY")
         let topicClient = TopicClient(
             configuration: TopicClientConfigurations.iOS.latest(),
             credentialProvider: creds
@@ -200,7 +183,7 @@ func main() async {
         example_API_InstantiateTopicClient()
         await example_API_TopicPublish(topicClient: topicClient, cacheName: cacheName)
         await example_API_TopicSubscribe(topicClient: topicClient, cacheName: cacheName)
-        
+
         await example_API_DeleteCache(cacheClient: cacheClient, cacheName: cacheName)
     } catch {
         print("Unexpected error running doc examples: \(error)")

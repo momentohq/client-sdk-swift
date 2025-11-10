@@ -2,7 +2,7 @@ import Momento
 
 func main() async {
     print("Running Momento Topics example!")
-    let cacheName = "my-cache"
+    let cacheName = "cache"
     let topicName = "my-topic"
 
     var creds: CredentialProviderProtocol
@@ -13,34 +13,27 @@ func main() async {
         return
     }
 
-    let client = TopicClient(configuration: TopicClientConfigurations.iOS.latest(), credentialProvider: creds)
+    let client = TopicClient(
+        configuration: TopicClientConfigurations.iOS.latest(), credentialProvider: creds)
 
     let subscribeResponse = await client.subscribe(cacheName: cacheName, topicName: topicName)
-    #if swift(>=5.9)
-    let subscription = switch subscribeResponse {
+    let subscription =
+        switch subscribeResponse {
         case .error(let err): fatalError("Error subscribing to topic: \(err)")
         case .subscription(let sub): sub
-    }
-    #else 
-    let subscription: TopicSubscription
-    switch subscribeResponse {
-        case .error(let err):
-            fatalError("Error subscribing to topic: \(err)")
-        case .subscription(let sub):
-            subscription = sub
-    }
-    #endif
+        }
     print("Subscribed to the topic")
 
     Task {
-        print("Publishing a message every 2 seconds")
+        print("Publishing a message every second")
         let messages = ["hello", "and", "welcome", "to", "momento", "topics"]
         for message in messages {
-            // Sleep for 2 seconds
-            try! await Task.sleep(nanoseconds: 2_000_000_000)
+            // Sleep for 1 second
+            try! await Task.sleep(nanoseconds: 1_000_000_000)
 
             // Publish the message
-            let publishResponse = await client.publish(cacheName: cacheName, topicName: topicName, value: message)
+            let publishResponse = await client.publish(
+                cacheName: cacheName, topicName: topicName, value: message)
 
             // Check the response type (error or success?)
             switch publishResponse {
@@ -57,11 +50,11 @@ func main() async {
     Task {
         try await Task.sleep(nanoseconds: 10_000_000_000)
         print("Unsubscribing from topic")
-        subscription.unsubscribe()
+        await subscription.unsubscribe()
     }
 
     // Receive messages from the subscription as they arrive
-    for try await item in subscription.stream {
+    for try await item in await subscription.stream {
         var value: String = ""
         switch item {
         case .itemText(let textItem):
