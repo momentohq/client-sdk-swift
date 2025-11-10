@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.1](https://github.com/momentohq/client-sdk-swift/compare/v0.8.0...v0.8.1) (2025-11-10)
+
+
+### Bug Fixes
+
+* make TopicClient Sendable and other topics fixes ([#151](https://github.com/momentohq/client-sdk-swift/issues/151)) ([5650423](https://github.com/momentohq/client-sdk-swift/commit/5650423a7423191c1ab392c0bfccf33a7d938e58))
+
 ## [0.8.0](https://github.com/momentohq/client-sdk-swift/compare/v0.7.2...v0.8.0) (2025-11-07)
 
 
