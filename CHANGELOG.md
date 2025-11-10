@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.2](https://github.com/momentohq/client-sdk-swift/compare/v0.8.1...v0.8.2) (2025-11-10)
+
+
+### Miscellaneous
+
+* upgrade examples to latest sdk version ([#153](https://github.com/momentohq/client-sdk-swift/issues/153)) ([aee3fe3](https://github.com/momentohq/client-sdk-swift/commit/aee3fe30f9562237161eabcbb0a6bd5c54380972))
+
 ## [0.8.1](https://github.com/momentohq/client-sdk-swift/compare/v0.8.0...v0.8.1) (2025-11-10)
 
 
