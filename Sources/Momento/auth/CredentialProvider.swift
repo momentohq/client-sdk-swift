@@ -6,6 +6,7 @@ enum CredentialProviderError: Error {
         message: String = "API key environment variable name is an empty string"
     )
     case badToken(message: String = "invalid API key")
+    case emptyEndpoint(message: String = "Endpoint is an empty string")
 }
 
 /// Specifies the fields that are required for a Momento client to connect to and authenticate with the Momento service.
@@ -22,26 +23,33 @@ public protocol CredentialProviderProtocol: Sendable {
 
 public class CredentialProvider {
 
+    /// Reads and parses a global Momento API key stored as an environment variable.
+    public static func globalKeyFromEnvironmentVariable(
+        envVariableName: String, endpoint: String
+    ) throws
+        -> CredentialProviderProtocol
+    {
+        return try GlobalEnvVarCredentialProvider(
+            envVarName: envVariableName, endpoint: endpoint)
+    }
+
+    /// Reads and parses a global Momento API key stored as a string
+    public static func globalKeyFromString(apiKey: String, endpoint: String) throws
+        -> CredentialProviderProtocol
+    {
+        return try GlobalStringCredentialProvider(apiKey: apiKey, endpoint: endpoint)
+    }
+
     /// Reads and parses a Momento API key stored as an environment variable.
     public static func fromEnvironmentVariable(envVariableName: String) throws
         -> CredentialProviderProtocol
     {
-        do {
-            let provider = try EnvMomentoTokenProvider(envVarName: envVariableName)
-            return provider
-        } catch {
-            throw error
-        }
+        return try EnvMomentoTokenProvider(envVarName: envVariableName)
     }
 
     /// Reads and parses a Momento API key stored as a string
     public static func fromString(apiKey: String) throws -> CredentialProviderProtocol {
-        do {
-            let provider = try StringMomentoTokenProvider(apiKey: apiKey)
-            return provider
-        } catch {
-            throw error
-        }
+        return try StringMomentoTokenProvider(apiKey: apiKey)
     }
 
     internal static func parseApiKey(apiKey: String) throws -> (
@@ -122,6 +130,51 @@ public class CredentialProvider {
             throw CredentialProviderError.badToken()
         }
         return try decodeJWTPart(segments[1])
+    }
+}
+
+public struct GlobalStringCredentialProvider: CredentialProviderProtocol {
+    public let apiKey: String
+    public let controlEndpoint: String
+    public let cacheEndpoint: String
+
+    init(apiKey: String, endpoint: String) throws {
+        if apiKey.isEmpty {
+            throw CredentialProviderError.emptyApiKey()
+        }
+        if endpoint.isEmpty {
+            throw CredentialProviderError.emptyEndpoint(
+                message: "Endpoint provided is an empty string")
+        }
+        self.apiKey = apiKey
+        self.controlEndpoint = "control.\(endpoint)"
+        self.cacheEndpoint = "cache.\(endpoint)"
+    }
+}
+
+public struct GlobalEnvVarCredentialProvider: CredentialProviderProtocol {
+    public let apiKey: String
+    public let controlEndpoint: String
+    public let cacheEndpoint: String
+
+    init(envVarName: String, endpoint: String) throws {
+        if envVarName.isEmpty {
+            throw CredentialProviderError.emptyAuthEnvironmentVariable(
+                message:
+                    "Could not find environment variable \(envVarName) or the variable was an empty string"
+            )
+        }
+        let apiKey = ProcessInfo.processInfo.environment[envVarName]
+        if apiKey?.isEmpty ?? true {
+            throw CredentialProviderError.emptyApiKey()
+        }
+        if endpoint.isEmpty {
+            throw CredentialProviderError.emptyEndpoint(
+                message: "Endpoint provided is an empty string")
+        }
+        self.apiKey = apiKey!
+        self.controlEndpoint = "control.\(endpoint)"
+        self.cacheEndpoint = "cache.\(endpoint)"
     }
 }
 
