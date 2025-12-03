@@ -24,4 +24,8 @@ build:
 	
 .PHONY: test
 test:
+	@if [ -z "$$TEST_API_KEY" ]; then \
+		echo "ERROR: TEST_API_KEY environment variable is missing"; \
+		exit 1; \
+	fi
 	swift test

@@ -11,6 +11,8 @@ let testLegacyControlEndpoint = "control.test.com"
 let testLegacyCacheEndpoint = "cache.test.com"
 let testV1ControlEndpoint = "control.test.momentohq.com"
 let testV1CacheEndpoint = "cache.test.momentohq.com"
+let testGlobalApiKey =
+    "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ0IjoiZyIsImNwIjoiY29udHJvbC50ZXN0LmNvbSIsImMiOiJjYWNoZS50ZXN0LmNvbSJ9.T3ylW7iWLobcCsYQx92oImV2KgyBWmtFO-37uzw3qspSb18itIEH9zN49QFEm6joeIer_kXJ5R28ruF_JbUniA"
 
 final class authTests: XCTestCase {
     override class func setUp() {
@@ -125,25 +127,51 @@ final class authTests: XCTestCase {
         XCTFail("didn't get expected CredentialProviderError.badToken error")
     }
 
+    func testFromStringGlobalApiKey() throws {
+        do {
+            let _ = try CredentialProvider.fromString(apiKey: testGlobalApiKey)
+        } catch CredentialProviderError.badToken {
+            XCTAssert(true)
+            return
+        } catch {
+            XCTFail("didn't get expected CredentialProviderError.badToken error: \(error)")
+        }
+        XCTFail("didn't get expected CredentialProviderError.badToken error")
+    }
+
+    func testFromEnvironmentVariableGlobalApiKey() throws {
+        setenv("MOMENTO_TEST_GLOBAL_API_KEY", testGlobalApiKey, 1)
+        do {
+            let _ = try CredentialProvider.fromEnvironmentVariable(
+                envVariableName: "MOMENTO_TEST_GLOBAL_API_KEY")
+        } catch CredentialProviderError.badToken {
+            XCTAssert(true)
+            return
+        } catch {
+            XCTFail("didn't get expected CredentialProviderError.badToken error: \(error)")
+        }
+        XCTFail("didn't get expected CredentialProviderError.badToken error")
+    }
+
     func testGlobalKeyFromString() throws {
         let credentialProvider = try CredentialProvider.globalKeyFromString(
-            apiKey: "testToken",
+            apiKey: testGlobalApiKey,
             endpoint: "testEndpoint"
         )
         XCTAssertEqual(credentialProvider.controlEndpoint, "control.testEndpoint")
         XCTAssertEqual(credentialProvider.cacheEndpoint, "cache.testEndpoint")
-        XCTAssertEqual(credentialProvider.apiKey, "testToken")
+        XCTAssertEqual(credentialProvider.apiKey, testGlobalApiKey)
     }
 
     func testGlobalKeyFromEnvironmentVariable() throws {
-        setenv("MOMENTO_TEST_GLOBAL_API_KEY", "testToken", 1)
+        setenv("MOMENTO_TEST_GLOBAL_API_KEY", testGlobalApiKey, 1)
         let credentialProvider = try CredentialProvider.globalKeyFromEnvironmentVariable(
             envVariableName: "MOMENTO_TEST_GLOBAL_API_KEY",
             endpoint: "testEndpoint"
         )
         XCTAssertEqual(credentialProvider.controlEndpoint, "control.testEndpoint")
         XCTAssertEqual(credentialProvider.cacheEndpoint, "cache.testEndpoint")
-        XCTAssertEqual(credentialProvider.apiKey, "testToken")
+        XCTAssertEqual(credentialProvider.apiKey, testGlobalApiKey)
     }
 
     func testGlobalKeyFromStringEmptyKey() throws {
@@ -164,7 +192,7 @@ final class authTests: XCTestCase {
     func testGlobalKeyFromStringEmptyEndpoint() throws {
         do {
             let _ = try CredentialProvider.globalKeyFromString(
-                apiKey: "testToken",
+                apiKey: testGlobalApiKey,
                 endpoint: ""
             )
         } catch CredentialProviderError.emptyEndpoint {
@@ -174,6 +202,36 @@ final class authTests: XCTestCase {
             XCTFail("didn't get expected CredentialProviderError.emptyEndpoint error")
         }
         XCTFail("didn't get expected CredentialProviderError.emptyEndpoint error")
+    }
+
+    func testGlobalKeyFromStringV1ApiKey() throws {
+        do {
+            let _ = try CredentialProvider.globalKeyFromString(
+                apiKey: testV1Token,
+                endpoint: "testEndpoint"
+            )
+        } catch CredentialProviderError.badToken {
+            XCTAssert(true)
+            return
+        } catch {
+            XCTFail("didn't get expected CredentialProviderError.badToken error: \(error)")
+        }
+        XCTFail("didn't get expected CredentialProviderError.badToken error")
+    }
+
+    func testGlobalKeyFromStringPreV1ApiKey() throws {
+        do {
+            let _ = try CredentialProvider.globalKeyFromString(
+                apiKey: testLegacyToken,
+                endpoint: "testEndpoint"
+            )
+        } catch CredentialProviderError.badToken {
+            XCTAssert(true)
+            return
+        } catch {
+            XCTFail("didn't get expected CredentialProviderError.badToken error: \(error)")
+        }
+        XCTFail("didn't get expected CredentialProviderError.badToken error")
     }
 
     func testGlobalKeyFromEnvironmentVariableEmptyKey() throws {
@@ -212,7 +270,7 @@ final class authTests: XCTestCase {
     }
 
     func testGlobalKeyFromEnvironmentVariableEmptyEndpoint() throws {
-        setenv("MOMENTO_TEST_GLOBAL_API_KEY", "testToken", 1)
+        setenv("MOMENTO_TEST_GLOBAL_API_KEY", testGlobalApiKey, 1)
         do {
             let _ = try CredentialProvider.globalKeyFromEnvironmentVariable(
                 envVariableName: "MOMENTO_TEST_GLOBAL_API_KEY",
@@ -225,5 +283,37 @@ final class authTests: XCTestCase {
             XCTFail("didn't get expected CredentialProviderError.emptyEndpoint error: \(error)")
         }
         XCTFail("didn't get expected CredentialProviderError.emptyEndpoint error")
+    }
+
+    func testGlobalKeyFromEnvironmentVariableV1ApiKey() throws {
+        setenv("MOMENTO_TEST_GLOBAL_API_KEY_V1", testV1Token, 1)
+        do {
+            let _ = try CredentialProvider.globalKeyFromEnvironmentVariable(
+                envVariableName: "MOMENTO_TEST_GLOBAL_API_KEY_V1",
+                endpoint: "testEndpoint"
+            )
+        } catch CredentialProviderError.badToken {
+            XCTAssert(true)
+            return
+        } catch {
+            XCTFail("didn't get expected CredentialProviderError.badToken error: \(error)")
+        }
+        XCTFail("didn't get expected CredentialProviderError.badToken error")
+    }
+
+    func testGlobalKeyFromEnvironmentVariablePreV1ApiKey() throws {
+        setenv("MOMENTO_TEST_GLOBAL_API_KEY_PRE_V1", testLegacyToken, 1)
+        do {
+            let _ = try CredentialProvider.globalKeyFromEnvironmentVariable(
+                envVariableName: "MOMENTO_TEST_GLOBAL_API_KEY_PRE_V1",
+                endpoint: "testEndpoint"
+            )
+        } catch CredentialProviderError.badToken {
+            XCTAssert(true)
+            return
+        } catch {
+            XCTFail("didn't get expected CredentialProviderError.badToken error: \(error)")
+        }
+        XCTFail("didn't get expected CredentialProviderError.badToken error")
     }
 }

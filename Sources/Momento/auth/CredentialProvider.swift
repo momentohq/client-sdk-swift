@@ -55,11 +55,29 @@ public class CredentialProvider {
     internal static func parseApiKey(apiKey: String) throws -> (
         cacheEndpoint: String, controlEnpoint: String, apiKey: String
     ) {
-        let isBase64 = Data(base64Encoded: apiKey) != nil
-        if isBase64 {
+        if CredentialProvider.isBase64(apiKey: apiKey) {
             return try CredentialProvider.parseV1Token(apiKey: apiKey)
         } else {
+            if CredentialProvider.isGlobalApiKey(apiKey: apiKey) {
+                throw CredentialProviderError.badToken(
+                    message:
+                        "Received a global API key. Are you using the correct key? Or did you mean to use `globalKeyFromString()` or `globalKeyFromEnvironmentVariable()` instead?"
+                )
+            }
             return try CredentialProvider.parseJwtToken(apiKey: apiKey)
+        }
+    }
+
+    internal static func isBase64(apiKey: String) -> Bool {
+        return Data(base64Encoded: apiKey) != nil
+    }
+
+    internal static func isGlobalApiKey(apiKey: String) -> Bool {
+        do {
+            let payload = try CredentialProvider.decodeJwt(jwtToken: apiKey)
+            return payload["t"] != nil && (payload["t"] as! String) == "g"
+        } catch {
+            return false
         }
     }
 
@@ -139,13 +157,26 @@ public struct GlobalStringCredentialProvider: CredentialProviderProtocol {
     public let cacheEndpoint: String
 
     init(apiKey: String, endpoint: String) throws {
-        if apiKey.isEmpty {
-            throw CredentialProviderError.emptyApiKey()
-        }
         if endpoint.isEmpty {
             throw CredentialProviderError.emptyEndpoint(
                 message: "Endpoint provided is an empty string")
         }
+        if apiKey.isEmpty {
+            throw CredentialProviderError.emptyApiKey()
+        }
+        if CredentialProvider.isBase64(apiKey: apiKey) {
+            throw CredentialProviderError.badToken(
+                message:
+                    "Did not expect global API key to be base64 encoded. Are you using the correct key? Or did you mean to use `fromString()` instead?"
+            )
+        }
+        if !CredentialProvider.isGlobalApiKey(apiKey: apiKey) {
+            throw CredentialProviderError.badToken(
+                message:
+                    "Provided API key is not a valid global API key. Are you using the correct key? Or did you mean to use `fromString()` instead?"
+            )
+        }
+
         self.apiKey = apiKey
         self.controlEndpoint = "control.\(endpoint)"
         self.cacheEndpoint = "cache.\(endpoint)"
@@ -168,11 +199,24 @@ public struct GlobalEnvVarCredentialProvider: CredentialProviderProtocol {
         if apiKey?.isEmpty ?? true {
             throw CredentialProviderError.emptyApiKey()
         }
+        self.apiKey = apiKey!
+        if CredentialProvider.isBase64(apiKey: self.apiKey) {
+            throw CredentialProviderError.badToken(
+                message:
+                    "Did not expect global API key to be base64 encoded. Are you using the correct key? Or did you mean to use `fromEnvironmentVariable()` instead?"
+            )
+        }
+        if !CredentialProvider.isGlobalApiKey(apiKey: self.apiKey) {
+            throw CredentialProviderError.badToken(
+                message:
+                    "Provided API key is not a valid global API key. Are you using the correct key? Or did you mean to use `fromEnvironmentVariable()` instead?"
+            )
+        }
+
         if endpoint.isEmpty {
             throw CredentialProviderError.emptyEndpoint(
                 message: "Endpoint provided is an empty string")
         }
-        self.apiKey = apiKey!
         self.controlEndpoint = "control.\(endpoint)"
         self.cacheEndpoint = "cache.\(endpoint)"
     }
