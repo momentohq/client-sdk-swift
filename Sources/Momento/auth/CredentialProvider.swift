@@ -24,23 +24,29 @@ public protocol CredentialProviderProtocol: Sendable {
 public class CredentialProvider {
 
     /// Reads and parses a global Momento API key stored as an environment variable.
-    public static func globalKeyFromEnvironmentVariable(
-        envVariableName: String, endpoint: String
+    public static func fromEnvVarV2(
+        apiKeyEnvVar: String, endpointEnvVar: String
     ) throws
         -> CredentialProviderProtocol
     {
-        return try GlobalEnvVarCredentialProvider(
-            envVarName: envVariableName, endpoint: endpoint)
+        return try EnvVarV2TokenProvider(
+            apiKeyEnvVar: apiKeyEnvVar, endpointEnvVar: endpointEnvVar)
     }
 
     /// Reads and parses a global Momento API key stored as a string
-    public static func globalKeyFromString(apiKey: String, endpoint: String) throws
+    public static func fromApiKeyV2(apiKey: String, endpoint: String) throws
         -> CredentialProviderProtocol
     {
-        return try GlobalStringCredentialProvider(apiKey: apiKey, endpoint: endpoint)
+        return try ApiKeyV2TokenProvider(apiKey: apiKey, endpoint: endpoint)
+    }
+
+    /// Reads and parses a Momento disposable token stored as a string
+    public static func fromDisposableToken(token: String) throws -> CredentialProviderProtocol {
+        return try DisposableTokenProvider(token: token)
     }
 
     /// Reads and parses a Momento API key stored as an environment variable.
+    @available(*, deprecated, message: "This function is deprecated, use fromEnvVarV2() instead")
     public static func fromEnvironmentVariable(envVariableName: String) throws
         -> CredentialProviderProtocol
     {
@@ -48,6 +54,10 @@ public class CredentialProvider {
     }
 
     /// Reads and parses a Momento API key stored as a string
+    @available(
+        *, deprecated,
+        message: "This function is deprecated, use fromApiKeyV2() or fromDisposableToken instead"
+    )
     public static func fromString(apiKey: String) throws -> CredentialProviderProtocol {
         return try StringMomentoTokenProvider(apiKey: apiKey)
     }
@@ -58,10 +68,10 @@ public class CredentialProvider {
         if CredentialProvider.isBase64(apiKey: apiKey) {
             return try CredentialProvider.parseV1Token(apiKey: apiKey)
         } else {
-            if CredentialProvider.isGlobalApiKey(apiKey: apiKey) {
+            if CredentialProvider.isV2ApiKey(apiKey: apiKey) {
                 throw CredentialProviderError.badToken(
                     message:
-                        "Received a global API key. Are you using the correct key? Or did you mean to use `globalKeyFromString()` or `globalKeyFromEnvironmentVariable()` instead?"
+                        "Received a v2 API key. Are you using the correct key? Or did you mean to use `fromApiKeyV2()` or `fromEnvVarV2()` instead?"
                 )
             }
             return try CredentialProvider.parseJwtToken(apiKey: apiKey)
@@ -72,7 +82,10 @@ public class CredentialProvider {
         return Data(base64Encoded: apiKey) != nil
     }
 
-    internal static func isGlobalApiKey(apiKey: String) -> Bool {
+    internal static func isV2ApiKey(apiKey: String) -> Bool {
+        if CredentialProvider.isBase64(apiKey: apiKey) {
+            return false
+        }
         do {
             let payload = try CredentialProvider.decodeJwt(jwtToken: apiKey)
             return payload["t"] != nil && (payload["t"] as! String) == "g"
@@ -151,7 +164,7 @@ public class CredentialProvider {
     }
 }
 
-public struct GlobalStringCredentialProvider: CredentialProviderProtocol {
+public struct ApiKeyV2TokenProvider: CredentialProviderProtocol {
     public let apiKey: String
     public let controlEndpoint: String
     public let cacheEndpoint: String
@@ -159,21 +172,15 @@ public struct GlobalStringCredentialProvider: CredentialProviderProtocol {
     init(apiKey: String, endpoint: String) throws {
         if endpoint.isEmpty {
             throw CredentialProviderError.emptyEndpoint(
-                message: "Endpoint provided is an empty string")
+                message: "Endpoint is an empty string")
         }
         if apiKey.isEmpty {
             throw CredentialProviderError.emptyApiKey()
         }
-        if CredentialProvider.isBase64(apiKey: apiKey) {
+        if !CredentialProvider.isV2ApiKey(apiKey: apiKey) {
             throw CredentialProviderError.badToken(
                 message:
-                    "Did not expect global API key to be base64 encoded. Are you using the correct key? Or did you mean to use `fromString()` instead?"
-            )
-        }
-        if !CredentialProvider.isGlobalApiKey(apiKey: apiKey) {
-            throw CredentialProviderError.badToken(
-                message:
-                    "Provided API key is not a valid global API key. Are you using the correct key? Or did you mean to use `fromString()` instead?"
+                    "Received an invalid v2 API key. Are you using the correct key? Or did you mean to use `fromString()` with a legacy key instead?"
             )
         }
 
@@ -183,45 +190,69 @@ public struct GlobalStringCredentialProvider: CredentialProviderProtocol {
     }
 }
 
-public struct GlobalEnvVarCredentialProvider: CredentialProviderProtocol {
+public struct EnvVarV2TokenProvider: CredentialProviderProtocol {
     public let apiKey: String
     public let controlEndpoint: String
     public let cacheEndpoint: String
 
-    init(envVarName: String, endpoint: String) throws {
-        if envVarName.isEmpty {
+    init(apiKeyEnvVar: String, endpointEnvVar: String) throws {
+        if endpointEnvVar.isEmpty {
             throw CredentialProviderError.emptyAuthEnvironmentVariable(
                 message:
-                    "Could not find environment variable \(envVarName) or the variable was an empty string"
+                    "Could not find environment variable \(endpointEnvVar) or the variable was an empty string"
             )
         }
-        let apiKey = ProcessInfo.processInfo.environment[envVarName]
-        if apiKey?.isEmpty ?? true {
+        let endpointVar = ProcessInfo.processInfo.environment[endpointEnvVar]
+        if endpointVar?.isEmpty ?? true {
+            throw CredentialProviderError.emptyEndpoint()
+        }
+        let endpoint = endpointVar!
+
+        if apiKeyEnvVar.isEmpty {
+            throw CredentialProviderError.emptyAuthEnvironmentVariable(
+                message:
+                    "Could not find environment variable \(apiKeyEnvVar) or the variable was an empty string"
+            )
+        }
+        let apiKeyVar = ProcessInfo.processInfo.environment[apiKeyEnvVar]
+        if apiKeyVar?.isEmpty ?? true {
             throw CredentialProviderError.emptyApiKey()
         }
-        self.apiKey = apiKey!
-        if CredentialProvider.isBase64(apiKey: self.apiKey) {
+        self.apiKey = apiKeyVar!
+
+        if !CredentialProvider.isV2ApiKey(apiKey: self.apiKey) {
             throw CredentialProviderError.badToken(
                 message:
-                    "Did not expect global API key to be base64 encoded. Are you using the correct key? Or did you mean to use `fromEnvironmentVariable()` instead?"
-            )
-        }
-        if !CredentialProvider.isGlobalApiKey(apiKey: self.apiKey) {
-            throw CredentialProviderError.badToken(
-                message:
-                    "Provided API key is not a valid global API key. Are you using the correct key? Or did you mean to use `fromEnvironmentVariable()` instead?"
+                    "Received an invalid v2 API key. Are you using the correct key? Or did you mean to use `fromEnvironmentVariable()` with a legacy key instead?"
             )
         }
 
-        if endpoint.isEmpty {
-            throw CredentialProviderError.emptyEndpoint(
-                message: "Endpoint provided is an empty string")
-        }
         self.controlEndpoint = "control.\(endpoint)"
         self.cacheEndpoint = "cache.\(endpoint)"
     }
 }
 
+public struct DisposableTokenProvider: CredentialProviderProtocol {
+    public let apiKey: String
+    public let controlEndpoint: String
+    public let cacheEndpoint: String
+
+    init(token: String = "") throws {
+        if token.isEmpty {
+            throw CredentialProviderError.emptyApiKey()
+        }
+        let (_cacheEndpoint, _controlEndpoint, _apiKey) = try CredentialProvider.parseApiKey(
+            apiKey: token)
+        self.controlEndpoint = _controlEndpoint
+        self.cacheEndpoint = _cacheEndpoint
+        self.apiKey = _apiKey
+    }
+}
+
+@available(
+    *, deprecated,
+    message: "This struct is deprecated, use fromApiKeyV2() or ApiKeyV2TokenProvider instead"
+)
 public struct StringMomentoTokenProvider: CredentialProviderProtocol {
     public let apiKey: String
     public let controlEndpoint: String
@@ -239,6 +270,10 @@ public struct StringMomentoTokenProvider: CredentialProviderProtocol {
     }
 }
 
+@available(
+    *, deprecated,
+    message: "This struct is deprecated, use fromEnvVarV2() or EnvVarV2TokenProvider instead"
+)
 public struct EnvMomentoTokenProvider: CredentialProviderProtocol {
     public let apiKey: String
     public let controlEndpoint: String
