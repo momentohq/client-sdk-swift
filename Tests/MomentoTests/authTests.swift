@@ -251,15 +251,15 @@ final class authTests: XCTestCase {
             let _ = try CredentialProvider.fromEnvironmentVariablesV2(
                 apiKeyEnvVar: "MOMENTO_API_KEY_EMPTY",
             )
-        } catch CredentialProviderError.emptyApiKey {
+        } catch CredentialProviderError.emptyAuthEnvironmentVariable {
             XCTAssert(true)
             return
         } catch {
             XCTFail(
-                "didn't get expected CredentialProviderError.emptyApiKey error: \(error)"
+                "didn't get expected CredentialProviderError.emptyAuthEnvironmentVariable error: \(error)"
             )
         }
-        XCTFail("didn't get expected CredentialProviderError.emptyApiKey error")
+        XCTFail("didn't get expected CredentialProviderError.emptyAuthEnvironmentVariable error")
     }
 
     func testV2KeyFromEmptyEnvironmentVariable() throws {
@@ -298,13 +298,15 @@ final class authTests: XCTestCase {
             let _ = try CredentialProvider.fromEnvironmentVariablesV2(
                 endpointEnvVar: "MOMENTO_ENDPOINT_EMPTY"
             )
-        } catch CredentialProviderError.emptyEndpoint {
+        } catch CredentialProviderError.emptyAuthEnvironmentVariable {
             XCTAssert(true)
             return
         } catch {
-            XCTFail("didn't get expected CredentialProviderError.emptyEndpoint error: \(error)")
+            XCTFail(
+                "didn't get expected CredentialProviderError.emptyAuthEnvironmentVariable error: \(error)"
+            )
         }
-        XCTFail("didn't get expected CredentialProviderError.emptyEndpoint error")
+        XCTFail("didn't get expected CredentialProviderError.emptyAuthEnvironmentVariable error")
     }
 
     func testfromEnvironmentVariablesV2GivenV1ApiKey() throws {
