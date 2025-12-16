@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.9.0](https://github.com/momentohq/client-sdk-swift/compare/v0.8.1...v0.9.0) (2025-12-16)
+
+
+### Features
+
+* new credential provider methods for accepting v2 api keys ([#155](https://github.com/momentohq/client-sdk-swift/issues/155)) ([7054468](https://github.com/momentohq/client-sdk-swift/commit/705446832dbaf7c614c5c41903ba8fa56f36dd1e))
+
+
+### Miscellaneous
+
+* upgrade examples to latest sdk version ([#153](https://github.com/momentohq/client-sdk-swift/issues/153)) ([aee3fe3](https://github.com/momentohq/client-sdk-swift/commit/aee3fe30f9562237161eabcbb0a6bd5c54380972))
+
 ## [0.8.1](https://github.com/momentohq/client-sdk-swift/compare/v0.8.0...v0.8.1) (2025-11-10)
 
 
