@@ -6,6 +6,7 @@ enum CredentialProviderError: Error {
         message: String = "API key environment variable name is an empty string"
     )
     case badToken(message: String = "invalid API key")
+    case emptyEndpoint(message: String = "Endpoint is an empty string")
 }
 
 /// Specifies the fields that are required for a Momento client to connect to and authenticate with the Momento service.
@@ -22,36 +23,78 @@ public protocol CredentialProviderProtocol: Sendable {
 
 public class CredentialProvider {
 
+    /// Reads and parses a v2 API key and Momento service endpoint stored as the environment variables
+    /// MOMENTO_API_KEY and MOMENTO_ENDPOINT.
+    public static func fromEnvironmentVariablesV2(
+        apiKeyEnvVar: String = "MOMENTO_API_KEY", endpointEnvVar: String = "MOMENTO_ENDPOINT"
+    ) throws
+        -> CredentialProviderProtocol
+    {
+        return try EnvMomentoV2TokenProvider(
+            apiKeyEnvVar: apiKeyEnvVar, endpointEnvVar: endpointEnvVar)
+    }
+
+    /// Reads and parses a global Momento API key stored as a string
+    public static func fromApiKeyV2(apiKey: String, endpoint: String) throws
+        -> CredentialProviderProtocol
+    {
+        return try ApiKeyV2TokenProvider(apiKey: apiKey, endpoint: endpoint)
+    }
+
+    /// Reads and parses a Momento disposable token stored as a string
+    public static func fromDisposableToken(token: String) throws -> CredentialProviderProtocol {
+        return try DisposableTokenProvider(token: token)
+    }
+
     /// Reads and parses a Momento API key stored as an environment variable.
+    @available(
+        *, deprecated,
+        message: "This function is deprecated, use fromEnvironmentVariablesV2() instead"
+    )
     public static func fromEnvironmentVariable(envVariableName: String) throws
         -> CredentialProviderProtocol
     {
-        do {
-            let provider = try EnvMomentoTokenProvider(envVarName: envVariableName)
-            return provider
-        } catch {
-            throw error
-        }
+        return try EnvMomentoTokenProvider(envVarName: envVariableName)
     }
 
     /// Reads and parses a Momento API key stored as a string
+    @available(
+        *, deprecated,
+        message: "This function is deprecated, use fromApiKeyV2() or fromDisposableToken instead"
+    )
     public static func fromString(apiKey: String) throws -> CredentialProviderProtocol {
-        do {
-            let provider = try StringMomentoTokenProvider(apiKey: apiKey)
-            return provider
-        } catch {
-            throw error
-        }
+        return try StringMomentoTokenProvider(apiKey: apiKey)
     }
 
     internal static func parseApiKey(apiKey: String) throws -> (
         cacheEndpoint: String, controlEnpoint: String, apiKey: String
     ) {
-        let isBase64 = Data(base64Encoded: apiKey) != nil
-        if isBase64 {
+        if CredentialProvider.isBase64(apiKey: apiKey) {
             return try CredentialProvider.parseV1Token(apiKey: apiKey)
         } else {
+            if CredentialProvider.isV2ApiKey(apiKey: apiKey) {
+                throw CredentialProviderError.badToken(
+                    message:
+                        "Received a v2 API key. Are you using the correct key? Or did you mean to use `fromApiKeyV2()` or `fromEnvironmentVariablesV2()` instead?"
+                )
+            }
             return try CredentialProvider.parseJwtToken(apiKey: apiKey)
+        }
+    }
+
+    internal static func isBase64(apiKey: String) -> Bool {
+        return Data(base64Encoded: apiKey) != nil
+    }
+
+    internal static func isV2ApiKey(apiKey: String) -> Bool {
+        if CredentialProvider.isBase64(apiKey: apiKey) {
+            return false
+        }
+        do {
+            let payload = try CredentialProvider.decodeJwt(jwtToken: apiKey)
+            return payload["t"] != nil && (payload["t"] as! String) == "g"
+        } catch {
+            return false
         }
     }
 
@@ -125,6 +168,92 @@ public class CredentialProvider {
     }
 }
 
+/// Constructor for a CredentialProvider that accepts a v2 API key and Momento service endpoint as strings.
+public struct ApiKeyV2TokenProvider: CredentialProviderProtocol {
+    public let apiKey: String
+    public let controlEndpoint: String
+    public let cacheEndpoint: String
+
+    init(apiKey: String, endpoint: String) throws {
+        if endpoint.isEmpty {
+            throw CredentialProviderError.emptyEndpoint()
+        }
+        if apiKey.isEmpty {
+            throw CredentialProviderError.emptyApiKey()
+        }
+        if !CredentialProvider.isV2ApiKey(apiKey: apiKey) {
+            throw CredentialProviderError.badToken(
+                message:
+                    "Received an invalid v2 API key. Are you using the correct key? Or did you mean to use `fromString()` with a legacy key instead?"
+            )
+        }
+
+        self.apiKey = apiKey
+        self.controlEndpoint = "control.\(endpoint)"
+        self.cacheEndpoint = "cache.\(endpoint)"
+    }
+}
+
+/// Constructor for a CredentialProvider that reads a v2 API key and Momento service endpoint from environment variables MOMENTO_API_KEY and MOMENTO_ENDPOINT.
+public struct EnvMomentoV2TokenProvider: CredentialProviderProtocol {
+    public let apiKey: String
+    public let controlEndpoint: String
+    public let cacheEndpoint: String
+
+    init(apiKeyEnvVar: String = "MOMENTO_API_KEY", endpointEnvVar: String = "MOMENTO_ENDPOINT")
+        throws
+    {
+        let endpointVar = ProcessInfo.processInfo.environment[endpointEnvVar]
+        if endpointVar?.isEmpty ?? true {
+            throw CredentialProviderError.emptyAuthEnvironmentVariable(
+                message:
+                    "Could not find value for environment variable \(endpointEnvVar)"
+            )
+        }
+        let endpoint = endpointVar!
+
+        let apiKeyVar = ProcessInfo.processInfo.environment[apiKeyEnvVar]
+        if apiKeyVar?.isEmpty ?? true {
+            throw CredentialProviderError.emptyAuthEnvironmentVariable(
+                message:
+                    "Could not find value for environment variable \(apiKeyEnvVar)"
+            )
+        }
+        self.apiKey = apiKeyVar!
+
+        if !CredentialProvider.isV2ApiKey(apiKey: self.apiKey) {
+            throw CredentialProviderError.badToken(
+                message:
+                    "Received an invalid v2 API key. Are you using the correct key? Or did you mean to use `fromEnvironmentVariable()` with a legacy key instead?"
+            )
+        }
+
+        self.controlEndpoint = "control.\(endpoint)"
+        self.cacheEndpoint = "cache.\(endpoint)"
+    }
+}
+
+public struct DisposableTokenProvider: CredentialProviderProtocol {
+    public let apiKey: String
+    public let controlEndpoint: String
+    public let cacheEndpoint: String
+
+    init(token: String = "") throws {
+        if token.isEmpty {
+            throw CredentialProviderError.emptyApiKey()
+        }
+        let (_cacheEndpoint, _controlEndpoint, _apiKey) = try CredentialProvider.parseApiKey(
+            apiKey: token)
+        self.controlEndpoint = _controlEndpoint
+        self.cacheEndpoint = _cacheEndpoint
+        self.apiKey = _apiKey
+    }
+}
+
+@available(
+    *, deprecated,
+    message: "This struct is deprecated, use fromApiKeyV2() or ApiKeyV2TokenProvider instead"
+)
 public struct StringMomentoTokenProvider: CredentialProviderProtocol {
     public let apiKey: String
     public let controlEndpoint: String
@@ -142,6 +271,11 @@ public struct StringMomentoTokenProvider: CredentialProviderProtocol {
     }
 }
 
+@available(
+    *, deprecated,
+    message:
+        "This struct is deprecated, use fromEnvironmentVariablesV2 or EnvMomentoV2TokenProvider instead"
+)
 public struct EnvMomentoTokenProvider: CredentialProviderProtocol {
     public let apiKey: String
     public let controlEndpoint: String
