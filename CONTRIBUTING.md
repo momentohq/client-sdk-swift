@@ -11,6 +11,7 @@ Happy coding :dancer:
 
 - Swift version [5.4 or higher](https://www.swift.org/install/) is required
 - A Momento API key is required, you can generate one using the [Momento Console](https://console.gomomento.com/api-keys)
+- A Momento service endpoint is required. You can find a [list of them here](https://docs.momentohq.com/platform/regions)
 
 <br/>
 
@@ -24,4 +25,5 @@ You can build the SDK using either `swift build` or `make build` from the root o
 
 ## Running tests
 
-Coming soon
+You can run all tests using `make test` or filter to specific tests using `swift test --filter <testClassName>.<testName>`.
+Make sure to set the `MOMENTO_ENDPOINT`, `MOMENTO_API_KEY`, and `V1_API_KEY` environment variables.

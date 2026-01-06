@@ -1,7 +1,6 @@
 import Foundation
-@testable import Momento
 
-let apiKeyEnvVarName = "TEST_API_KEY"
+@testable import Momento
 
 struct TestSetup {
     var cacheName: String
@@ -9,10 +8,15 @@ struct TestSetup {
     var topicClient: TopicClientProtocol
 }
 
-func setUpIntegrationTests() async -> TestSetup {
+func setUpIntegrationTests(apiKeyV2: Bool = false) async -> TestSetup {
     do {
-        let creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: apiKeyEnvVarName)
-        
+        let creds =
+            if apiKeyV2 {
+                try CredentialProvider.fromEnvironmentVariablesV2()
+            } else {
+                try CredentialProvider.fromEnvironmentVariable(envVariableName: "V1_API_KEY")
+            }
+
         let topicClient = TopicClient(
             configuration: TopicClientConfigurations.iOS.latest(),
             credentialProvider: creds
@@ -23,7 +27,7 @@ func setUpIntegrationTests() async -> TestSetup {
             credentialProvider: creds,
             defaultTtlSeconds: 10
         )
-        
+
         let cacheName = generateStringWithUuid(prefix: "swift-test")
         let result = await cacheClient.createCache(cacheName: cacheName)
         switch result {
@@ -36,7 +40,7 @@ func setUpIntegrationTests() async -> TestSetup {
         return TestSetup(
             cacheName: cacheName,
             cacheClient: cacheClient,
-            topicClient:  topicClient
+            topicClient: topicClient
         )
     } catch {
         fatalError("Unable to setup integration tests: \(error)")
