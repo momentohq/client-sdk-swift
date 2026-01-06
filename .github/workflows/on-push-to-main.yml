@@ -29,7 +29,7 @@ jobs:
     secrets:
       auth-token: ${{ secrets.ALPHA_TEST_AUTH_TOKEN }}
       github-token: ${{ secrets.MOMENTO_MACHINE_USER_GITHUB_TOKEN }}
-      api-key-v2: ${{ secrets.ALPHA_TEST_API_KEY_V2 }}
+      api-key-v2: ${{ secrets.ALPHA_API_KEY_V2 }}
 
   publish:
     runs-on: ubuntu-latest
