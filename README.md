@@ -21,12 +21,16 @@ To get started with Momento you will need a Momento Auth Token. You can get one 
 
 # Momento Swift SDK
 
-To get started with Momento you will need a Momento API key. You can get one from the [Momento Console](https://console.gomomento.com).
+To get started with Momento you will need:
 
-* Website: [https://www.gomomento.com/](https://www.gomomento.com/)
-* Momento Documentation: [https://docs.momentohq.com/](https://docs.momentohq.com/)
-* Getting Started: [https://docs.momentohq.com/getting-started](https://docs.momentohq.com/getting-started)
-* Discuss: [Momento Discord](https://discord.gg/3HkAKjUZGq)
+- A Momento API key. You can get one from the [Momento Console](https://console.gomomento.com).
+- A Momento service endpoint is required. You can find a [list of them here](https://docs.momentohq.com/platform/regions)
+
+For more information, check out the following links:
+
+- Website: [https://www.gomomento.com/](https://www.gomomento.com/)
+- Momento Documentation: [https://docs.momentohq.com/](https://docs.momentohq.com/)
+- Getting Started: [https://docs.momentohq.com/getting-started](https://docs.momentohq.com/getting-started)
 
 ## Packages
 
@@ -50,7 +54,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/momentohq/client-sdk-swift", exact: "0.4.0")
+        .package(url: "https://github.com/momentohq/client-sdk-swift", exact: "0.9.0")
     ],
     targets: [
         .executableTarget(
@@ -80,7 +84,7 @@ func main() async {
 
     var creds: CredentialProviderProtocol
     do {
-        creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
+        creds = try CredentialProvider.fromEnvironmentVariablesV2()
     } catch {
         print("Error establishing credential provider: \(error)")
         exit(1)
@@ -91,6 +95,17 @@ func main() async {
         credentialProvider: creds,
         defaultTtlSeconds: 10
     )
+
+    let createResult = await cacheClient.createCache(cacheName: cacheName)
+    switch createResult {
+    case .alreadyExists(_):
+        print("Cache already exists!")
+    case .success(_):
+        print("Successfully created the cache!")
+    case .error(let err):
+        print("Unable to create the cache: \(err)")
+        exit(1)
+    }
 
     let getResult = await cacheClient.get(
         cacheName: cacheName,
