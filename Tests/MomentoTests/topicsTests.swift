@@ -137,6 +137,7 @@ final class topicsTests: XCTestCase {
             }
             break
         }
+        await subscription.unsubscribe()
     }
 
     func testTopicClientPublishesAndSubscribesResumeAtSequence() async throws {
@@ -183,6 +184,7 @@ final class topicsTests: XCTestCase {
             }
             break
         }
+        await subscription.unsubscribe()
     }
 
     func testTopicClientPublishesAndSubscribesResumeAtInvalidSequence() async throws {
@@ -226,6 +228,7 @@ final class topicsTests: XCTestCase {
             }
             break
         }
+        await subscription.unsubscribe()
     }
 
     func testTopicClientPublishesAndSubscribesBinary() async throws {
@@ -267,5 +270,6 @@ final class topicsTests: XCTestCase {
             }
             break
         }
+        await subscription.unsubscribe()
     }
 }

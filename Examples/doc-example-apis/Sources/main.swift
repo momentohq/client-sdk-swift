@@ -1,10 +1,52 @@
 import Foundation
 import Momento
 
+func retrieveApiKeyFromYourSecretsManager() -> String {
+    // this is not a valid API key but conforms to the syntax requirements.
+    return
+        "eyJhcGlfa2V5IjogImV5SjBlWEFpT2lKS1YxUWlMQ0poYkdjaU9pSklVekkxTmlKOS5leUpwYzNNaU9pSlBibXhwYm1VZ1NsZFVJRUoxYVd4a1pYSWlMQ0pwWVhRaU9qRTJOemd6TURVNE1USXNJbVY0Y0NJNk5EZzJOVFV4TlRReE1pd2lZWFZrSWpvaUlpd2ljM1ZpSWpvaWFuSnZZMnRsZEVCbGVHRnRjR3hsTG1OdmJTSjkuOEl5OHE4NExzci1EM1lDb19IUDRkLXhqSGRUOFVDSXV2QVljeGhGTXl6OCIsICJlbmRwb2ludCI6ICJ0ZXN0Lm1vbWVudG9ocS5jb20ifQo="
+}
+
+func retrieveApiKeyV2FromYourSecretsManager() -> String {
+    // this is not a valid API key but conforms to the syntax requirements.
+    return
+        "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJ0IjoiZyIsImp0aSI6InNvbWUtaWQifQ.GMr9nA6HE0ttB6llXct_2Sg5-fOKGFbJCdACZFgNbN1fhT6OPg_hVc8ThGzBrWC_RlsBpLA1nzqK3SOJDXYxAw"
+}
+
+func example_API_CredentialProviderFromEnvVarV2() {
+    do {
+        let credentialProvider = try CredentialProvider.fromEnvironmentVariablesV2()
+    } catch {
+        print("Unable to create credential provider: \(error)")
+        exit(1)
+    }
+}
+
+func example_API_CredentialProviderFromApiKeyV2() {
+    let apiKey = retrieveApiKeyV2FromYourSecretsManager()
+    let endpoint = "cell-4-us-west-2-1.prod.a.momentohq.com"
+    do {
+        let credentialProvider = try CredentialProvider.fromApiKeyV2(
+            apiKey: apiKey, endpoint: endpoint)
+    } catch {
+        print("Unable to create credential provider: \(error)")
+        exit(1)
+    }
+}
+
+func example_API_CredentialProviderFromDisposableToken() {
+    let authToken = retrieveApiKeyFromYourSecretsManager()
+    do {
+        let credentialProvider = try CredentialProvider.fromDisposableToken(token: authToken)
+    } catch {
+        print("Unable to create credential provider: \(error)")
+        exit(1)
+    }
+}
+
 func example_API_InstantiateCacheClient() {
     do {
-        let credentialProvider = try CredentialProvider.fromEnvironmentVariable(
-            envVariableName: "MOMENTO_API_KEY")
+        let credentialProvider = try CredentialProvider.fromEnvironmentVariablesV2()
         let cacheClient = CacheClient(
             configuration: CacheClientConfigurations.iOS.latest(),
             credentialProvider: credentialProvider,
@@ -98,8 +140,7 @@ func example_API_Delete(cacheClient: CacheClient, cacheName: String) async {
 
 func example_API_InstantiateTopicClient() {
     do {
-        let credentialProvider = try CredentialProvider.fromEnvironmentVariable(
-            envVariableName: "MOMENTO_API_KEY")
+        let credentialProvider = try CredentialProvider.fromEnvironmentVariablesV2()
         let topicClient = TopicClient(
             configuration: TopicClientConfigurations.iOS.latest(),
             credentialProvider: credentialProvider
@@ -158,8 +199,11 @@ func example_API_TopicSubscribe(topicClient: TopicClient, cacheName: String) asy
 
 func main() async {
     do {
-        let creds = try CredentialProvider.fromEnvironmentVariable(
-            envVariableName: "MOMENTO_API_KEY")
+        example_API_CredentialProviderFromApiKeyV2()
+        example_API_CredentialProviderFromDisposableToken()
+        example_API_CredentialProviderFromEnvVarV2()
+
+        let creds = try CredentialProvider.fromEnvironmentVariablesV2()
         let topicClient = TopicClient(
             configuration: TopicClientConfigurations.iOS.latest(),
             credentialProvider: creds

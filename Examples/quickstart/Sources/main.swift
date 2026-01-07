@@ -7,7 +7,7 @@ func main() async {
 
     var creds: CredentialProviderProtocol
     do {
-        creds = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
+        creds = try CredentialProvider.fromEnvironmentVariablesV2()
     } catch {
         print("Error establishing credential provider: \(error)")
         exit(1)
@@ -18,6 +18,17 @@ func main() async {
         credentialProvider: creds,
         defaultTtlSeconds: 10
     )
+
+    let createResult = await cacheClient.createCache(cacheName: cacheName)
+    switch createResult {
+    case .alreadyExists(_):
+        print("Cache already exists!")
+    case .success(_):
+        print("Successfully created the cache!")
+    case .error(let err):
+        print("Unable to create the cache: \(err)")
+        exit(1)
+    }
 
     let getResult = await cacheClient.get(
         cacheName: cacheName,

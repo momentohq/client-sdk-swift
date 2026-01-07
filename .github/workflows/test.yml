@@ -4,17 +4,21 @@ on:
   workflow_call:
     secrets:
       auth-token:
-        description: "Auth token used for live testing"
+        description: "v1 api key used for integration tests"
         required: true
       github-token:
         description: "Token for running Github actions"
+        required: true
+      api-key-v2:
+        description: "v2 api key used for integration tests"
         required: true
 
 jobs:
   test: 
     env:
-        TEST_API_KEY: ${{ secrets.auth-token }}
-        MOMENTO_API_KEY: ${{ secrets.auth-token }}
+        V1_API_KEY: ${{ secrets.auth-token }}
+        MOMENTO_API_KEY: ${{ secrets.api-key-v2 }}
+        MOMENTO_ENDPOINT: "cell-alpha-dev.preprod.a.momentohq.com"
 
     runs-on: macos-latest
     steps:
@@ -34,13 +38,13 @@ jobs:
         run: swift test
 
       - name: Build topics example
-        run: cd Examples/topics && swift build
+        run: cd Examples/topics && swift run
 
       - name: Build cache example
         run: cd Examples/cache && swift run
 
       - name: Build quickstart example
-        run: cd Examples/quickstart && swift build
+        run: cd Examples/quickstart && swift run
       
       - name: Run dev doc examples
         run: cd Examples/doc-example-apis && swift run

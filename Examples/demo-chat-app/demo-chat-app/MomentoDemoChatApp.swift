@@ -8,7 +8,7 @@ class Momento: ObservableObject {
     
     init() {
         do {
-            let credProvider = try CredentialProvider.fromEnvironmentVariable(envVariableName: "MOMENTO_API_KEY")
+            let credProvider = try CredentialProvider.fromEnvironmentVariablesV2()
             self.topicClient = TopicClient(
                 configuration: TopicClientConfigurations.iOS.latest().withClientTimeout(timeout: 600),
                 credentialProvider: credProvider
