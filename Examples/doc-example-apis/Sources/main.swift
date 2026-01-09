@@ -15,14 +15,19 @@ func retrieveApiKeyV2FromYourSecretsManager() -> String {
 
 func example_API_CredentialProviderFromEnvVarV2() {
     do {
-        // Looks for MOMENTO_API_KEY and MOMENTO_ENDPOINT environment variables by default
-        let credentialProvider = try CredentialProvider.fromEnvironmentVariablesV2()
+        let credentialProvider = try CredentialProvider.fromEnvironmentVariablesV2(
+            apiKeyEnvVar: "MOMENTO_API_KEY",
+            endpointEnvVar: "MOMENTO_ENDPOINT"
+        )
+    } catch {
+        print("Unable to create credential provider: \(error)")
+        exit(1)
+    }
+}
 
-        // To specify custom environment variable names:
-        // let credentialProvider = try CredentialProvider.fromEnvironmentVariablesV2(
-        //     apiKeyEnvVarName: "ALT_MOMENTO_API_KEY",
-        //     endpointEnvVarName: "ALT_MOMENTO_ENDPOINT"
-        // )
+func example_API_CredentialProviderFromEnvVarV2Default() {
+    do {
+        let credentialProvider = try CredentialProvider.fromEnvironmentVariablesV2()
     } catch {
         print("Unable to create credential provider: \(error)")
         exit(1)
@@ -209,6 +214,7 @@ func main() async {
         example_API_CredentialProviderFromApiKeyV2()
         example_API_CredentialProviderFromDisposableToken()
         example_API_CredentialProviderFromEnvVarV2()
+        example_API_CredentialProviderFromEnvVarV2Default()
 
         let creds = try CredentialProvider.fromEnvironmentVariablesV2()
         let topicClient = TopicClient(
