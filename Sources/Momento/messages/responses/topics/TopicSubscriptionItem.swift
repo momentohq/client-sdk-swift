@@ -60,7 +60,7 @@ public struct TopicSubscriptionItemBinary: CustomStringConvertible, Sendable {
 ///
 /// - `lastSequenceNumber`: the last sequence number known before the gap (0 if unknown)
 /// - `newSequenceNumber`: the sequence number at which messages will resume
-/// - `newSequencePage`: if different from the previous page, the topic has reset and all prior messages are gone
+/// - `newSequencePage`: if different from the previous page, the topic has reset
 public struct TopicSubscriptionItemDiscontinuity: Sendable {
     public let lastSequenceNumber: UInt64
     public let newSequenceNumber: UInt64
