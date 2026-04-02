@@ -132,6 +132,8 @@ final class topicsTests: XCTestCase {
                 XCTFail("expected itemText but got \(err)")
             case .itemBinary(let bin):
                 XCTFail("expected itemText but got \(bin)")
+            case .discontinuity(let d):
+                XCTFail("expected itemText but got discontinuity \(d)")
             case .itemText(let itemText):
                 XCTAssertEqual(itemText.value, topicValue)
             }
@@ -179,6 +181,8 @@ final class topicsTests: XCTestCase {
                 XCTFail("expected itemText but got \(err)")
             case .itemBinary(let bin):
                 XCTFail("expected itemText but got \(bin)")
+            case .discontinuity(let d):
+                XCTFail("expected itemText but got discontinuity \(d)")
             case .itemText(let itemText):
                 XCTAssertEqual(itemText.value, topicValue)
             }
@@ -223,11 +227,71 @@ final class topicsTests: XCTestCase {
                 XCTFail("expected itemText but got \(err)")
             case .itemBinary(let bin):
                 XCTFail("expected itemText but got \(bin)")
+            case .discontinuity:
+                // A discontinuity is expected when resuming at an invalid sequence/page;
+                // keep iterating to find the actual message.
+                continue
             case .itemText(let itemText):
                 XCTAssertEqual(itemText.value, topicValue)
+                break
             }
             break
         }
+        await subscription.unsubscribe()
+    }
+
+    func testTopicClientReceivesDiscontinuity() async throws {
+        let topicName = generateStringWithUuid(prefix: "test-topic")
+        let topicValue = "message after discontinuity"
+
+        let pubResp = await self.topicClient.publish(
+            cacheName: self.integrationTestCacheName,
+            topicName: topicName,
+            value: topicValue
+        )
+        switch pubResp {
+        case .error(let err):
+            XCTFail("expected success but got \(err)")
+        case .success(_):
+            break
+        }
+
+        // Subscribing with a mismatched sequence page causes the server to send a discontinuity.
+        let subResp = await self.topicClient.subscribe(
+            cacheName: self.integrationTestCacheName,
+            topicName: topicName,
+            resumeAtTopicSequenceNumber: 5434,
+            resumeAtTopicSequencePage: 95764
+        )
+        var subscription: TopicSubscription! = nil
+        switch subResp {
+        case .error(let err):
+            XCTFail("expected subscription but got \(err)")
+        case .subscription(let sub):
+            subscription = sub
+        }
+
+        var receivedDiscontinuity = false
+        for try await item in await subscription.stream {
+            switch item {
+            case .error(let err):
+                XCTFail("unexpected error: \(err)")
+                break
+            case .itemBinary(let bin):
+                XCTFail("unexpected binary item: \(bin)")
+                break
+            case .discontinuity(let d):
+                receivedDiscontinuity = true
+                XCTAssertGreaterThanOrEqual(d.newSequenceNumber, UInt64(0))
+            case .itemText(let itemText):
+                XCTAssertEqual(itemText.value, topicValue)
+                break
+            }
+            if receivedDiscontinuity {
+                break
+            }
+        }
+        XCTAssertTrue(receivedDiscontinuity, "expected a discontinuity when resuming at invalid sequence/page")
         await subscription.unsubscribe()
     }
 
@@ -265,6 +329,8 @@ final class topicsTests: XCTestCase {
                 XCTFail("expected itemBinary but got \(err)")
             case .itemText(let text):
                 XCTFail("expected itemBinary but got \(text)")
+            case .discontinuity(let d):
+                XCTFail("expected itemBinary but got discontinuity \(d)")
             case .itemBinary(let itemBinary):
                 XCTAssertEqual(binaryValue, itemBinary.value)
             }

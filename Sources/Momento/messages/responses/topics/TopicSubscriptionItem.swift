@@ -11,11 +11,14 @@ import Foundation
 ///      print("Text: \(text)")
 ///  case .itemBinary(let binary):
 ///      print("Binary: \(String(decoding: binary, as: UTF8.self))")
+///  case .discontinuity(let d):
+///      print("Missed messages between sequence \(d.lastSequenceNumber) and \(d.newSequenceNumber)")
 ///  }
 /// ```
 public enum TopicSubscriptionItemResponse: Sendable {
     case itemText(TopicSubscriptionItemText)
     case itemBinary(TopicSubscriptionItemBinary)
+    case discontinuity(TopicSubscriptionItemDiscontinuity)
     case error(TopicSubscriptionItemError)
 }
 
@@ -51,6 +54,17 @@ public struct TopicSubscriptionItemBinary: CustomStringConvertible, Sendable {
     public var description: String {
         return "[\(type(of: self))] Value: \(String(decoding: self.value, as: UTF8.self))"
     }
+}
+
+/// Topic subscription discontinuity indicating that some messages may have been missed.
+///
+/// - `lastSequenceNumber`: the last sequence number known before the gap (0 if unknown)
+/// - `newSequenceNumber`: the sequence number at which messages will resume
+/// - `newSequencePage`: if different from the previous page, the topic has reset and all prior messages are gone
+public struct TopicSubscriptionItemDiscontinuity: Sendable {
+    public let lastSequenceNumber: UInt64
+    public let newSequenceNumber: UInt64
+    public let newSequencePage: UInt64
 }
 
 /// Indicates that an error occurred while receiving a topic subscription item.
