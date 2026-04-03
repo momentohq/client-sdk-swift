@@ -149,6 +149,13 @@ public actor TopicSubscription {
             logger.debug("topic client received a heartbeat")
         case .discontinuity:
             logger.debug("topic client received a discontinuity")
+            return TopicSubscriptionItemResponse.discontinuity(
+                TopicSubscriptionItemDiscontinuity(
+                    lastSequenceNumber: item.discontinuity.lastTopicSequence,
+                    newSequenceNumber: item.discontinuity.newTopicSequence,
+                    newSequencePage: item.discontinuity.newSequencePage
+                )
+            )
         default:
             logger.error("topic client received unknown subscription item: \(item)")
         }

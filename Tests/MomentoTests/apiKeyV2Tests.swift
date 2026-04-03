@@ -452,6 +452,8 @@ final class apiKeyV2Tests: XCTestCase {
                 XCTFail("expected itemText but got \(bin)")
             case .itemText(let itemText):
                 XCTAssertEqual(itemText.value, topicValue)
+            case .discontinuity(let disc):
+                XCTFail("expected itemText but got discontinuity: \(disc)")
             }
             break
         }
