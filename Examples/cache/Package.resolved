@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/momentohq/client-sdk-swift",
       "state" : {
-        "revision" : "4fda2af536ed1e2e648b12f0ab74929a65f93ab4",
-        "version" : "0.9.0"
+        "revision" : "1c7a6bd077687945faa1f187431f7a8591b5a4e5",
+        "version" : "0.10.0"
       }
     },
     {
@@ -93,7 +93,7 @@
     {
       "identity" : "swift-http-types",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-http-types",
+      "location" : "https://github.com/apple/swift-http-types.git",
       "state" : {
         "revision" : "45eb0224913ea070ec4fba17291b9e7ecf4749ca",
         "version" : "1.5.1"

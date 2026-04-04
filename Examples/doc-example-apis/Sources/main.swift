@@ -205,6 +205,10 @@ func example_API_TopicSubscribe(topicClient: TopicClient, cacheName: String) asy
             print("Subscriber recieved binary message: \(value)")
         case .error(let err):
             print("Subscriber received error: \(err)")
+        case .discontinuity(let disc):
+            print(
+                "Subscriber received discontinuity, last sequence number \(disc.lastSequenceNumber), new sequence number \(disc.newSequenceNumber), and new sequence page: \(disc.newSequencePage)"
+            )
         }
     }
 }
