@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.10.0](https://github.com/momentohq/client-sdk-swift/compare/v0.9.0...v0.10.0) (2026-04-03)
+
+
+### Features
+
+* add discontinuities subscription item ([#159](https://github.com/momentohq/client-sdk-swift/issues/159)) ([7073264](https://github.com/momentohq/client-sdk-swift/commit/7073264e37a9c1c6e3be3e627c2581cc8cc39b84))
+
+
+### Miscellaneous
+
+* add custom env var v2 example in docs snippet ([#158](https://github.com/momentohq/client-sdk-swift/issues/158)) ([6134bc9](https://github.com/momentohq/client-sdk-swift/commit/6134bc99d644c343a1ae15638bd9bd90cb47411b))
+* update tests, examples, CI for api keys v2 ([#156](https://github.com/momentohq/client-sdk-swift/issues/156)) ([a19dde9](https://github.com/momentohq/client-sdk-swift/commit/a19dde9e3ac0a820a8cd064f476228013392a0c7))
+
 ## [0.9.0](https://github.com/momentohq/client-sdk-swift/compare/v0.8.1...v0.9.0) (2025-12-16)
 
 
