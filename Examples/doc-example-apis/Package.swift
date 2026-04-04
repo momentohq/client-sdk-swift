@@ -7,7 +7,7 @@ let package = Package(
     name: "doc-example-apis",
     platforms: [.macOS(.v10_15), .iOS(.v13)],
     dependencies: [
-        .package(url: "https://github.com/momentohq/client-sdk-swift", exact: "0.9.0")
+        .package(url: "https://github.com/momentohq/client-sdk-swift", exact: "0.10.0")
     ],
     targets: [
         .executableTarget(
