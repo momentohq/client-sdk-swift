@@ -34,7 +34,11 @@ func main() async {
     let client = TopicClient(
         configuration: TopicClientConfigurations.iOS.latest(), credentialProvider: creds)
 
-    let subscribeResponse = await client.subscribe(cacheName: cacheName, topicName: topicName)
+    // Starting a new subscription on a nonexistent sequence number and page will cause a
+    // discontinuity, which you can handle as you wish in the .discontinuity case below.
+    let subscribeResponse = await client.subscribe(
+        cacheName: cacheName, topicName: topicName, resumeAtTopicSequenceNumber: 1234,
+        resumeAtTopicSequencePage: 100)
     let subscription =
         switch subscribeResponse {
         case .error(let err): fatalError("Error subscribing to topic: \(err)")
@@ -83,6 +87,10 @@ func main() async {
             print("Subscriber recieved binary message: \(value)")
         case .error(let err):
             print("Subscriber received error: \(err)")
+        case .discontinuity(let disc):
+            print(
+                "Subscriber received discontinuity, last sequence number \(disc.lastSequenceNumber), new sequence number \(disc.newSequenceNumber), and new sequence page: \(disc.newSequencePage)"
+            )
         }
     }
 
