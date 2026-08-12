@@ -7,10 +7,17 @@ jobs:
   readme:
     runs-on: ubuntu-latest
     steps:
+      - name: Generate release bot token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.MOMENTO_RELEASE_APP_ID }}
+          private-key: ${{ secrets.MOMENTO_RELEASE_APP_PRIVATE_KEY }}
+
       - name: Setup repo
         uses: actions/checkout@v3
         with:
-          token: ${{ secrets.MOMENTO_MACHINE_USER_GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
 
       - name: Generate README
         uses: momentohq/standards-and-practices/github-actions/generate-and-commit-oss-readme@gh-actions-v2
@@ -28,7 +35,6 @@ jobs:
     uses: ./.github/workflows/test.yml
     secrets:
       auth-token: ${{ secrets.ALPHA_TEST_AUTH_TOKEN }}
-      github-token: ${{ secrets.MOMENTO_MACHINE_USER_GITHUB_TOKEN }}
       api-key-v2: ${{ secrets.ALPHA_API_KEY_V2 }}
 
   publish:
@@ -36,11 +42,18 @@ jobs:
     needs: test
 
     steps:
+      - name: Generate release bot token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ secrets.MOMENTO_RELEASE_APP_ID }}
+          private-key: ${{ secrets.MOMENTO_RELEASE_APP_PRIVATE_KEY }}
+
       - uses: google-github-actions/release-please-action@v3
         name: Release Please
         id: release
         with:
-          token: ${{ secrets.MOMENTO_MACHINE_USER_GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
           release-type: simple
           package-name: client-sdk-swift
           changelog-types: '[{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"chore","section":"Miscellaneous","hidden":false}]'
