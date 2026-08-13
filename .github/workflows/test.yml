@@ -19,10 +19,10 @@ jobs:
 
     runs-on: macos-latest
     steps:
-      - uses: swift-actions/setup-swift@v2
-        with:
-          swift-version: 6.1.0
-
+      # No pinned toolchain: macos-latest ships a Swift that matches its own SDK.
+      # Pinning 6.1.0 broke once the image moved to Xcode 26.6, whose SDK is built
+      # with Swift 6.3.2 - "this SDK is not supported by the compiler ... Please
+      # select a toolchain which matches the SDK".
       - name: Setup repo
         uses: actions/checkout@v3
 
