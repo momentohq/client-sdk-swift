@@ -32,5 +32,4 @@ jobs:
     uses: ./.github/workflows/test.yml
     secrets:
       auth-token: ${{ secrets.ALPHA_TEST_AUTH_TOKEN }}
-      github-token: ${{ secrets.MOMENTO_MACHINE_USER_GITHUB_TOKEN }}
       api-key-v2: ${{ secrets.ALPHA_API_KEY_V2 }}

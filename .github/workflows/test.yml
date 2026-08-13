@@ -6,9 +6,6 @@ on:
       auth-token:
         description: "v1 api key used for integration tests"
         required: true
-      github-token:
-        description: "Token for running Github actions"
-        required: true
       api-key-v2:
         description: "v2 api key used for integration tests"
         required: true
@@ -28,8 +25,6 @@ jobs:
       # select a toolchain which matches the SDK".
       - name: Setup repo
         uses: actions/checkout@v3
-        with:
-          token: ${{ secrets.github-token }}
 
       - name: Build momento package
         run: swift build
