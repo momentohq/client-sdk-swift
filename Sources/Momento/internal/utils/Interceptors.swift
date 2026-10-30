@@ -52,18 +52,6 @@ final class ControlClientInterceptorFactory: ControlClient_ScsControlClientInter
         self.apiKey = apiKey
     }
 
-    func makeCreateStoreInterceptors() -> [GRPC.ClientInterceptor<ControlClient__CreateStoreRequest, ControlClient__CreateStoreResponse>] {
-        [AuthHeaderInterceptor(apiKey: apiKey)]
-    }
-
-    func makeDeleteStoreInterceptors() -> [GRPC.ClientInterceptor<ControlClient__DeleteStoreRequest, ControlClient__DeleteStoreResponse>] {
-        [AuthHeaderInterceptor(apiKey: apiKey)]
-    }
-
-    func makeListStoresInterceptors() -> [GRPC.ClientInterceptor<ControlClient__ListStoresRequest, ControlClient__ListStoresResponse>] {
-        [AuthHeaderInterceptor(apiKey: apiKey)]
-    }
-
     func makeCreateCacheInterceptors() -> [ClientInterceptor<ControlClient__CreateCacheRequest, ControlClient__CreateCacheResponse>] {
         [AuthHeaderInterceptor(apiKey: apiKey)]
     }
