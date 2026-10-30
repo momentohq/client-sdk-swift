@@ -1,9 +1,11 @@
 /// Represents information about a listed cache, such as its name. May include additional information in the future.
 public struct CacheInfo {
     public let name: String
+    public let id: String
 
-    init(name: String) {
+    init(name: String, id: String) {
         self.name = name
+        self.id = id
     }
 }
 
@@ -32,7 +34,7 @@ public struct ListCachesSuccess: CustomStringConvertible {
 
     init(caches: [ControlClient__Cache]) {
         self.caches = caches.map({ cache in
-            return CacheInfo(name: cache.cacheName)
+            return CacheInfo(name: cache.cacheName, id: cache.cacheID)
         })
     }
 
